@@ -1,8 +1,11 @@
 #include "CmdLineArgs.h"
+#include "CubeGenerator.h"
+#include "Mesh.h"
+#include "StlWriter.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
-#include <iostream>
+#include <memory>
 
 int wmain(int argc, wchar_t **argv)
 {
@@ -13,6 +16,11 @@ int wmain(int argc, wchar_t **argv)
 	if (!cmdLine.Parse(log, argc, argv)) {
 		return 1;
 	}
+
+	std::shared_ptr<Mesh> cube = CubeGenerator::Create(3, 4, 5);
+	StlWriter writer{ log };
+
+	writer.Save(L"cube.stl", cube);
 
 	// TODO: Implement
 

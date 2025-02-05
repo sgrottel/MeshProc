@@ -83,13 +83,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdLineArgs.cpp" />
+    <ClCompile Include="CubeGenerator.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
+    <ClCompile Include="StlWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h" />
+    <ClInclude Include="CubeGenerator.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="StlWriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

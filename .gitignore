@@ -4,3 +4,4 @@ bin
 MeshProc/obj
 *.user
 packages
+MeshProc/cube.stl
