@@ -1,1 +1,6 @@
 ﻿desktop.ini
+.vs
+bin
+MeshProc/obj
+*.user
+packages
