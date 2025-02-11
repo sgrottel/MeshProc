@@ -17,8 +17,8 @@ std::shared_ptr<Mesh> CubeGenerator::Create(float sizeX, float sizeY, float size
 	m->triangles.reserve(12);
 	auto quadFace = [&](unsigned int i1, unsigned int i2, unsigned int i3, unsigned int i4)
 		{
-			m->triangles.push_back(glm::uvec3{ i1, i2, i3 });
-			m->triangles.push_back(glm::uvec3{ i3, i2, i4 });
+			m->triangles.push_back(Triangle{ i1, i2, i3 });
+			m->triangles.push_back(Triangle{ i3, i2, i4 });
 		};
 	quadFace(0, 2, 1, 3);
 	quadFace(0, 1, 4, 5);

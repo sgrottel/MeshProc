@@ -9,11 +9,11 @@ bool Mesh::IsValid() const
 			if (std::isnan(v[i])) return false;
 		}
 	}
-	for (glm::uvec3 const& t : triangles) {
+	for (Triangle const& t : triangles) {
 		for (int i = 0; i < 3; ++i) {
 			if (t[i] >= vertices.size()) return false;
 		}
-		if (t.x == t.y || t.y == t.z || t.x == t.z) {
+		if (t[0] == t[1] || t[1] == t[2] || t[0] == t[2]) {
 			return false;
 		}
 	}

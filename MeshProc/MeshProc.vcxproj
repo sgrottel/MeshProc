@@ -87,6 +87,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="StlWriter.cpp" />
+    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +97,7 @@
     <ClInclude Include="CubeGenerator.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="StlWriter.h" />
+    <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

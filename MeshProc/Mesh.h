@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Triangle.h"
+
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -8,7 +10,7 @@ class Mesh
 public:
 
 	std::vector<glm::vec3> vertices;
-	std::vector<glm::uvec3> triangles;
+	std::vector<Triangle> triangles;
 
 	// Checks for structural validity.
 	// Does not include checking for:

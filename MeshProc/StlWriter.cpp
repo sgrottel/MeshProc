@@ -41,7 +41,7 @@ void StlWriter::Save(std::wstring const& filename, std::shared_ptr<Mesh> mesh)
 	// foreach tri
 	uint16_t nullAttr = 0;
 	glm::vec3 nullNormal{ 0.0f, 0.0f, 0.0f };
-	for (glm::uvec3 const& t : mesh->triangles)
+	for (Triangle const& t : mesh->triangles)
 	{
 		// 3*float normal
 		fwrite(glm::value_ptr(nullNormal), 4, 3, file);

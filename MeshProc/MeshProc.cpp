@@ -20,6 +20,10 @@ int wmain(int argc, wchar_t **argv)
 	std::shared_ptr<Mesh> cube = CubeGenerator::Create(3, 4, 5);
 	StlWriter writer{ log };
 
+	std::vector<glm::vec3> faceNormals;
+	faceNormals.resize(cube->triangles.size());
+	std::transform(cube->triangles.begin(), cube->triangles.end(), faceNormals.begin(), [&cube](auto const& tri) { return tri.CalcNormal(cube->vertices); });
+
 	writer.Save(L"cube.stl", cube);
 
 	// TODO: Implement
