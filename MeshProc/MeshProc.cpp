@@ -1,6 +1,8 @@
 #include "CmdLineArgs.h"
 #include "CubeGenerator.h"
+#include "FlatSkirt.h"
 #include "Mesh.h"
+#include "OpenBorder.h"
 #include "StlReader.h"
 #include "StlWriter.h"
 
@@ -25,14 +27,43 @@ int wmain(int argc, wchar_t **argv)
 		mesh = reader.Load(cmdLine.input);
 	}
 
+	if (mesh->triangles.empty())
+	{
+		log.Warning("Mesh is empty");
+		return 1;
+	}
+
+	{
+		OpenBorder openBorder{ log };
+		auto border = openBorder.Find(mesh);
+
+		if (!border.empty())
+		{
+			log.Message("Found %d open borders", static_cast<int>(border.size()));
+
+			for (auto const& loop : border)
+			{
+				if (loop.size() < 3)
+				{
+					log.Warning("Skipping degenerated loop");
+					continue;
+				}
+
+				FlatSkirt skirt{ log };
+				std::vector<uint32_t> newLoop = skirt.AddSkirt(mesh, loop);
+
+			}
+		}
+	}
+
 	//= CubeGenerator::Create(3, 4, 5);
-	//StlWriter writer{ log };
+	StlWriter writer{ log };
 
 	//std::vector<glm::vec3> faceNormals;
 	//faceNormals.resize(cube->triangles.size());
 	//std::transform(cube->triangles.begin(), cube->triangles.end(), faceNormals.begin(), [&cube](auto const& tri) { return tri.CalcNormal(cube->vertices); });
 
-	//writer.Save(L"cube.stl", cube);
+	writer.Save(L"cube.stl", mesh);
 
 	// TODO: Implement
 

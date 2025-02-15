@@ -14,6 +14,7 @@ namespace
 	#pragma pack(1)
 	struct StlTriData
 	{
+		float xn, yn, zn;
 		union {
 			struct {
 				float x1, y1, z1;
@@ -22,7 +23,6 @@ namespace
 			};
 			glm::vec3 v[3];
 		};
-		float xn, yn, zn;
 		uint16_t attr;
 	};
 
@@ -122,6 +122,11 @@ std::shared_ptr<Mesh> StlReader::Load(std::filesystem::path const& filename)
 	fclose(file);
 
 	mesh->vertices.shrink_to_fit();
+
+	if (!mesh->IsValid())
+	{
+		m_log.Error("Loaded mesh is not valid");
+	}
 
 	return mesh;
 }
