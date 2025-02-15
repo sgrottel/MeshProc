@@ -1,6 +1,7 @@
 #include "CmdLineArgs.h"
 #include "CubeGenerator.h"
 #include "Mesh.h"
+#include "StlReader.h"
 #include "StlWriter.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -17,14 +18,21 @@ int wmain(int argc, wchar_t **argv)
 		return 1;
 	}
 
-	std::shared_ptr<Mesh> cube = CubeGenerator::Create(3, 4, 5);
-	StlWriter writer{ log };
+	std::shared_ptr<Mesh> mesh;
+	if (std::filesystem::is_regular_file(cmdLine.input))
+	{
+		StlReader reader{ log };
+		mesh = reader.Load(cmdLine.input);
+	}
 
-	std::vector<glm::vec3> faceNormals;
-	faceNormals.resize(cube->triangles.size());
-	std::transform(cube->triangles.begin(), cube->triangles.end(), faceNormals.begin(), [&cube](auto const& tri) { return tri.CalcNormal(cube->vertices); });
+	//= CubeGenerator::Create(3, 4, 5);
+	//StlWriter writer{ log };
 
-	writer.Save(L"cube.stl", cube);
+	//std::vector<glm::vec3> faceNormals;
+	//faceNormals.resize(cube->triangles.size());
+	//std::transform(cube->triangles.begin(), cube->triangles.end(), faceNormals.begin(), [&cube](auto const& tri) { return tri.CalcNormal(cube->vertices); });
+
+	//writer.Save(L"cube.stl", cube);
 
 	// TODO: Implement
 

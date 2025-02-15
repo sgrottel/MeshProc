@@ -86,6 +86,7 @@
     <ClCompile Include="CubeGenerator.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
+    <ClCompile Include="StlReader.cpp" />
     <ClCompile Include="StlWriter.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
@@ -96,6 +97,7 @@
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CubeGenerator.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="StlReader.h" />
     <ClInclude Include="StlWriter.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
