@@ -33,12 +33,12 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 		}
 	}
 
-	glm::vec3 center = std::reduce(v.begin(), v.end());
-	center /= v.size();
+	m_center = std::reduce(v.begin(), v.end());
+	m_center /= v.size();
 
 	glm::vec3 dir;
 	{
-		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), center);
+		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), m_center);
 
 		glm::vec3 evals;
 		glm::mat3 evecs;
@@ -51,6 +51,10 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 		}
 
 		glm::sortEigenvalues(evals, evecs);
+
+		m_x2d = glm::normalize(evecs[0]);
+		m_y2d = glm::normalize(evecs[1]);
+
 		dir = glm::normalize(evecs[2]);
 	}
 
@@ -71,17 +75,20 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 	float maxDist = 0.0f;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		const float dist = glm::dot(v[i] - center, dir);
+		const float dist = glm::dot(v[i] - m_center, dir);
 		if (dist > maxDist)
 		{
 			maxDist = dist;
 		}
 		v[i] -= dir * dist;
 	}
+	maxDist *= 1.1f;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		v[i] += dir * maxDist * 1.1f;
+		v[i] += dir * maxDist;
 	}
+
+	m_center += dir * maxDist;
 
 	size_t oldSize = mesh->vertices.size();
 	mesh->vertices.reserve(oldSize + v.size());

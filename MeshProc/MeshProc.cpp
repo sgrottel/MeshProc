@@ -52,17 +52,20 @@ int wmain(int argc, wchar_t **argv)
 				FlatSkirt skirt{ log };
 				std::vector<uint32_t> newLoop = skirt.AddSkirt(mesh, loop);
 
+				// TODO: detect loop self-intersection in projected 2d space
+				// if intersecting -> resolve by collapsing both offending edges,
+				//                    remove degenerated triangles,
+				//                    flip triangles if necessary (should be on one side).
+				//                    repeat until no longer self-intersecting.
+				//                    then break loops.
+
+				// TODO: fill hole in projected 2d space.
+
 			}
 		}
 	}
 
-	//= CubeGenerator::Create(3, 4, 5);
 	StlWriter writer{ log };
-
-	//std::vector<glm::vec3> faceNormals;
-	//faceNormals.resize(cube->triangles.size());
-	//std::transform(cube->triangles.begin(), cube->triangles.end(), faceNormals.begin(), [&cube](auto const& tri) { return tri.CalcNormal(cube->vertices); });
-
 	writer.Save(L"cube.stl", mesh);
 
 	// TODO: Implement
