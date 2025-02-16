@@ -15,6 +15,8 @@ FlatSkirt::FlatSkirt(sgrottel::ISimpleLog& log)
 
 std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vector<uint32_t> const& loop)
 {
+	m_log.Detail("Adding skirt to loop");
+
 	std::vector<glm::vec3> v;
 	v.resize(loop.size());
 	std::transform(loop.begin(), loop.end(), v.begin(), [&mesh](uint32_t i) { return mesh->vertices[i]; });
@@ -132,6 +134,8 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 	{
 		newLoop.push_back(static_cast<uint32_t>(i));
 	}
+
+	m_log.Detail("Added %d vertices", static_cast<int>(newLoop.size()));
 
 	return newLoop;
 }

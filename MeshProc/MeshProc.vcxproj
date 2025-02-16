@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="CmdLineArgs.cpp" />
     <ClCompile Include="CubeGenerator.cpp" />
+    <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
@@ -98,6 +99,7 @@
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CubeGenerator.h" />
+    <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenBorder.h" />

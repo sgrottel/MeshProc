@@ -1,5 +1,6 @@
 #include "CmdLineArgs.h"
 #include "CubeGenerator.h"
+#include "FlatLoop.h"
 #include "FlatSkirt.h"
 #include "Mesh.h"
 #include "OpenBorder.h"
@@ -51,6 +52,11 @@ int wmain(int argc, wchar_t **argv)
 
 				FlatSkirt skirt{ log };
 				std::vector<uint32_t> newLoop = skirt.AddSkirt(mesh, loop);
+
+				FlatLoop flatLoop{ log };
+				std::vector<glm::vec2> loop2d = flatLoop.Project(mesh->vertices, newLoop, skirt.GetCenter(), skirt.GetX2D(), skirt.GetY2D());
+
+				std::vector<glm::uvec2> intersections = flatLoop.IsSelfintersecting(loop2d);
 
 				// TODO: detect loop self-intersection in projected 2d space
 				// if intersecting -> resolve by collapsing both offending edges,

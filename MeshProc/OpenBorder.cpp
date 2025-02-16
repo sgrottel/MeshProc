@@ -17,6 +17,7 @@ OpenBorder::OpenBorder(sgrottel::ISimpleLog& log)
 
 std::vector<std::vector<uint32_t>> OpenBorder::Find(std::shared_ptr<Mesh> const& mesh)
 {
+	m_log.Detail("Detecting open border edges");
 	std::unordered_set<glm::uvec2> openEdges;
 	for (Triangle const& t : mesh->triangles)
 	{
@@ -98,5 +99,6 @@ std::vector<std::vector<uint32_t>> OpenBorder::Find(std::shared_ptr<Mesh> const&
 		}
 	}
 
+	m_log.Detail("Found %d open border loops", static_cast<int>(loops.size()));
 	return loops;
 }
