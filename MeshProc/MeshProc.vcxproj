@@ -84,8 +84,12 @@
   <ItemGroup>
     <ClCompile Include="CmdLineArgs.cpp" />
     <ClCompile Include="CubeGenerator.cpp" />
+    <ClCompile Include="FlatLoop.cpp" />
+    <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
+    <ClCompile Include="OpenBorder.cpp" />
+    <ClCompile Include="StlReader.cpp" />
     <ClCompile Include="StlWriter.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
@@ -95,7 +99,11 @@
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CubeGenerator.h" />
+    <ClInclude Include="FlatLoop.h" />
+    <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="OpenBorder.h" />
+    <ClInclude Include="StlReader.h" />
     <ClInclude Include="StlWriter.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>

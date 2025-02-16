@@ -35,7 +35,7 @@ void StlWriter::Save(std::wstring const& filename, std::shared_ptr<Mesh> mesh)
 	fwrite(header, 1, 80, file);
 
 	// tri count uint32
-	uint32_t triCnt = mesh->triangles.size();
+	uint32_t triCnt = static_cast<uint32_t>(mesh->triangles.size());
 	fwrite(&triCnt, 4, 1, file);
 
 	// foreach tri

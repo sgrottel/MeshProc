@@ -17,4 +17,6 @@ bool Mesh::IsValid() const
 			return false;
 		}
 	}
+
+	return true;
 }
