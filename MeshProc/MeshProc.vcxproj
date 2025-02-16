@@ -89,6 +89,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StlReader.cpp" />
     <ClCompile Include="StlWriter.cpp" />
     <ClCompile Include="Triangle.cpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenBorder.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="StlReader.h" />
     <ClInclude Include="StlWriter.h" />
     <ClInclude Include="Triangle.h" />

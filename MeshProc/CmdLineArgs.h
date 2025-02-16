@@ -2,6 +2,7 @@
 
 #include <string>
 #include <filesystem>
+#include <vector>
 
 namespace sgrottel
 {
@@ -11,7 +12,7 @@ namespace sgrottel
 class CmdLineArgs
 {
 public:
-	std::filesystem::path input;
+	std::vector<std::filesystem::path> inputs;
 
 	bool Parse(sgrottel::ISimpleLog& log, int argc, wchar_t const* const* argv);
 };

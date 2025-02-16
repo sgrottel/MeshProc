@@ -11,7 +11,7 @@ StlWriter::StlWriter(sgrottel::ISimpleLog& log)
 {
 }
 
-void StlWriter::Save(std::wstring const& filename, std::shared_ptr<Mesh> mesh)
+void StlWriter::Save(std::wstring const& filename, std::shared_ptr<Scene> scene)
 {
 	FILE* file = nullptr;
 	errno_t r = _wfopen_s(&file, filename.c_str(), L"wb");
@@ -35,27 +35,37 @@ void StlWriter::Save(std::wstring const& filename, std::shared_ptr<Mesh> mesh)
 	fwrite(header, 1, 80, file);
 
 	// tri count uint32
-	uint32_t triCnt = static_cast<uint32_t>(mesh->triangles.size());
+	uint32_t triCnt = 0;
+	for (auto const& mesh : scene->m_meshes)
+	{
+		triCnt += static_cast<uint32_t>(mesh.first->triangles.size());
+	}
+
 	fwrite(&triCnt, 4, 1, file);
 
 	// foreach tri
 	uint16_t nullAttr = 0;
 	glm::vec3 nullNormal{ 0.0f, 0.0f, 0.0f };
-	for (Triangle const& t : mesh->triangles)
+	for (auto const& mesh : scene->m_meshes)
 	{
-		// 3*float normal
-		fwrite(glm::value_ptr(nullNormal), 4, 3, file);
+		for (Triangle const& t : mesh.first->triangles)
+		{
+			// 3*float normal
+			fwrite(glm::value_ptr(nullNormal), 4, 3, file);
 
-		// 3*3*float vertices
-		for (int i = 0; i < 3; ++i) {
-			fwrite(glm::value_ptr(mesh->vertices[t[i]]), 4, 3, file);
+			// 3*3*float vertices
+			for (int i = 0; i < 3; ++i) {
+				glm::vec4 v = mesh.second * glm::vec4{ mesh.first->vertices[t[i]], 1.0f };
+				v *= 1.0f / v.w;
+				fwrite(glm::value_ptr(v), 4, 3, file);
+			}
+
+			// 16 byte attribute
+			fwrite(&nullAttr, 2, 1, file);
 		}
-
-		// 16 byte attribute
-		fwrite(&nullAttr, 2, 1, file);
 	}
 
 	// done.
 	fclose(file);
-	m_log.Detail(L"Written %d triangles to %s", static_cast<int>(mesh->triangles.size()), filename.c_str());
+	m_log.Detail(L"Written %d triangles to %s", static_cast<int>(triCnt), filename.c_str());
 }

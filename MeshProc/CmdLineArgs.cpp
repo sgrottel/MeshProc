@@ -27,7 +27,10 @@ bool CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t const* cons
 
 	if (res.GetOptionCount(inputFile) > 0)
 	{
-		input.assign<std::wstring_view>(res.GetOptionValue(inputFile));
+		for (std::wstring_view const& i : res.GetOptionValues(inputFile))
+		{
+			inputs.push_back(i);
+		}
 	}
 
 	// TODO: Implement
