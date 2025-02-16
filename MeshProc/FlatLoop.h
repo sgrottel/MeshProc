@@ -21,6 +21,8 @@ public:
 
 	std::vector<glm::uvec2> IsSelfintersecting(std::vector<glm::vec2> l) const;
 
+	// TODO: fill hole in projected 2d space.
+
 private:
 	sgrottel::ISimpleLog& m_log;
 };

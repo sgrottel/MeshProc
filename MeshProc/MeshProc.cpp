@@ -1,6 +1,5 @@
 #include "CmdLineArgs.h"
 #include "CubeGenerator.h"
-#include "FlatLoop.h"
 #include "FlatSkirt.h"
 #include "Mesh.h"
 #include "OpenBorder.h"
@@ -53,19 +52,14 @@ int wmain(int argc, wchar_t **argv)
 				FlatSkirt skirt{ log };
 				std::vector<uint32_t> newLoop = skirt.AddSkirt(mesh, loop);
 
-				FlatLoop flatLoop{ log };
-				std::vector<glm::vec2> loop2d = flatLoop.Project(mesh->vertices, newLoop, skirt.GetCenter(), skirt.GetX2D(), skirt.GetY2D());
-
-				std::vector<glm::uvec2> intersections = flatLoop.IsSelfintersecting(loop2d);
-
-				// TODO: detect loop self-intersection in projected 2d space
-				// if intersecting -> resolve by collapsing both offending edges,
-				//                    remove degenerated triangles,
-				//                    flip triangles if necessary (should be on one side).
-				//                    repeat until no longer self-intersecting.
-				//                    then break loops.
-
-				// TODO: fill hole in projected 2d space.
+				// fill hole via pin
+				uint32_t pinIdx = static_cast<uint32_t>(mesh->vertices.size());
+				mesh->vertices.push_back(skirt.GetCenter() + skirt.GetZDir() * skirt.GetZDist());
+				mesh->triangles.reserve(mesh->triangles.size() + newLoop.size());
+				for (size_t i = 0; i < newLoop.size(); ++i)
+				{
+					mesh->triangles.push_back({ newLoop[i], newLoop[(i + 1) % newLoop.size()], pinIdx });
+				}
 
 			}
 		}

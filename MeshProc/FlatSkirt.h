@@ -29,6 +29,14 @@ public:
 	{
 		return m_y2d;
 	}
+	inline glm::vec3 const& GetZDir() const noexcept
+	{
+		return m_zDir;
+	}
+	inline float GetZDist() const noexcept
+	{
+		return m_zDist;
+	}
 
 private:
 	sgrottel::ISimpleLog& m_log;
@@ -36,4 +44,6 @@ private:
 	glm::vec3 m_center{};
 	glm::vec3 m_x2d{ 1.0f, 0.0f, 0.0f };
 	glm::vec3 m_y2d{ 0.0f, 1.0f, 0.0f };
+	glm::vec3 m_zDir{ 0.0f, 0.0f, 1.0f };
+	float m_zDist{ 1.0f };
 };
