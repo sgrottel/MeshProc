@@ -1,18 +1,25 @@
 #include "CubeGenerator.h"
 
-std::shared_ptr<Mesh> CubeGenerator::Create(float sizeX, float sizeY, float sizeZ)
+using namespace meshproc;
+
+CubeGenerator::CubeGenerator(const sgrottel::ISimpleLog& log)
+	: AbstractCommand(log)
 {
-	std::shared_ptr<Mesh> m = std::make_shared<Mesh>();
+}
+
+bool CubeGenerator::Invoke()
+{
+	std::shared_ptr<::Mesh> m = std::make_shared<::Mesh>();
 
 	m->vertices.reserve(8);
-	m->vertices.push_back(glm::vec3{ 0.0f, 0.0f, 0.0f });	// 0
-	m->vertices.push_back(glm::vec3{ sizeX, 0.0f, 0.0f });	// 1
-	m->vertices.push_back(glm::vec3{ 0.0f, sizeY, 0.0f });	// 2
-	m->vertices.push_back(glm::vec3{ sizeX, sizeY, 0.0f });	// 3
-	m->vertices.push_back(glm::vec3{ 0.0f, 0.0f, sizeZ });	// 4
-	m->vertices.push_back(glm::vec3{ sizeX, 0.0f, sizeZ });	// 5
-	m->vertices.push_back(glm::vec3{ 0.0f, sizeY, sizeZ });	// 6
-	m->vertices.push_back(glm::vec3{ sizeX, sizeY, sizeZ });// 7
+	m->vertices.push_back(glm::vec3{ 0.0f, 0.0f, 0.0f });						// 0
+	m->vertices.push_back(glm::vec3{ SizeX.Get(), 0.0f, 0.0f });				// 1
+	m->vertices.push_back(glm::vec3{ 0.0f, SizeY.Get(), 0.0f });				// 2
+	m->vertices.push_back(glm::vec3{ SizeX.Get(), SizeY.Get(), 0.0f });			// 3
+	m->vertices.push_back(glm::vec3{ 0.0f, 0.0f, SizeZ.Get() });				// 4
+	m->vertices.push_back(glm::vec3{ SizeX.Get(), 0.0f, SizeZ.Get() });			// 5
+	m->vertices.push_back(glm::vec3{ 0.0f, SizeY.Get(), SizeZ.Get() });			// 6
+	m->vertices.push_back(glm::vec3{ SizeX.Get(), SizeY.Get(), SizeZ.Get() });	// 7
 
 	m->triangles.reserve(12);
 
@@ -23,5 +30,6 @@ std::shared_ptr<Mesh> CubeGenerator::Create(float sizeX, float sizeY, float size
 	m->AddQuad(4, 5, 6, 7);
 	m->AddQuad(1, 3, 5, 7);
 
-	return m;
+	Mesh.Put() = m;
+	return true;
 }

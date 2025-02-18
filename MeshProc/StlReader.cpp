@@ -9,6 +9,8 @@
 #include <cstdio>
 #include <unordered_map>
 
+using namespace meshproc;
+
 namespace
 {
 	#pragma pack(1)
@@ -31,46 +33,46 @@ namespace
 }
 
 StlReader::StlReader(sgrottel::ISimpleLog& log)
-	: m_log{ log }
+	: AbstractCommand{ log }
 {
 }
 
-std::shared_ptr<Mesh> StlReader::Load(std::filesystem::path const& filename)
+bool StlReader::Invoke()
 {
-	std::wstring wfilename{ filename.wstring() };
+	std::wstring wfilename{ Path.Get().wstring() };
 	FILE* file = nullptr;
 	errno_t r = _wfopen_s(&file, wfilename.c_str(), L"rb");
 	if (r != 0) {
-		m_log.Error(L"Failed to open \"%s\": %d", wfilename.c_str(), static_cast<int>(r));
-		return nullptr;
+		Log().Error(L"Failed to open \"%s\": %d", wfilename.c_str(), static_cast<int>(r));
+		return false;
 	}
 	if (file == nullptr) {
-		m_log.Error(L"Failed to open \"%s\": returned nullptr", wfilename.c_str());
-		return nullptr;
+		Log().Error(L"Failed to open \"%s\": returned nullptr", wfilename.c_str());
+		return false;
 	}
 
-	m_log.Message(L"Reading STL: %s", wfilename.c_str());
+	Log().Message(L"Reading STL: %s", wfilename.c_str());
 
 	char header[80];
 	if (fread(header, 80, 1, file) != 1)
 	{
-		m_log.Error(L"Failed read file format header. Truncated?");
-		return nullptr;
+		Log().Error(L"Failed read file format header. Truncated?");
+		return false;
 	}
 	if (memcmp(header, "solid", 5) == 0)
 	{
-		m_log.Error(L"File appeards to be ASCII STL, which is not supported.");
-		return nullptr;
+		Log().Error(L"File appeards to be ASCII STL, which is not supported.");
+		return false;
 	}
 
 	uint32_t numTri = 0;
 	if (fread(&numTri, 4, 1, file) != 1)
 	{
-		m_log.Error(L"Failed read data. Truncated?");
-		return nullptr;
+		Log().Error(L"Failed read data. Truncated?");
+		return false;
 	}
 
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	std::shared_ptr<::Mesh> mesh = std::make_shared<::Mesh>();
 	mesh->vertices.reserve(numTri * 2);
 	mesh->triangles.reserve(numTri);
 
@@ -125,8 +127,9 @@ std::shared_ptr<Mesh> StlReader::Load(std::filesystem::path const& filename)
 
 	if (!mesh->IsValid())
 	{
-		m_log.Error("Loaded mesh is not valid");
+		Log().Error("Loaded mesh is not valid");
 	}
 
-	return mesh;
+	Mesh.Put() = mesh;
+	return true;
 }

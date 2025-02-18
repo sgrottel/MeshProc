@@ -14,6 +14,8 @@
 
 #include <memory>
 
+using namespace meshproc;
+
 int wmain(int argc, wchar_t **argv)
 {
 	sgrottel::NullLog nullLog;
@@ -32,7 +34,13 @@ int wmain(int argc, wchar_t **argv)
 		if (std::filesystem::is_regular_file(cmdLine.inputs.front()))
 		{
 			StlReader reader{ log };
-			mesh = reader.Load(cmdLine.inputs.front());
+			reader.Path.Put() = cmdLine.inputs.front();
+			if (!reader.Invoke())
+			{
+				log.Error("StlReader.Invoke failed");
+				return 1;
+			}
+			mesh = reader.Mesh.Get();
 
 			if (mesh->triangles.empty())
 			{
@@ -46,10 +54,16 @@ int wmain(int argc, wchar_t **argv)
 			scene = std::make_shared<Scene>();
 			scene->m_meshes.push_back({ mesh, glm::mat4(1.0) });
 
-			StlReader reader{ log };
 			for (auto it = cmdLine.inputs.begin() + 1; it != cmdLine.inputs.end(); ++it)
 			{
-				std::shared_ptr<Mesh> m = reader.Load(*it);
+				StlReader reader{ log };
+				reader.Path.Put() = *it;
+				if (!reader.Invoke())
+				{
+					log.Error("StlReader.Invoke failed");
+					continue;
+				}
+				std::shared_ptr<Mesh> m = reader.Mesh.Get();
 				if (m->triangles.empty())
 				{
 					log.Warning("Mesh is empty");
@@ -109,7 +123,16 @@ int wmain(int argc, wchar_t **argv)
 	}
 	else
 	{
-		mesh = CubeGenerator::Create(3, 4, 5);
+		CubeGenerator cube{ log };
+		cube.SizeX.Put() = 3;
+		cube.SizeY.Put() = 4;
+		cube.SizeZ.Put() = 5;
+		if (!cube.Invoke())
+		{
+			log.Error("CubeGenerator.Invoke failed");
+			return 1;
+		}
+		mesh = cube.Mesh.Get();
 	}
 
 	/*
@@ -166,7 +189,13 @@ int wmain(int argc, wchar_t **argv)
 	}
 
 	StlWriter writer{ log };
-	writer.Save(L"cube.stl", scene);
+	writer.Path.Put() = L"cube.stl";
+	writer.Scene.Put() = scene;
+	if (!writer.Invoke())
+	{
+		log.Error("StlWriter.Invoke failed");
+		return 1;
+	}
 
 	// TODO: Implement
 

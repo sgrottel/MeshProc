@@ -1,23 +1,22 @@
 #pragma once
 
+#include "AbstractCommand.h"
 #include "Mesh.h"
 
 #include <memory>
 #include <filesystem>
 
-namespace sgrottel
+namespace meshproc
 {
-	class ISimpleLog;
+
+	class StlReader : public AbstractCommand
+	{
+	public:
+		StlReader(sgrottel::ISimpleLog& log);
+
+		Parameter<std::filesystem::path> Path{};
+		Parameter<std::shared_ptr<Mesh>> Mesh{};
+
+		bool Invoke() override;
+	};
 }
-
-class StlReader
-{
-public:
-	StlReader(sgrottel::ISimpleLog& log);
-
-	std::shared_ptr<Mesh> Load(std::filesystem::path const& file);
-
-private:
-	sgrottel::ISimpleLog& m_log;
-};
-

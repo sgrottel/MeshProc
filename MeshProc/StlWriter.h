@@ -1,24 +1,23 @@
 #pragma once
 
-#include "Mesh.h"
+#include "AbstractCommand.h"
 #include "Scene.h"
 
-#include <string>
+#include <filesystem>
 #include <memory>
 
-namespace sgrottel
+namespace meshproc
 {
-	class ISimpleLog;
+
+	class StlWriter : public AbstractCommand
+	{
+	public:
+		StlWriter(sgrottel::ISimpleLog& log);
+
+		Parameter<std::filesystem::path> Path{};
+		Parameter<std::shared_ptr<Scene>> Scene{};
+
+		bool Invoke() override;
+	};
+
 }
-
-class StlWriter
-{
-public:
-	StlWriter(sgrottel::ISimpleLog& log);
-
-	void Save(std::wstring const& filename, std::shared_ptr<Scene> scene);
-
-private:
-	sgrottel::ISimpleLog& m_log;
-};
-

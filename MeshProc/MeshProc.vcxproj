@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
     <ClCompile Include="CubeGenerator.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
@@ -89,6 +90,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
+    <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StlReader.cpp" />
     <ClCompile Include="StlWriter.cpp" />
@@ -98,12 +100,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CubeGenerator.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenBorder.h" />
+    <ClInclude Include="Parameter.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StlReader.h" />
     <ClInclude Include="StlWriter.h" />
@@ -111,16 +115,16 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.1.0\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.1.0\build\native\SGrottel.SimpleLog.Cpp.targets')" />
     <Import Project="..\packages\SGrottel.yaclap.0.3.1\build\native\SGrottel.yaclap.targets" Condition="Exists('..\packages\SGrottel.yaclap.0.3.1\build\native\SGrottel.yaclap.targets')" />
     <Import Project="..\packages\glm.1.0.1\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.1\build\native\glm.targets')" />
+    <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.1.0\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.1.0\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
     <Error Condition="!Exists('..\packages\SGrottel.yaclap.0.3.1\build\native\SGrottel.yaclap.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.yaclap.0.3.1\build\native\SGrottel.yaclap.targets'))" />
     <Error Condition="!Exists('..\packages\glm.1.0.1\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.1\build\native\glm.targets'))" />
+    <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
   </Target>
 </Project>
