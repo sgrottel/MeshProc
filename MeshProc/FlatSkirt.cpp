@@ -8,16 +8,22 @@
 #include <algorithm>
 #include <numeric>
 
+using namespace meshproc;
+
 FlatSkirt::FlatSkirt(sgrottel::ISimpleLog& log)
-	:m_log{ log }
+	: AbstractCommand{ log }
 {
 }
 
-std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vector<uint32_t> const& loop)
+bool FlatSkirt::Invoke()
 {
-	m_log.Detail("Adding skirt to loop");
+	Log().Detail("Adding skirt to loop");
 
 	std::vector<glm::vec3> v;
+
+	auto const& loop = Loop.Get();
+	auto& mesh = Mesh.Put();
+
 	v.resize(loop.size());
 	std::transform(loop.begin(), loop.end(), v.begin(), [&mesh](uint32_t i) { return mesh->vertices[i]; });
 
@@ -35,11 +41,14 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 		}
 	}
 
-	m_center = std::reduce(v.begin(), v.end());
-	m_center /= v.size();
+	auto& center = Center.Put();
+	auto& zDir = ZDir.Put();
+
+	center = std::reduce(v.begin(), v.end());
+	center /= v.size();
 
 	{
-		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), m_center);
+		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), center);
 
 		glm::vec3 evals;
 		glm::mat3 evecs;
@@ -47,16 +56,16 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 
 		if (evcnt != 3)
 		{
-			m_log.Error("Failed to compute princple vectors for open loop");
+			Log().Error("Failed to compute princple vectors for open loop");
 			return {};
 		}
 
 		glm::sortEigenvalues(evals, evecs);
 
-		m_x2d = glm::normalize(evecs[0]);
-		m_y2d = glm::normalize(evecs[1]);
+		X2D.Put() = glm::normalize(evecs[0]);
+		Y2D.Put() = glm::normalize(evecs[1]);
 
-		m_zDir = glm::normalize(evecs[2]);
+		zDir = glm::normalize(evecs[2]);
 	}
 
 	{
@@ -66,31 +75,31 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 		for (int i = 0; i < 3; ++i) {
 			d += mesh->vertices[oldTri[i]] - triEdgeCenter;
 		}
-		float f = glm::dot(d, m_zDir);
+		float f = glm::dot(d, zDir);
 		if (f > 0.0f)
 		{
-			m_zDir *= -1.0f;
+			zDir *= -1.0f;
 		}
 	}
 
 	float maxDist = 0.0f;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		const float dist = glm::dot(v[i] - m_center, m_zDir);
+		const float dist = glm::dot(v[i] - center, zDir);
 		if (dist > maxDist)
 		{
 			maxDist = dist;
 		}
-		v[i] -= m_zDir * dist;
+		v[i] -= zDir * dist;
 	}
 	maxDist *= 1.1f;
-	m_zDist = maxDist;
+	ZDist.Put() = maxDist;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		v[i] += m_zDir * maxDist;
+		v[i] += zDir * maxDist;
 	}
 
-	m_center += m_zDir * maxDist;
+	center += zDir * maxDist;
 
 	size_t oldSize = mesh->vertices.size();
 	mesh->vertices.reserve(oldSize + v.size());
@@ -135,7 +144,9 @@ std::vector<uint32_t> FlatSkirt::AddSkirt(std::shared_ptr<Mesh>& mesh, std::vect
 		newLoop.push_back(static_cast<uint32_t>(i));
 	}
 
-	m_log.Detail("Added %d vertices", static_cast<int>(newLoop.size()));
+	Log().Detail("Added %d vertices", static_cast<int>(newLoop.size()));
 
-	return newLoop;
+	std::swap(NewLoop.Put(), newLoop);
+
+	return true;
 }

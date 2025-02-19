@@ -146,16 +146,42 @@ int wmain(int argc, wchar_t **argv)
 	chamfer.ChamferEdge(mesh, 0, 1, 0.2f, faceNormals);
 	*/
 
-	/*
+	if (scene->m_meshes.size() == 1)
 	{
 		OpenBorder openBorder{ log };
-		auto border = openBorder.Find(mesh);
-
-		if (!border.empty())
+		openBorder.Mesh.Put() = scene->m_meshes.front().first;
+		if (!openBorder.Invoke())
 		{
-			log.Message("Found %d open borders", static_cast<int>(border.size()));
+			log.Error("OpenBorder.Invoke failed");
+			return 1;
+		}
 
-			for (auto const& loop : border)
+		if (!openBorder.EdgeLists.Get().empty())
+		{
+			std::vector<std::vector<uint32_t>> loops;
+			std::swap(loops, openBorder.EdgeLists.Put());
+
+			log.Message("Found %d open borders", static_cast<int>(loops.size()));
+
+			std::sort(loops.begin(), loops.end(), [](const auto& a, const auto& b) { return a.size() > b.size(); });
+
+			glm::vec3 closingDir;
+
+			{
+				FlatSkirt skirt{ log };
+				skirt.Mesh.Put() = scene->m_meshes.front().first;
+				std::swap(skirt.Loop.Put(), loops.front());
+				if (!skirt.Invoke())
+				{
+					log.Error("skirt.Invoke failed");
+					return 1;
+				}
+				std::swap(loops.front(), skirt.NewLoop.Put());
+
+				closingDir = skirt.ZDir.Get() * skirt.ZDist.Get();
+			}
+
+			for (auto& loop : loops)
 			{
 				if (loop.size() < 3)
 				{
@@ -163,22 +189,29 @@ int wmain(int argc, wchar_t **argv)
 					continue;
 				}
 
-				FlatSkirt skirt{ log };
-				std::vector<uint32_t> newLoop = skirt.AddSkirt(mesh, loop);
-
 				// fill hole via pin
+				auto& mesh = scene->m_meshes.front().first;
 				uint32_t pinIdx = static_cast<uint32_t>(mesh->vertices.size());
-				mesh->vertices.push_back(skirt.GetCenter() + skirt.GetZDir() * skirt.GetZDist());
-				mesh->triangles.reserve(mesh->triangles.size() + newLoop.size());
-				for (size_t i = 0; i < newLoop.size(); ++i)
+
+				glm::vec3 center{ 0.0 };
+				for (uint32_t i : loop)
 				{
-					mesh->triangles.push_back({ newLoop[i], newLoop[(i + 1) % newLoop.size()], pinIdx });
+					center += mesh->vertices[i];
+				}
+				center /= loop.size();
+
+				mesh->vertices.push_back(center + closingDir);
+
+				mesh->triangles.reserve(mesh->triangles.size() + loop.size());
+				for (size_t i = 0; i < loop.size(); ++i)
+				{
+					mesh->triangles.push_back({ loop[i], loop[(i + 1) % loop.size()], pinIdx });
 				}
 
 			}
+
 		}
 	}
-	*/
 
 	if (scene->m_meshes.empty())
 	{

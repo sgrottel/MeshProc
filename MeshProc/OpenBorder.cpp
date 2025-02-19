@@ -10,16 +10,19 @@
 
 #include <iostream>
 
+using namespace meshproc;
+
 OpenBorder::OpenBorder(sgrottel::ISimpleLog& log)
-	: m_log{ log }
+	: AbstractCommand{ log }
 {
 }
 
-std::vector<std::vector<uint32_t>> OpenBorder::Find(std::shared_ptr<Mesh> const& mesh)
+bool OpenBorder::Invoke()
 {
-	m_log.Detail("Detecting open border edges");
+	Log().Detail("Detecting open border edges");
+
 	std::unordered_set<glm::uvec2> openEdges;
-	for (Triangle const& t : mesh->triangles)
+	for (Triangle const& t : Mesh.Get()->triangles)
 	{
 		for (int i = 0; i < 3; ++i)
 		{
@@ -88,7 +91,7 @@ std::vector<std::vector<uint32_t>> OpenBorder::Find(std::shared_ptr<Mesh> const&
 			std::unordered_set<uint32_t>& t = halfEdges[last];
 			if (t.empty())
 			{
-				m_log.Error("Failed to complete loop at %d", static_cast<int>(last));
+				Log().Error("Failed to complete loop at %d", static_cast<int>(last));
 			}
 			next = *t.begin();
 			removeEdge(last, next);
@@ -99,6 +102,9 @@ std::vector<std::vector<uint32_t>> OpenBorder::Find(std::shared_ptr<Mesh> const&
 		}
 	}
 
-	m_log.Detail("Found %d open border loops", static_cast<int>(loops.size()));
-	return loops;
+	Log().Detail("Found %d open border loops", static_cast<int>(loops.size()));
+
+	EdgeLists.Put() = loops;
+
+	return true;
 }

@@ -61,6 +61,8 @@ bool ObjReader::Invoke()
 		return false;
 	}
 
+	Log().Message(L"Reading OBJ: %s", std::wstring{Path.Get()}.c_str());
+
 	auto mesh = std::make_shared<::Mesh>();
 
 	std::string lineBuf;
