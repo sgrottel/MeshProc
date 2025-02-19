@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 using namespace meshproc;
+using namespace meshproc::io;
 
 namespace
 {

@@ -1,11 +1,12 @@
 #include "CmdLineArgs.h"
 #include "CubeGenerator.h"
 #include "FlatSkirt.h"
+#include "io/ObjReader.h"
+#include "io/StlReader.h"
+#include "io/StlWriter.h"
 #include "Mesh.h"
 #include "OpenBorder.h"
 #include "Scene.h"
-#include "StlReader.h"
-#include "StlWriter.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -13,6 +14,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <memory>
+#include <cwctype>
 
 using namespace meshproc;
 
@@ -26,97 +28,96 @@ int wmain(int argc, wchar_t **argv)
 		return 1;
 	}
 
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<Scene> scene;
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 
 	if (!cmdLine.inputs.empty())
 	{
-		if (std::filesystem::is_regular_file(cmdLine.inputs.front()))
+		for (auto const& inputPath : cmdLine.inputs)
 		{
-			StlReader reader{ log };
-			reader.Path.Put() = cmdLine.inputs.front();
-			if (!reader.Invoke())
+			if (!std::filesystem::exists(inputPath))
 			{
-				log.Error("StlReader.Invoke failed");
-				return 1;
+				log.Error(L"Specified input file does not seem to exist: %s", inputPath.wstring().c_str());
+				continue;
 			}
-			mesh = reader.Mesh.Get();
 
-			if (mesh->triangles.empty())
+			std::wstring ext = inputPath.extension().wstring();
+			std::transform(ext.begin(), ext.end(), ext.begin(), &std::towlower);
+
+			glm::mat4 placement{ 1.0f };
+
+			switch (scene->m_meshes.size())
 			{
-				log.Warning("Mesh is empty");
-				return 1;
+			case 1:
+			{
+				glm::mat4 scale = glm::scale(glm::vec3(0.485f));
+				glm::mat4 rotate = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+				glm::mat4 translate = glm::translate(glm::vec3(
+					(-57.466003f + -1.082000f) / -2.0f,
+					-43.580002f,
+					(-37.636002f + 8.714001f) / -2.0f));
+				// scale([0.485,0.485,0.485])
+				// rotate([-90,0,0])
+				// translate([
+				//     (-57.466003 + -1.082000) / -2.0,
+				//     -43.580002,
+				//     (-37.636002 + 8.714001) / -2.0
+				//     ])
+				placement = scale * rotate * translate;
 			}
-		}
-
-		if (cmdLine.inputs.size() > 1)
-		{
-			scene = std::make_shared<Scene>();
-			scene->m_meshes.push_back({ mesh, glm::mat4(1.0) });
-
-			for (auto it = cmdLine.inputs.begin() + 1; it != cmdLine.inputs.end(); ++it)
+				break;
+			case 2:
 			{
-				StlReader reader{ log };
-				reader.Path.Put() = *it;
+				glm::mat4 translate2 = glm::translate(glm::vec3(-6.0f, 6.0f, 20.0f));
+				glm::mat4 rotate2 = glm::rotate(glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				glm::mat4 scale = glm::scale(glm::vec3(0.485f));
+				glm::mat4 rotate = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+				glm::mat4 translate = glm::translate(glm::vec3(
+					(-34.432003f + 39.858002f) / -2.0f,
+					0,
+					(-28.958002f + 44.544003f) / -2.0f));
+				// translate([-6,6,20])
+				// rotate([0,0,15])
+				// scale([0.485,0.485,0.485])
+				// rotate([-90,0,0])
+				// translate([
+				//     (-34.432003 + 39.858002) / -2.0,
+				//     0,
+				//     (-28.958002 + 44.544003) / -2.0
+				//     ])
+				placement = translate2 * rotate2 * scale * rotate * translate;
+			}
+				break;
+			}
+
+			if (ext == L".stl")
+			{
+				io::StlReader reader{ log };
+				reader.Path.Put() = cmdLine.inputs.front();
 				if (!reader.Invoke())
 				{
 					log.Error("StlReader.Invoke failed");
 					continue;
 				}
-				std::shared_ptr<Mesh> m = reader.Mesh.Get();
-				if (m->triangles.empty())
+
+				scene->m_meshes.push_back({ reader.Mesh.Get(), placement });
+
+			}
+			else if (ext == L".obj")
+			{
+				io::ObjReader reader{ log };
+				reader.Path.Put() = cmdLine.inputs.front();
+				if (!reader.Invoke())
 				{
-					log.Warning("Mesh is empty");
+					log.Error("ObjReader.Invoke failed");
 					continue;
 				}
 
-				glm::mat4 ma(1.0f);
+				scene->m_meshes.push_back({ reader.Mesh.Get(), placement });
 
-				switch (scene->m_meshes.size())
-				{
-				case 1:
-				{
-					glm::mat4 scale = glm::scale(glm::vec3(0.485f));
-					glm::mat4 rotate = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-					glm::mat4 translate = glm::translate(glm::vec3(
-						(-57.466003f + -1.082000f) / -2.0f,
-						-43.580002f,
-						(-37.636002f + 8.714001f) / -2.0f));
-					// scale([0.485,0.485,0.485])
-					// rotate([-90,0,0])
-					// translate([
-					//     (-57.466003 + -1.082000) / -2.0,
-					//     -43.580002,
-					//     (-37.636002 + 8.714001) / -2.0
-					//     ])
-					ma = scale * rotate * translate;
-				}
-					break;
-				case 2:
-				{
-					glm::mat4 translate2 = glm::translate(glm::vec3(-6.0f, 6.0f, 20.0f));
-					glm::mat4 rotate2 = glm::rotate(glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-					glm::mat4 scale = glm::scale(glm::vec3(0.485f));
-					glm::mat4 rotate = glm::rotate(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-					glm::mat4 translate = glm::translate(glm::vec3(
-						(-34.432003f + 39.858002f) / -2.0f,
-						0,
-						(-28.958002f + 44.544003f) / -2.0f));
-					// translate([-6,6,20])
-					// rotate([0,0,15])
-					// scale([0.485,0.485,0.485])
-					// rotate([-90,0,0])
-					// translate([
-					//     (-34.432003 + 39.858002) / -2.0,
-					//     0,
-					//     (-28.958002 + 44.544003) / -2.0
-					//     ])
-					ma = translate2 * rotate2 * scale * rotate * translate;
-				}
-					break;
-				}
-
-				scene->m_meshes.push_back({ m, ma });
+			}
+			else
+			{
+				log.Error(L"Unknown input file format: %s", ext.c_str());
 			}
 		}
 
@@ -132,7 +133,7 @@ int wmain(int argc, wchar_t **argv)
 			log.Error("CubeGenerator.Invoke failed");
 			return 1;
 		}
-		mesh = cube.Mesh.Get();
+		scene->m_meshes.push_back({ cube.Mesh.Get(), glm::mat4{1.0f} });
 	}
 
 	/*
@@ -179,16 +180,12 @@ int wmain(int argc, wchar_t **argv)
 	}
 	*/
 
-	if (!scene)
-	{
-		scene = std::make_shared<Scene>();
-	}
 	if (scene->m_meshes.empty())
 	{
-		scene->m_meshes.push_back({ mesh, glm::mat4(1.0) });
+		log.Warning("Scene is empty");
 	}
 
-	StlWriter writer{ log };
+	io::StlWriter writer{ log };
 	writer.Path.Put() = L"cube.stl";
 	writer.Scene.Put() = scene;
 	if (!writer.Invoke())

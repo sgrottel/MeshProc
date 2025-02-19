@@ -7,6 +7,7 @@
 #include <cstdio>
 
 using namespace meshproc;
+using namespace meshproc::io;
 
 StlWriter::StlWriter(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }

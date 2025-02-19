@@ -58,6 +58,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,6 +74,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,13 +89,14 @@
     <ClCompile Include="CubeGenerator.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
+    <ClCompile Include="io\ObjReader.cpp" />
+    <ClCompile Include="io\StlReader.cpp" />
+    <ClCompile Include="io\StlWriter.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="StlReader.cpp" />
-    <ClCompile Include="StlWriter.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,12 +108,13 @@
     <ClInclude Include="CubeGenerator.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
+    <ClInclude Include="io\ObjReader.h" />
+    <ClInclude Include="io\StlReader.h" />
+    <ClInclude Include="io\StlWriter.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="StlReader.h" />
-    <ClInclude Include="StlWriter.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
