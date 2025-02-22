@@ -1,13 +1,13 @@
-#include "CubeGenerator.h"
+#include "Cube.h"
 
 using namespace meshproc;
 
-CubeGenerator::CubeGenerator(const sgrottel::ISimpleLog& log)
+generator::Cube::Cube(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
 }
 
-bool CubeGenerator::Invoke()
+bool generator::Cube::Invoke()
 {
 	std::shared_ptr<::Mesh> m = std::make_shared<::Mesh>();
 

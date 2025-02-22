@@ -1,6 +1,7 @@
 #include "CmdLineArgs.h"
-#include "CubeGenerator.h"
 #include "FlatSkirt.h"
+#include "generator/Cube.h"
+#include "generator/Icosahedron.h"
 #include "io/ObjReader.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
@@ -124,7 +125,8 @@ int wmain(int argc, wchar_t **argv)
 	}
 	else
 	{
-		CubeGenerator cube{ log };
+		/*
+		generator::Cube cube{ log };
 		cube.SizeX.Put() = 3;
 		cube.SizeY.Put() = 4;
 		cube.SizeZ.Put() = 5;
@@ -134,6 +136,15 @@ int wmain(int argc, wchar_t **argv)
 			return 1;
 		}
 		scene->m_meshes.push_back({ cube.Mesh.Get(), glm::mat4{1.0f} });
+		*/
+
+		generator::Icosahedron ico{ log };
+		if (!ico.Invoke())
+		{
+			log.Error("CubeGenerator.Invoke failed");
+			return 1;
+		}
+		scene->m_meshes.push_back({ ico.Mesh.Get(), glm::mat4{1.0f} });
 	}
 
 	/*
@@ -146,6 +157,7 @@ int wmain(int argc, wchar_t **argv)
 	chamfer.ChamferEdge(mesh, 0, 1, 0.2f, faceNormals);
 	*/
 
+	/*
 	if (scene->m_meshes.size() == 1)
 	{
 		OpenBorder openBorder{ log };
@@ -212,6 +224,7 @@ int wmain(int argc, wchar_t **argv)
 
 		}
 	}
+	*/
 
 	if (scene->m_meshes.empty())
 	{

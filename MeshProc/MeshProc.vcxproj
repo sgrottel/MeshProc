@@ -86,9 +86,10 @@
   <ItemGroup>
     <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
-    <ClCompile Include="CubeGenerator.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
+    <ClCompile Include="generator\Cube.cpp" />
+    <ClCompile Include="generator\Icosahedron.cpp" />
     <ClCompile Include="io\ObjReader.cpp" />
     <ClCompile Include="io\StlReader.cpp" />
     <ClCompile Include="io\StlWriter.cpp" />
@@ -105,9 +106,10 @@
   <ItemGroup>
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="CmdLineArgs.h" />
-    <ClInclude Include="CubeGenerator.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
+    <ClInclude Include="generator\Cube.h" />
+    <ClInclude Include="generator\Icosahedron.h" />
     <ClInclude Include="io\ObjReader.h" />
     <ClInclude Include="io\StlReader.h" />
     <ClInclude Include="io\StlWriter.h" />

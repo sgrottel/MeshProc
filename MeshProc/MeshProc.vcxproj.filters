@@ -22,6 +22,15 @@
     <Filter Include="io\Source Files">
       <UniqueIdentifier>{14baf3da-98eb-4329-84a1-d80e2e1f8108}</UniqueIdentifier>
     </Filter>
+    <Filter Include="generator">
+      <UniqueIdentifier>{4791f317-3d33-4813-b172-6aac109a31cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="generator\Header Files">
+      <UniqueIdentifier>{5a25c499-b719-4010-a02b-d967fe35d903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="generator\Source Files">
+      <UniqueIdentifier>{e3abbb4d-020d-4366-a746-fa8f542efd12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -31,9 +40,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CubeGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
@@ -66,6 +72,12 @@
     <ClCompile Include="io\ObjReader.cpp">
       <Filter>io\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="generator\Cube.cpp">
+      <Filter>generator\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generator\Icosahedron.cpp">
+      <Filter>generator\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -75,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CubeGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
@@ -109,6 +118,12 @@
     </ClInclude>
     <ClInclude Include="io\ObjReader.h">
       <Filter>io\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\Cube.h">
+      <Filter>generator\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\Icosahedron.h">
+      <Filter>generator\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
