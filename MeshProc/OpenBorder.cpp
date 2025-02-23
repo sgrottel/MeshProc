@@ -14,6 +14,8 @@ using namespace meshproc;
 OpenBorder::OpenBorder(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
+	AddParam("Mesh", Mesh);
+	AddParam("EdgeLists", EdgeLists);
 }
 
 bool OpenBorder::Invoke()

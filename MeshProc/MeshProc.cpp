@@ -21,6 +21,28 @@
 using namespace meshproc;
 using namespace meshproc::data;
 
+namespace
+{
+	template<typename T>
+	bool Invoke(T& obj)
+	{
+		bool r;
+		obj.PreInvoke();
+		try
+		{
+			r = obj.Invoke();
+		}
+		catch (...)
+		{
+			obj.PostInvoke();
+			throw;
+		}
+		obj.PostInvoke();
+		return r;
+	}
+
+}
+
 int wmain(int argc, wchar_t **argv)
 {
 	sgrottel::NullLog nullLog;
@@ -96,7 +118,7 @@ int wmain(int argc, wchar_t **argv)
 			{
 				io::StlReader reader{ log };
 				reader.Path.Put() = cmdLine.inputs.front();
-				if (!reader.Invoke())
+				if (!Invoke(reader))
 				{
 					log.Error("StlReader.Invoke failed");
 					continue;
@@ -109,7 +131,7 @@ int wmain(int argc, wchar_t **argv)
 			{
 				io::ObjReader reader{ log };
 				reader.Path.Put() = cmdLine.inputs.front();
-				if (!reader.Invoke())
+				if (!Invoke(reader))
 				{
 					log.Error("ObjReader.Invoke failed");
 					continue;
@@ -132,7 +154,7 @@ int wmain(int argc, wchar_t **argv)
 		cube.SizeX.Put() = 3;
 		cube.SizeY.Put() = 4;
 		cube.SizeZ.Put() = 5;
-		if (!cube.Invoke())
+		if (!Invoke(cube))
 		{
 			log.Error("CubeGenerator.Invoke failed");
 			return 1;
@@ -143,9 +165,9 @@ int wmain(int argc, wchar_t **argv)
 		generator::Icosahedron ico{ log };
 		*/
 		generator::SphereIco ico{ log };
-		ico.Iterations.Put() = 3;
+		ico.Iterations.Put() = 4;
 
-		if (!ico.Invoke())
+		if (!Invoke(ico))
 		{
 			log.Error("CubeGenerator.Invoke failed");
 			return 1;
@@ -168,7 +190,7 @@ int wmain(int argc, wchar_t **argv)
 	{
 		OpenBorder openBorder{ log };
 		openBorder.Mesh.Put() = scene->m_meshes.front().first;
-		if (!openBorder.Invoke())
+		if (!Invoke(openBorder))
 		{
 			log.Error("OpenBorder.Invoke failed");
 			return 1;
@@ -189,7 +211,7 @@ int wmain(int argc, wchar_t **argv)
 				FlatSkirt skirt{ log };
 				skirt.Mesh.Put() = scene->m_meshes.front().first;
 				std::swap(skirt.Loop.Put(), loops.front());
-				if (!skirt.Invoke())
+				if (!Invoke(skirt))
 				{
 					log.Error("skirt.Invoke failed");
 					return 1;
@@ -240,7 +262,7 @@ int wmain(int argc, wchar_t **argv)
 	io::StlWriter writer{ log };
 	writer.Path.Put() = L"cube.stl";
 	writer.Scene.Put() = scene;
-	if (!writer.Invoke())
+	if (!Invoke(writer))
 	{
 		log.Error("StlWriter.Invoke failed");
 		return 1;

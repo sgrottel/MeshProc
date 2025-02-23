@@ -2,6 +2,10 @@
 
 #include "Parameter.h"
 
+#include <string>
+#include <tuple>
+#include <vector>
+
 namespace sgrottel
 {
 	class ISimpleLog;
@@ -15,9 +19,14 @@ namespace meshproc
 	public:
 		AbstractCommand(const sgrottel::ISimpleLog& log);
 
+		void PreInvoke();
 		virtual bool Invoke() = 0;
+		void PostInvoke();
 
 	protected:
+
+		// To be called during Ctor to register all parameter object available to the framework
+		AbstractCommand& AddParam(const char* name, ParameterBase& param);
 
 		inline const sgrottel::ISimpleLog& Log() const noexcept
 		{
@@ -26,6 +35,7 @@ namespace meshproc
 
 	private:
 		const sgrottel::ISimpleLog& m_log;
+		std::vector<std::tuple<ParameterBase*, std::string>> m_params;
 	};
 
 }

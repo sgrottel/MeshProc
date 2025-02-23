@@ -12,6 +12,8 @@ using namespace meshproc::io;
 StlWriter::StlWriter(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
+	AddParam("Path", Path);
+	AddParam("Scene", Scene);
 }
 
 bool StlWriter::Invoke()

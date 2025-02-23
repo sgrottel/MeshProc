@@ -50,6 +50,8 @@ namespace
 ObjReader::ObjReader(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
+	AddParam("Path", Path);
+	AddParam("Mesh", Mesh);
 }
 
 bool ObjReader::Invoke()

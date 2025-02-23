@@ -7,6 +7,7 @@ using namespace meshproc;
 generator::Icosahedron::Icosahedron(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
+	AddParam("Mesh", Mesh);
 }
 
 bool generator::Icosahedron::Invoke()

@@ -9,6 +9,7 @@ using namespace meshproc;
 generator::SphereIco::SphereIco(const sgrottel::ISimpleLog& log)
 	: Icosahedron(log)
 {
+	AddParam("Iterations", Iterations);
 	Iterations.Put() = 1;
 }
 

@@ -13,6 +13,14 @@ using namespace meshproc;
 FlatSkirt::FlatSkirt(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
+	AddParam("Mesh", Mesh);
+	AddParam("Loop", Loop);
+	AddParam("NewLoop", NewLoop);
+	AddParam("Center", Center);
+	AddParam("X2D", X2D);
+	AddParam("Y2D", Y2D);
+	AddParam("ZDir", ZDir);
+	AddParam("ZDist", ZDist);
 }
 
 bool FlatSkirt::Invoke()

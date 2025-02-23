@@ -5,6 +5,10 @@ using namespace meshproc;
 generator::Cube::Cube(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
+	AddParam("SizeX", SizeX);
+	AddParam("SizeY", SizeY);
+	AddParam("SizeZ", SizeZ);
+	AddParam("Mesh", Mesh);
 }
 
 bool generator::Cube::Invoke()

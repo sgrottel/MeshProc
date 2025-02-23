@@ -36,6 +36,8 @@ namespace
 StlReader::StlReader(sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
+	AddParam("Path", Path);
+	AddParam("Mesh", Mesh);
 }
 
 bool StlReader::Invoke()

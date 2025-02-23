@@ -14,14 +14,14 @@ namespace meshproc
 	public:
 		FlatSkirt(sgrottel::ISimpleLog& log);
 
-		Parameter<std::shared_ptr<data::Mesh>> Mesh; // inout
-		Parameter<std::vector<uint32_t>> Loop; // in
-		Parameter<std::vector<uint32_t>> NewLoop; // out
-		Parameter<glm::vec3> Center; // out
-		Parameter<glm::vec3> X2D; // out
-		Parameter<glm::vec3> Y2D; // out
-		Parameter<glm::vec3> ZDir; // out
-		Parameter<float> ZDist; // out
+		Parameter<std::shared_ptr<data::Mesh>, ParamType::InOut> Mesh;
+		Parameter<std::vector<uint32_t>, ParamType::In> Loop;
+		Parameter<std::vector<uint32_t>, ParamType::Out> NewLoop;
+		Parameter<glm::vec3, ParamType::Out> Center;
+		Parameter<glm::vec3, ParamType::Out> X2D;
+		Parameter<glm::vec3, ParamType::Out> Y2D;
+		Parameter<glm::vec3, ParamType::Out> ZDir;
+		Parameter<float, ParamType::Out> ZDist;
 
 		bool Invoke() override;
 	};

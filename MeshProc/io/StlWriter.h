@@ -16,8 +16,8 @@ namespace meshproc
 		public:
 			StlWriter(sgrottel::ISimpleLog& log);
 
-			Parameter<std::filesystem::path> Path{};
-			Parameter<std::shared_ptr<data::Scene>> Scene{};
+			Parameter<std::filesystem::path, ParamType::In> Path{};
+			Parameter<std::shared_ptr<data::Scene>, ParamType::In> Scene{};
 
 			bool Invoke() override;
 		};
