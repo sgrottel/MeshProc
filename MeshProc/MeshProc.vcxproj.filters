@@ -78,6 +78,9 @@
     <ClCompile Include="generator\Icosahedron.cpp">
       <Filter>generator\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="generator\SphereIco.cpp">
+      <Filter>generator\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -123,6 +126,9 @@
       <Filter>generator\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="generator\Icosahedron.h">
+      <Filter>generator\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\SphereIco.h">
       <Filter>generator\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

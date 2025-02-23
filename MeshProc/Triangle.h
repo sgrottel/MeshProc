@@ -110,6 +110,16 @@ public:
 		}
 	}
 
+	inline glm::uvec2 HashableEdge(uint32_t idx) const
+	{
+		glm::uvec2 e{ m_idx[idx], m_idx[(idx + 1) % 3] };
+		if (e.x > e.y)
+		{
+			std::swap(e.x, e.y);
+		}
+		return e;
+	}
+
 private:
 	uint32_t m_idx[3];
 

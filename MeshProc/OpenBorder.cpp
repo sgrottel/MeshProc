@@ -26,12 +26,7 @@ bool OpenBorder::Invoke()
 	{
 		for (int i = 0; i < 3; ++i)
 		{
-			glm::uvec2 e{ t[i], t[(i + 1) % 3] };
-			if (e.x > e.y)
-			{
-				std::swap(e.x, e.y);
-			}
-
+			glm::uvec2 e{ t.HashableEdge(i) };
 			if (openEdges.find(e) == openEdges.end())
 			{
 				openEdges.insert(e);

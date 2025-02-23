@@ -2,6 +2,7 @@
 #include "FlatSkirt.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
+#include "generator/SphereIco.h"
 #include "io/ObjReader.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
@@ -137,8 +138,12 @@ int wmain(int argc, wchar_t **argv)
 		}
 		scene->m_meshes.push_back({ cube.Mesh.Get(), glm::mat4{1.0f} });
 		*/
-
+		/*
 		generator::Icosahedron ico{ log };
+		*/
+		generator::SphereIco ico{ log };
+		ico.Iterations.Put() = 3;
+
 		if (!ico.Invoke())
 		{
 			log.Error("CubeGenerator.Invoke failed");
