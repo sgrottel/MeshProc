@@ -90,6 +90,9 @@
     <ClCompile Include="data\Triangle.cpp">
       <Filter>data\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="data\HashableEdge.cpp">
+      <Filter>data\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -138,6 +141,9 @@
       <Filter>data\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="data\Triangle.h">
+      <Filter>data\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="data\HashableEdge.h">
       <Filter>data\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

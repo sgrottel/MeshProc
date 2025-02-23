@@ -2,10 +2,7 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-
-#include <unordered_set>
+#include <unordered_map>
 
 using namespace meshproc;
 
@@ -33,13 +30,13 @@ bool generator::SphereIco::Invoke()
 
 	for (uint32_t i = 0; i < Iterations.Get(); ++i)
 	{
-		std::unordered_map<glm::uvec2, uint32_t> edges;
+		std::unordered_map<data::HashableEdge, uint32_t> edges;
 
 		for (data::Triangle const& t : mesh->triangles)
 		{
 			for (int i = 0; i < 3; ++i)
 			{
-				glm::uvec2 e{ t.HashableEdge(i) };
+				auto e{ t.HashableEdge(i) };
 				if (edges.find(e) == edges.end())
 				{
 					edges.insert({ e, 0 });

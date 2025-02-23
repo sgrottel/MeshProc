@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
+    <ClCompile Include="data\HashableEdge.cpp" />
     <ClCompile Include="data\Mesh.cpp" />
     <ClCompile Include="data\Scene.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="CmdLineArgs.h" />
+    <ClInclude Include="data\HashableEdge.h" />
     <ClInclude Include="data\Mesh.h" />
     <ClInclude Include="data\Scene.h" />
     <ClInclude Include="data\Triangle.h" />
