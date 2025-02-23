@@ -52,7 +52,7 @@ bool StlWriter::Invoke()
 	glm::vec3 nullNormal{ 0.0f, 0.0f, 0.0f };
 	for (auto const& mesh : Scene.Get()->m_meshes)
 	{
-		for (Triangle const& t : mesh.first->triangles)
+		for (data::Triangle const& t : mesh.first->triangles)
 		{
 			// 3*float normal
 			fwrite(glm::value_ptr(nullNormal), 4, 3, file);

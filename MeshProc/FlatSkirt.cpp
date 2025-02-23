@@ -27,11 +27,11 @@ bool FlatSkirt::Invoke()
 	v.resize(loop.size());
 	std::transform(loop.begin(), loop.end(), v.begin(), [&mesh](uint32_t i) { return mesh->vertices[i]; });
 
-	Triangle oldTri = mesh->triangles[0];
+	data::Triangle oldTri = mesh->triangles[0];
 	{
 		const uint32_t i0 = loop[0];
 		const uint32_t i1 = loop[1];
-		for (Triangle const& t : mesh->triangles)
+		for (data::Triangle const& t : mesh->triangles)
 		{
 			if (t.HasIndex(i0) && t.HasIndex(i1))
 			{
@@ -122,7 +122,7 @@ bool FlatSkirt::Invoke()
 	}
 
 	{
-		Triangle newTri = mesh->triangles[oldTriSize];
+		data::Triangle newTri = mesh->triangles[oldTriSize];
 		glm::uvec2 edge = oldTri.CommonEdge(newTri);
 		assert(edge.x != edge.y);
 		assert((edge.x == loop[0] || edge.y == loop[0]) && (edge.x == loop[1] || edge.y == loop[1]));

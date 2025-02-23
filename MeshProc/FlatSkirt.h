@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "Mesh.h"
+#include "data/Mesh.h"
 
 #include <memory>
 #include <vector>
@@ -14,7 +14,7 @@ namespace meshproc
 	public:
 		FlatSkirt(sgrottel::ISimpleLog& log);
 
-		Parameter<std::shared_ptr<Mesh>> Mesh; // inout
+		Parameter<std::shared_ptr<data::Mesh>> Mesh; // inout
 		Parameter<std::vector<uint32_t>> Loop; // in
 		Parameter<std::vector<uint32_t>> NewLoop; // out
 		Parameter<glm::vec3> Center; // out

@@ -22,20 +22,20 @@ bool generator::SphereIco::Invoke()
 		return false;
 	}
 
-	std::shared_ptr<::Mesh> mesh = Mesh.Get();
+	std::shared_ptr<data::Mesh> mesh = Mesh.Get();
 	if (!mesh)
 	{
 		Log().Error("Mesh from Icosahedron not set");
 		return false;
 	}
 
-	std::vector<Triangle> newTris;
+	std::vector<data::Triangle> newTris;
 
 	for (uint32_t i = 0; i < Iterations.Get(); ++i)
 	{
 		std::unordered_map<glm::uvec2, uint32_t> edges;
 
-		for (Triangle const& t : mesh->triangles)
+		for (data::Triangle const& t : mesh->triangles)
 		{
 			for (int i = 0; i < 3; ++i)
 			{
@@ -58,7 +58,7 @@ bool generator::SphereIco::Invoke()
 
 		newTris.reserve(mesh->triangles.size() * 4);
 
-		for (Triangle const& t : mesh->triangles)
+		for (data::Triangle const& t : mesh->triangles)
 		{
 			uint32_t n[3]{
 				edges[t.HashableEdge(0)],

@@ -1,4 +1,6 @@
 #include "CmdLineArgs.h"
+#include "data/Mesh.h"
+#include "data/Scene.h"
 #include "FlatSkirt.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
@@ -6,9 +8,7 @@
 #include "io/ObjReader.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
-#include "Mesh.h"
 #include "OpenBorder.h"
-#include "Scene.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -19,6 +19,7 @@
 #include <cwctype>
 
 using namespace meshproc;
+using namespace meshproc::data;
 
 int wmain(int argc, wchar_t **argv)
 {

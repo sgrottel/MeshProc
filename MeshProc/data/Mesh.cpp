@@ -2,6 +2,9 @@
 
 #include <cmath>
 
+using namespace meshproc;
+using namespace meshproc::data;
+
 bool Mesh::IsValid() const
 {
 	for (glm::vec3 const& v : vertices) {

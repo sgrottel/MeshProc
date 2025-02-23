@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Icosahedron.h"
+#include "generator/Icosahedron.h"
 
 namespace meshproc
 {

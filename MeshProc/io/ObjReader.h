@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "Scene.h"
+#include "data/Scene.h"
 
 #include <filesystem>
 #include <memory>
@@ -17,7 +17,7 @@ namespace meshproc
 			ObjReader(sgrottel::ISimpleLog& log);
 
 			Parameter<std::filesystem::path> Path{};
-			Parameter<std::shared_ptr<Mesh>> Mesh{};
+			Parameter<std::shared_ptr<data::Mesh>> Mesh{};
 
 			bool Invoke() override;
 		};

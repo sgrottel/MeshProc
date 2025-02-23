@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mesh.h"
+#include "data/Mesh.h"
 
 #include <algorithm>
 #include <memory>

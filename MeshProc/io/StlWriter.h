@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "Scene.h"
+#include "data/Scene.h"
 
 #include <filesystem>
 #include <memory>
@@ -17,7 +17,7 @@ namespace meshproc
 			StlWriter(sgrottel::ISimpleLog& log);
 
 			Parameter<std::filesystem::path> Path{};
-			Parameter<std::shared_ptr<Scene>> Scene{};
+			Parameter<std::shared_ptr<data::Scene>> Scene{};
 
 			bool Invoke() override;
 		};

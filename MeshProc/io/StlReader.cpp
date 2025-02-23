@@ -73,7 +73,7 @@ bool StlReader::Invoke()
 		return false;
 	}
 
-	std::shared_ptr<::Mesh> mesh = std::make_shared<::Mesh>();
+	std::shared_ptr<data::Mesh> mesh = std::make_shared<data::Mesh>();
 	mesh->vertices.reserve(numTri * 2);
 	mesh->triangles.reserve(numTri);
 

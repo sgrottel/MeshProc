@@ -22,7 +22,7 @@ bool OpenBorder::Invoke()
 	Log().Detail("Detecting open border edges");
 
 	std::unordered_set<glm::uvec2> openEdges;
-	for (Triangle const& t : Mesh.Get()->triangles)
+	for (data::Triangle const& t : Mesh.Get()->triangles)
 	{
 		for (int i = 0; i < 3; ++i)
 		{

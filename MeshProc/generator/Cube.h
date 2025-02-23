@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "Mesh.h"
+#include "data/Mesh.h"
 
 #include <memory>
 
@@ -18,7 +18,7 @@ namespace meshproc
 			Parameter<float> SizeX{};
 			Parameter<float> SizeY{};
 			Parameter<float> SizeZ{};
-			Parameter<std::shared_ptr<Mesh>> Mesh{};
+			Parameter<std::shared_ptr<data::Mesh>> Mesh{};
 
 			bool Invoke() override;
 		};

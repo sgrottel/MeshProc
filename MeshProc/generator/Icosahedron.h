@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "Mesh.h"
+#include "data/Mesh.h"
 
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace meshproc
 		public:
 			Icosahedron(const sgrottel::ISimpleLog& log);
 
-			Parameter<std::shared_ptr<Mesh>> Mesh{};
+			Parameter<std::shared_ptr<data::Mesh>> Mesh{};
 
 			bool Invoke() override;
 		};

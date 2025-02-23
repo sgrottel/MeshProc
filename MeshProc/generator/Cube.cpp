@@ -9,7 +9,7 @@ generator::Cube::Cube(const sgrottel::ISimpleLog& log)
 
 bool generator::Cube::Invoke()
 {
-	std::shared_ptr<::Mesh> m = std::make_shared<::Mesh>();
+	std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
 
 	m->vertices.reserve(8);
 	m->vertices.push_back(glm::vec3{ 0.0f, 0.0f, 0.0f });						// 0

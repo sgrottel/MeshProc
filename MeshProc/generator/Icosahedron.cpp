@@ -11,7 +11,7 @@ generator::Icosahedron::Icosahedron(const sgrottel::ISimpleLog& log)
 
 bool generator::Icosahedron::Invoke()
 {
-	std::shared_ptr<::Mesh> m = std::make_shared<::Mesh>();
+	std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
 
 	m->vertices.reserve(12);
 	float a = 2.0f;

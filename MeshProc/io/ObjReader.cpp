@@ -63,7 +63,7 @@ bool ObjReader::Invoke()
 
 	Log().Message(L"Reading OBJ: %s", std::wstring{Path.Get()}.c_str());
 
-	auto mesh = std::make_shared<::Mesh>();
+	auto mesh = std::make_shared<data::Mesh>();
 
 	std::string lineBuf;
 	while (std::getline(file, lineBuf))
