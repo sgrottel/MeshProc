@@ -25,6 +25,15 @@ void AbstractCommand::PostInvoke()
 	}
 }
 
+void AbstractCommand::LogInfo(const sgrottel::ISimpleLog& log, bool verbose) const
+{
+	for (auto const& p : m_params)
+	{
+		auto const& pb = std::get<0>(p);
+		log.Detail("  %s  [%s]  %s", std::get<1>(p).c_str(), pb->ModeStr(), pb->TypeStr());
+	}
+}
+
 AbstractCommand& AbstractCommand::AddParam(const char* name, ParameterBase& param)
 {
 	m_params.push_back(std::make_tuple<ParameterBase*, std::string>(&param, name));

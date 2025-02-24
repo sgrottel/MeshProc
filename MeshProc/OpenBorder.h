@@ -14,8 +14,8 @@ namespace meshproc
 	public:
 		OpenBorder(sgrottel::ISimpleLog& log);
 
-		Parameter<std::shared_ptr<data::Mesh>, ParamType::In> Mesh;
-		Parameter<std::vector<std::vector<uint32_t>>, ParamType::Out> EdgeLists;
+		Parameter<std::shared_ptr<data::Mesh>, ParamMode::In> Mesh;
+		Parameter<std::vector<std::vector<uint32_t>>, ParamMode::Out> EdgeLists;
 
 		bool Invoke() override;
 	};

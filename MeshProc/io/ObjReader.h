@@ -16,8 +16,8 @@ namespace meshproc
 		public:
 			ObjReader(sgrottel::ISimpleLog& log);
 
-			Parameter<std::filesystem::path, ParamType::In> Path{};
-			Parameter<std::shared_ptr<data::Mesh>, ParamType::Out> Mesh{};
+			Parameter<std::filesystem::path, ParamMode::In> Path{};
+			Parameter<std::shared_ptr<data::Mesh>, ParamMode::Out> Mesh{};
 
 			bool Invoke() override;
 		};

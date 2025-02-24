@@ -12,7 +12,7 @@ namespace meshproc
 		public:
 			SphereIco(const sgrottel::ISimpleLog& log);
 
-			Parameter<uint32_t, ParamType::In> Iterations{};
+			Parameter<uint32_t, ParamMode::In> Iterations{};
 
 			bool Invoke() override;
 		};

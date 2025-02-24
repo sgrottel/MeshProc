@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <filesystem>
+#include <unordered_map>
 #include <vector>
 
 namespace sgrottel
@@ -9,10 +10,26 @@ namespace sgrottel
 	class ISimpleLog;
 }
 
-class CmdLineArgs
+namespace meshproc
 {
-public:
-	std::vector<std::filesystem::path> inputs;
 
-	bool Parse(sgrottel::ISimpleLog& log, int argc, wchar_t const* const* argv);
-};
+	enum class CliCommand
+	{
+		RunScript,
+		ListCommands,
+		Help,
+		Error
+	};
+
+	class CmdLineArgs
+	{
+	public:
+		CliCommand m_command{ CliCommand::Error };
+		bool m_verbose{ false };
+		std::filesystem::path m_script{};
+		std::unordered_map<std::wstring_view, std::wstring_view> m_scriptArgs{};
+
+		bool Parse(sgrottel::ISimpleLog& log, int argc, wchar_t const* const* argv);
+	};
+
+}

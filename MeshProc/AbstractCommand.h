@@ -23,6 +23,8 @@ namespace meshproc
 		virtual bool Invoke() = 0;
 		void PostInvoke();
 
+		void LogInfo(const sgrottel::ISimpleLog& log, bool verbose) const;
+
 	protected:
 
 		// To be called during Ctor to register all parameter object available to the framework

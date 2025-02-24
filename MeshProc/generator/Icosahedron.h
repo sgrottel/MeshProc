@@ -15,7 +15,7 @@ namespace meshproc
 		public:
 			Icosahedron(const sgrottel::ISimpleLog& log);
 
-			Parameter<std::shared_ptr<data::Mesh>, ParamType::Out> Mesh{};
+			Parameter<std::shared_ptr<data::Mesh>, ParamMode::Out> Mesh{};
 
 			bool Invoke() override;
 		};

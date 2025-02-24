@@ -26,23 +26,23 @@ using namespace meshproc::data;
 
 namespace
 {
-	template<typename T>
-	bool Invoke(T& obj)
-	{
-		bool r;
-		obj.PreInvoke();
-		try
-		{
-			r = obj.Invoke();
-		}
-		catch (...)
-		{
-			obj.PostInvoke();
-			throw;
-		}
-		obj.PostInvoke();
-		return r;
-	}
+	//template<typename T>
+	//bool Invoke(T& obj)
+	//{
+	//	bool r;
+	//	obj.PreInvoke();
+	//	try
+	//	{
+	//		r = obj.Invoke();
+	//	}
+	//	catch (...)
+	//	{
+	//		obj.PostInvoke();
+	//		throw;
+	//	}
+	//	obj.PostInvoke();
+	//	return r;
+	//}
 
 }
 
@@ -53,11 +53,37 @@ int wmain(int argc, wchar_t **argv)
 
 	CmdLineArgs cmdLine;
 	if (!cmdLine.Parse(log, argc, argv)) {
-		return 1;
+		return (cmdLine.m_command == CliCommand::Error)
+				? 1
+				: 0;
 	}
+
+	log.SetEchoDetails(cmdLine.m_verbose);
 
 	meshproc::CommandFactory cmdFactory{ log };
 	meshproc::CommandRegistration(cmdFactory, log);
+
+	switch (cmdLine.m_command)
+	{
+	case CliCommand::RunScript:
+		log.Critical("Not implemented");
+
+		// TODO: Implement
+
+		break;
+
+	case CliCommand::ListCommands:
+		log.Message("");
+		log.Message("Available commands:");
+		cmdFactory.ListCommands(cmdLine.m_verbose);
+		break;
+
+	default:
+		log.Critical("CLI command %d not implemented", cmdLine.m_command);
+		break;
+	}
+
+#if 0
 
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 
@@ -275,6 +301,8 @@ int wmain(int argc, wchar_t **argv)
 	}
 
 	// TODO: Implement
+
+#endif
 
 	return 0;
 }
