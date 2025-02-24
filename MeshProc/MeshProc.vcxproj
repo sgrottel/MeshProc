@@ -88,6 +88,8 @@
   <ItemGroup>
     <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
+    <ClCompile Include="CommandFactory.cpp" />
+    <ClCompile Include="CommandRegistration.cpp" />
     <ClCompile Include="data\HashableEdge.cpp" />
     <ClCompile Include="data\Mesh.cpp" />
     <ClCompile Include="data\Scene.cpp" />
@@ -103,6 +105,7 @@
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
+    <ClCompile Include="PlaceMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -110,6 +113,8 @@
   <ItemGroup>
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="CmdLineArgs.h" />
+    <ClInclude Include="CommandFactory.h" />
+    <ClInclude Include="CommandRegistration.h" />
     <ClInclude Include="data\HashableEdge.h" />
     <ClInclude Include="data\Mesh.h" />
     <ClInclude Include="data\Scene.h" />
@@ -124,6 +129,7 @@
     <ClInclude Include="io\StlWriter.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
+    <ClInclude Include="PlaceMesh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

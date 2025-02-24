@@ -1,4 +1,7 @@
 #include "CmdLineArgs.h"
+#include "CommandFactory.h"
+#include "CommandRegistration.h"
+
 #include "data/Mesh.h"
 #include "data/Scene.h"
 #include "FlatSkirt.h"
@@ -52,6 +55,9 @@ int wmain(int argc, wchar_t **argv)
 	if (!cmdLine.Parse(log, argc, argv)) {
 		return 1;
 	}
+
+	meshproc::CommandFactory cmdFactory{ log };
+	meshproc::CommandRegistration(cmdFactory, log);
 
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 

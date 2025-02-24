@@ -93,6 +93,15 @@
     <ClCompile Include="data\HashableEdge.cpp">
       <Filter>data\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CommandFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandRegistration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaceMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -145,6 +154,15 @@
     </ClInclude>
     <ClInclude Include="data\HashableEdge.h">
       <Filter>data\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandRegistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaceMesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
