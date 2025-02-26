@@ -47,7 +47,7 @@ namespace
 }
 
 
-ObjReader::ObjReader(sgrottel::ISimpleLog& log)
+ObjReader::ObjReader(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParam("Path", Path);

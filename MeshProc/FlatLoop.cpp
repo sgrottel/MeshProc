@@ -2,7 +2,7 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
-FlatLoop::FlatLoop(sgrottel::ISimpleLog& log)
+FlatLoop::FlatLoop(const sgrottel::ISimpleLog& log)
 	:m_log{ log }
 {
 }

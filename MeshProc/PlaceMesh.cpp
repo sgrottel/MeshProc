@@ -2,7 +2,7 @@
 
 using namespace meshproc;
 
-PlaceMesh::PlaceMesh(sgrottel::ISimpleLog& log)
+PlaceMesh::PlaceMesh(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParam("Scene", Scene);
@@ -13,6 +13,10 @@ PlaceMesh::PlaceMesh(sgrottel::ISimpleLog& log)
 
 bool PlaceMesh::Invoke()
 {
+	if (!Scene.Put())
+	{
+		Scene.Put() = std::make_shared<data::Scene>();
+	}
 	Scene.Put()->m_meshes.push_back({ Mesh.Get(), Mat.Get() });
 	return true;
 }

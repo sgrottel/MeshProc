@@ -6,7 +6,7 @@
 namespace
 {
 
-	void LogGreeting(sgrottel::ISimpleLog& log)
+	void LogGreeting(const sgrottel::ISimpleLog& log)
 	{
 		log.Message("MeshProc");
 	}

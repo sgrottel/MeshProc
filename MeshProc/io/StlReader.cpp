@@ -33,7 +33,7 @@ namespace
 
 }
 
-StlReader::StlReader(sgrottel::ISimpleLog& log)
+StlReader::StlReader(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParam("Path", Path);

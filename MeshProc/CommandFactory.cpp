@@ -6,12 +6,6 @@
 
 using namespace meshproc;
 
-sgrottel::ISimpleLog& CommandFactory::MyNullLog()
-{
-	static sgrottel::NullLog nullLog;
-	return nullLog;
-}
-
 CommandFactory::CommandFactory(const sgrottel::ISimpleLog& log)
 	: m_log{ log }
 {
@@ -19,16 +13,30 @@ CommandFactory::CommandFactory(const sgrottel::ISimpleLog& log)
 
 void CommandFactory::ListCommands(bool verbose) const
 {
-	for (auto const& ct : m_commandTypes)
+	sgrottel::NullLog nullLog;
+
+	for (auto const& ct : m_commandTemplates)
 	{
 		m_log.Message("%s", ct.first.c_str());
-		ct.second->LogInfo(m_log, verbose);
+		std::shared_ptr<AbstractCommand> cmd = ct.second->Instantiate(nullLog);
+		cmd->LogInfo(m_log, verbose);
 	}
 	m_log.Message("");
 	if (!verbose)
 	{
 		m_log.Message("Switch to verbose output for more information.");
 	}
+}
+
+std::shared_ptr<class AbstractCommand> CommandFactory::Instantiate(const std::string& name, const sgrottel::ISimpleLog& log) const
+{
+	auto t = m_commandTemplates.find(name);
+	if (t == m_commandTemplates.end())
+	{
+		m_log.Error("Unable to instantiate command \"%s\": not found", name.c_str());
+		return nullptr;
+	}
+	return t->second->Instantiate(log);
 }
 
 void CommandFactory::Log(const char* msg, const char* a)

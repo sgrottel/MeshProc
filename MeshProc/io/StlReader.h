@@ -14,7 +14,7 @@ namespace meshproc
 		class StlReader : public AbstractCommand
 		{
 		public:
-			StlReader(sgrottel::ISimpleLog& log);
+			StlReader(const sgrottel::ISimpleLog& log);
 
 			Parameter<std::filesystem::path, ParamMode::In> Path{};
 			Parameter<std::shared_ptr<data::Mesh>, ParamMode::Out> Mesh{};

@@ -12,7 +12,7 @@ namespace meshproc
 	class FlatSkirt : public AbstractCommand
 	{
 	public:
-		FlatSkirt(sgrottel::ISimpleLog& log);
+		FlatSkirt(const sgrottel::ISimpleLog& log);
 
 		Parameter<std::shared_ptr<data::Mesh>, ParamMode::InOut> Mesh;
 		Parameter<std::vector<uint32_t>, ParamMode::In> Loop;

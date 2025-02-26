@@ -9,7 +9,7 @@
 using namespace meshproc;
 using namespace meshproc::io;
 
-StlWriter::StlWriter(sgrottel::ISimpleLog& log)
+StlWriter::StlWriter(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParam("Path", Path);
@@ -22,7 +22,9 @@ bool StlWriter::Invoke()
 	FILE* file = nullptr;
 	errno_t r = _wfopen_s(&file, wfilename.c_str(), L"wb");
 	if (r != 0) {
-		Log().Error(L"Failed to open \"%s\": %d", wfilename.c_str(), static_cast<int>(r));
+		wchar_t errMsg[95]{};
+		_wcserror_s(errMsg, r);
+		Log().Error(L"Failed to open \"%s\": %s (%d)", wfilename.c_str(), errMsg, static_cast<int>(r));
 		return false;
 	}
 	if (file == nullptr) {

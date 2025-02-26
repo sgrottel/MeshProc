@@ -14,7 +14,7 @@ namespace sgrottel
 class FlatLoop
 {
 public:
-	FlatLoop(sgrottel::ISimpleLog& log);
+	FlatLoop(const sgrottel::ISimpleLog& log);
 
 	template<typename C>
 	std::vector<glm::vec2> Project(C const& vertices, std::vector<uint32_t> const& loop, glm::vec3 center, glm::vec3 x2d, glm::vec3 y2d) const;
@@ -24,7 +24,7 @@ public:
 	// TODO: fill hole in projected 2d space.
 
 private:
-	sgrottel::ISimpleLog& m_log;
+	const sgrottel::ISimpleLog& m_log;
 };
 
 template<typename C>

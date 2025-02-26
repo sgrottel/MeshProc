@@ -14,7 +14,7 @@ namespace meshproc
 		class StlWriter : public AbstractCommand
 		{
 		public:
-			StlWriter(sgrottel::ISimpleLog& log);
+			StlWriter(const sgrottel::ISimpleLog& log);
 
 			Parameter<std::filesystem::path, ParamMode::In> Path{};
 			Parameter<std::shared_ptr<data::Scene>, ParamMode::In> Scene{};

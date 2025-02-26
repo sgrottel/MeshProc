@@ -10,7 +10,7 @@
 
 using namespace meshproc;
 
-FlatSkirt::FlatSkirt(sgrottel::ISimpleLog& log)
+FlatSkirt::FlatSkirt(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParam("Mesh", Mesh);

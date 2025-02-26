@@ -20,28 +20,54 @@ namespace meshproc
 		CommandFactory(const sgrottel::ISimpleLog& log);
 
 		template<typename T>
-		bool Register(const char* name)
-		{
-			std::string n{ name };
-			if (m_commandTypes.find(name) != m_commandTypes.end())
-			{
-				Log("Cannot register command `%s`, name already registered", name);
-				throw std::logic_error("Cannot register command, name already registered");
-				return false;
-			}
-			m_commandTypes.insert({ n, std::make_shared<T>(MyNullLog()) });
-			return true;
-		}
+		bool Register(const char* name);
 
 		void ListCommands(bool verbose) const;
 
+		std::shared_ptr<class AbstractCommand> Instantiate(const std::string& name, const sgrottel::ISimpleLog& log) const;
+
 	private:
-		static sgrottel::ISimpleLog& MyNullLog();
+		class CommandTemplateBase
+		{
+		public:
+			virtual ~CommandTemplateBase() = default;
+
+			virtual std::shared_ptr<class AbstractCommand> Instantiate(const sgrottel::ISimpleLog& log) = 0;
+
+		protected:
+			CommandTemplateBase() = default;
+		};
+
+		template<typename TCMD>
+		class CommandTemplate : public CommandTemplateBase
+		{
+		public:
+			CommandTemplate() = default;
+
+			std::shared_ptr<class AbstractCommand> Instantiate(const sgrottel::ISimpleLog& log) override
+			{
+				return std::make_shared<TCMD>(log);
+			}
+		};
 
 		void Log(const char* msg, const char* a);
 
 		const sgrottel::ISimpleLog& m_log;
-		std::unordered_map<std::string, std::shared_ptr<AbstractCommand>> m_commandTypes;
+		std::unordered_map<std::string, std::unique_ptr<CommandTemplateBase>> m_commandTemplates;
 	};
+
+	template<typename TCMD>
+	bool CommandFactory::Register(const char* name)
+	{
+		std::string n{ name };
+		if (m_commandTemplates.find(name) != m_commandTemplates.end())
+		{
+			Log("Cannot register command `%s`, name already registered", name);
+			throw std::logic_error("Cannot register command, name already registered");
+			return false;
+		}
+		m_commandTemplates.insert({ n, std::make_unique<CommandTemplate<TCMD>>() });
+		return true;
+	}
 
 }

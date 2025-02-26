@@ -12,7 +12,7 @@ namespace meshproc
 	class PlaceMesh : public AbstractCommand
 	{
 	public:
-		PlaceMesh(sgrottel::ISimpleLog& log);
+		PlaceMesh(const sgrottel::ISimpleLog& log);
 
 		Parameter<std::shared_ptr<data::Scene>, ParamMode::InOut> Scene;
 		Parameter<std::shared_ptr<data::Mesh>, ParamMode::In> Mesh;

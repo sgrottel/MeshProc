@@ -1,6 +1,7 @@
 #include "CmdLineArgs.h"
 #include "CommandFactory.h"
 #include "CommandRegistration.h"
+#include "MeshProgram.h"
 
 #include "data/Mesh.h"
 #include "data/Scene.h"
@@ -66,10 +67,11 @@ int wmain(int argc, wchar_t **argv)
 	switch (cmdLine.m_command)
 	{
 	case CliCommand::RunScript:
-		log.Critical("Not implemented");
-
-		// TODO: Implement
-
+	{
+		meshproc::MeshProgram prog{ log };
+		prog.Load(cmdFactory);
+		prog.Execution();
+	}
 		break;
 
 	case CliCommand::ListCommands:

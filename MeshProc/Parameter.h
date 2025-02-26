@@ -30,8 +30,12 @@ namespace meshproc
 		virtual void PreInvoke() = 0;
 		virtual void PostInvoke() = 0;
 
+		virtual bool IsWritable() const = 0;
 		virtual const char* TypeStr() const = 0;
 		virtual const char* ModeStr() const = 0;
+
+		virtual std::shared_ptr<ParameterBase> GetVariable() const = 0;
+		virtual bool SetVariable(std::shared_ptr<ParameterBase> var) = 0;
 
 	protected:
 		ParameterBase() = default;
@@ -74,6 +78,10 @@ namespace meshproc
 		{
 			LockableParameterBase<PT>::ImplPostInvoke();
 		}
+		bool IsWritable() const override
+		{
+			return LockableParameterBase<PT>::isWritable;
+		}
 		const char* TypeStr() const override
 		{
 			return ParameterTypeInfo<T>{}.TypeStr();
@@ -81,6 +89,22 @@ namespace meshproc
 		const char* ModeStr() const override
 		{
 			return LockableParameterBase<PT>::ModeStr;
+		}
+		std::shared_ptr<ParameterBase> GetVariable() const override
+		{
+			auto p = std::make_shared<Parameter<T, ParamMode::InOut>>();
+			p->Put() = Get();
+			return p;
+		}
+		bool SetVariable(std::shared_ptr<ParameterBase> var) override
+		{
+			auto v = std::dynamic_pointer_cast<Parameter<T, ParamMode::InOut>>(var);
+			if (!v)
+			{
+				return false;
+			}
+			Put() = v->Get();
+			return true;
 		}
 
 	private:

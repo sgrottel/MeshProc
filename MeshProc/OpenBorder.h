@@ -12,7 +12,7 @@ namespace meshproc
 	class OpenBorder : public AbstractCommand
 	{
 	public:
-		OpenBorder(sgrottel::ISimpleLog& log);
+		OpenBorder(const sgrottel::ISimpleLog& log);
 
 		Parameter<std::shared_ptr<data::Mesh>, ParamMode::In> Mesh;
 		Parameter<std::vector<std::vector<uint32_t>>, ParamMode::Out> EdgeLists;
