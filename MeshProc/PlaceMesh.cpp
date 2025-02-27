@@ -5,18 +5,17 @@ using namespace meshproc;
 PlaceMesh::PlaceMesh(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Scene", Scene);
-	AddParam("Mesh", Mesh);
-	AddParam("Mat", Mat);
-	Mat.Put() = glm::mat4{ 1 };
+	AddParamBinding<ParamMode::InOut, ParamType::Scene>("Scene", m_scene);
+	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::In, ParamType::Mat4>("Mat", m_mat);
 }
 
 bool PlaceMesh::Invoke()
 {
-	if (!Scene.Put())
+	if (!m_scene)
 	{
-		Scene.Put() = std::make_shared<data::Scene>();
+		m_scene = std::make_shared<data::Scene>();
 	}
-	Scene.Put()->m_meshes.push_back({ Mesh.Get(), Mat.Get() });
+	m_scene->m_meshes.push_back({ m_mesh, m_mat });
 	return true;
 }

@@ -12,23 +12,22 @@ using namespace meshproc::io;
 StlWriter::StlWriter(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Path", Path);
-	AddParam("Scene", Scene);
+	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
+	AddParamBinding<ParamMode::In, ParamType::Scene>("Scene", m_scene);
 }
 
 bool StlWriter::Invoke()
 {
-	std::wstring wfilename{ Path.Get().wstring() };
 	FILE* file = nullptr;
-	errno_t r = _wfopen_s(&file, wfilename.c_str(), L"wb");
+	errno_t r = _wfopen_s(&file, m_path.c_str(), L"wb");
 	if (r != 0) {
 		wchar_t errMsg[95]{};
 		_wcserror_s(errMsg, r);
-		Log().Error(L"Failed to open \"%s\": %s (%d)", wfilename.c_str(), errMsg, static_cast<int>(r));
+		Log().Error(L"Failed to open \"%s\": %s (%d)", m_path.c_str(), errMsg, static_cast<int>(r));
 		return false;
 	}
 	if (file == nullptr) {
-		Log().Error(L"Failed to open \"%s\": returned nullptr", wfilename.c_str());
+		Log().Error(L"Failed to open \"%s\": returned nullptr", m_path.c_str());
 		return false;
 	}
 
@@ -44,7 +43,7 @@ bool StlWriter::Invoke()
 
 	// tri count uint32
 	uint32_t triCnt = 0;
-	for (auto const& mesh : Scene.Get()->m_meshes)
+	for (auto const& mesh : m_scene->m_meshes)
 	{
 		triCnt += static_cast<uint32_t>(mesh.first->triangles.size());
 	}
@@ -54,7 +53,7 @@ bool StlWriter::Invoke()
 	// foreach tri
 	uint16_t nullAttr = 0;
 	glm::vec3 nullNormal{ 0.0f, 0.0f, 0.0f };
-	for (auto const& mesh : Scene.Get()->m_meshes)
+	for (auto const& mesh : m_scene->m_meshes)
 	{
 		for (data::Triangle const& t : mesh.first->triangles)
 		{
@@ -75,6 +74,6 @@ bool StlWriter::Invoke()
 
 	// done.
 	fclose(file);
-	Log().Detail(L"Written %d triangles to %s", static_cast<int>(triCnt), wfilename.c_str());
+	Log().Detail(L"Written %d triangles to %s", static_cast<int>(triCnt), m_path.c_str());
 	return true;
 }

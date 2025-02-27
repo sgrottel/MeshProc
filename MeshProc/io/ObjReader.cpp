@@ -50,20 +50,20 @@ namespace
 ObjReader::ObjReader(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Path", Path);
-	AddParam("Mesh", Mesh);
+	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
+	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
 }
 
 bool ObjReader::Invoke()
 {
-	std::ifstream file{ Path.Get(), std::ios::in };
+	std::ifstream file{ m_path, std::ios::in };
 	if (!file.is_open())
 	{
 		Log().Error("Failed to open file");
 		return false;
 	}
 
-	Log().Message(L"Reading OBJ: %s", std::wstring{Path.Get()}.c_str());
+	Log().Message(L"Reading OBJ: %s", m_path.c_str());
 
 	auto mesh = std::make_shared<data::Mesh>();
 
@@ -136,6 +136,6 @@ bool ObjReader::Invoke()
 		Log().Error("Loaded mesh is not valid");
 	}
 
-	Mesh.Put() = mesh;
+	m_mesh = mesh;
 	return true;
 }

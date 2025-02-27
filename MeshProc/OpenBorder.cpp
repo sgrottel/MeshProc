@@ -14,8 +14,8 @@ using namespace meshproc;
 OpenBorder::OpenBorder(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Mesh", Mesh);
-	AddParam("EdgeLists", EdgeLists);
+	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::Out, ParamType::MultiVertexSelection>("EdgeLists", m_edgeLists);
 }
 
 bool OpenBorder::Invoke()
@@ -23,7 +23,7 @@ bool OpenBorder::Invoke()
 	Log().Detail("Detecting open border edges");
 
 	std::unordered_set<data::HashableEdge> openEdges;
-	for (data::Triangle const& t : Mesh.Get()->triangles)
+	for (data::Triangle const& t : m_mesh->triangles)
 	{
 		for (int i = 0; i < 3; ++i)
 		{
@@ -67,21 +67,21 @@ bool OpenBorder::Invoke()
 			}
 		};
 
-	std::vector<std::vector<uint32_t>> loops;
+	ParamTypeInfo_t<ParamType::MultiVertexSelection> loops = std::make_shared<std::vector<ParamTypeInfo_t<ParamType::VertexSelection>>>();
 
 	while (!halfEdges.empty())
 	{
-		std::vector<uint32_t>& loop = loops.emplace_back();
+		ParamTypeInfo_t<ParamType::VertexSelection> loop = loops->emplace_back(std::make_shared<std::vector<uint32_t>>());
 
 		uint32_t next, last;
 		{
 			auto const& start = halfEdges.begin();
-			loop.push_back(last = start->first);
-			loop.push_back(next = *start->second.begin());
+			loop->push_back(last = start->first);
+			loop->push_back(next = *start->second.begin());
 			removeEdge(last, next);
 		}
 
-		while (next != loop.front())
+		while (next != loop->front())
 		{
 			last = next;
 			std::unordered_set<uint32_t>& t = halfEdges[last];
@@ -91,16 +91,16 @@ bool OpenBorder::Invoke()
 			}
 			next = *t.begin();
 			removeEdge(last, next);
-			if (next != loop.front())
+			if (next != loop->front())
 			{
-				loop.push_back(next);
+				loop->push_back(next);
 			}
 		}
 	}
 
-	Log().Detail("Found %d open border loops", static_cast<int>(loops.size()));
+	Log().Detail("Found %d open border loops", static_cast<int>(loops->size()));
 
-	EdgeLists.Put() = loops;
+	m_edgeLists = loops;
 
 	return true;
 }

@@ -13,14 +13,14 @@ using namespace meshproc;
 FlatSkirt::FlatSkirt(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Mesh", Mesh);
-	AddParam("Loop", Loop);
-	AddParam("NewLoop", NewLoop);
-	AddParam("Center", Center);
-	AddParam("X2D", X2D);
-	AddParam("Y2D", Y2D);
-	AddParam("ZDir", ZDir);
-	AddParam("ZDist", ZDist);
+	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::In, ParamType::VertexSelection>("Loop", m_loop);
+	AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("NewLoop", m_newLoop);
+	AddParamBinding<ParamMode::Out, ParamType::Vec3>("Center", m_center);
+	AddParamBinding<ParamMode::Out, ParamType::Vec3>("X2D", m_x2D);
+	AddParamBinding<ParamMode::Out, ParamType::Vec3>("Y2D", m_y2D);
+	AddParamBinding<ParamMode::Out, ParamType::Vec3>("ZDir", m_zDir);
+	AddParamBinding<ParamMode::Out, ParamType::Float>("ZDist", m_zDist);
 }
 
 bool FlatSkirt::Invoke()
@@ -29,17 +29,16 @@ bool FlatSkirt::Invoke()
 
 	std::vector<glm::vec3> v;
 
-	auto const& loop = Loop.Get();
-	auto& mesh = Mesh.Put();
+	const auto& loop = *m_loop;
 
 	v.resize(loop.size());
-	std::transform(loop.begin(), loop.end(), v.begin(), [&mesh](uint32_t i) { return mesh->vertices[i]; });
+	std::transform(loop.begin(), loop.end(), v.begin(), [mesh = this->m_mesh](uint32_t i) { return mesh->vertices[i]; });
 
-	data::Triangle oldTri = mesh->triangles[0];
+	data::Triangle oldTri = m_mesh->triangles[0];
 	{
 		const uint32_t i0 = loop[0];
 		const uint32_t i1 = loop[1];
-		for (data::Triangle const& t : mesh->triangles)
+		for (data::Triangle const& t : m_mesh->triangles)
 		{
 			if (t.HasIndex(i0) && t.HasIndex(i1))
 			{
@@ -49,14 +48,11 @@ bool FlatSkirt::Invoke()
 		}
 	}
 
-	auto& center = Center.Put();
-	auto& zDir = ZDir.Put();
-
-	center = std::reduce(v.begin(), v.end());
-	center /= v.size();
+	m_center = std::reduce(v.begin(), v.end());
+	m_center /= v.size();
 
 	{
-		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), center);
+		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), m_center);
 
 		glm::vec3 evals;
 		glm::mat3 evecs;
@@ -70,10 +66,10 @@ bool FlatSkirt::Invoke()
 
 		glm::sortEigenvalues(evals, evecs);
 
-		X2D.Put() = glm::normalize(evecs[0]);
-		Y2D.Put() = glm::normalize(evecs[1]);
+		m_x2D = glm::normalize(evecs[0]);
+		m_y2D = glm::normalize(evecs[1]);
 
-		zDir = glm::normalize(evecs[2]);
+		m_zDir = glm::normalize(evecs[2]);
 	}
 
 	{
@@ -81,43 +77,43 @@ bool FlatSkirt::Invoke()
 		triEdgeCenter *= 0.5f;
 		glm::vec3 d{ 0.0f, 0.0f, 0.0f };
 		for (int i = 0; i < 3; ++i) {
-			d += mesh->vertices[oldTri[i]] - triEdgeCenter;
+			d += m_mesh->vertices[oldTri[i]] - triEdgeCenter;
 		}
-		float f = glm::dot(d, zDir);
+		float f = glm::dot(d, m_zDir);
 		if (f > 0.0f)
 		{
-			zDir *= -1.0f;
+			m_zDir *= -1.0f;
 		}
 	}
 
 	float maxDist = 0.0f;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		const float dist = glm::dot(v[i] - center, zDir);
+		const float dist = glm::dot(v[i] - m_center, m_zDir);
 		if (dist > maxDist)
 		{
 			maxDist = dist;
 		}
-		v[i] -= zDir * dist;
+		v[i] -= m_zDir * dist;
 	}
 	maxDist *= 1.1f;
-	ZDist.Put() = maxDist;
+	m_zDist = maxDist;
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		v[i] += zDir * maxDist;
+		v[i] += m_zDir * maxDist;
 	}
 
-	center += zDir * maxDist;
+	m_center += m_zDir * maxDist;
 
-	size_t oldSize = mesh->vertices.size();
-	mesh->vertices.reserve(oldSize + v.size());
+	size_t oldSize = m_mesh->vertices.size();
+	m_mesh->vertices.reserve(oldSize + v.size());
 	for (size_t i = 0; i < v.size(); ++i)
 	{
-		mesh->vertices.push_back(v[i]);
+		m_mesh->vertices.push_back(v[i]);
 	}
 
-	size_t oldTriSize = mesh->triangles.size();
-	mesh->triangles.reserve(mesh->triangles.size() + v.size() * 2);
+	size_t oldTriSize = m_mesh->triangles.size();
+	m_mesh->triangles.reserve(m_mesh->triangles.size() + v.size() * 2);
 
 	for (size_t i = 0; i < v.size(); ++i)
 	{
@@ -126,35 +122,35 @@ bool FlatSkirt::Invoke()
 		uint32_t i2 = static_cast<uint32_t>(oldSize + i);
 		uint32_t i3 = static_cast<uint32_t>(oldSize + ((i + 1) % v.size()));
 
-		mesh->AddQuad(i0, i1, i2, i3);
+		m_mesh->AddQuad(i0, i1, i2, i3);
 	}
 
 	{
-		data::Triangle newTri = mesh->triangles[oldTriSize];
+		data::Triangle newTri = m_mesh->triangles[oldTriSize];
 		glm::uvec2 edge = oldTri.CommonEdge(newTri);
 		assert(edge.x != edge.y);
 		assert((edge.x == loop[0] || edge.y == loop[0]) && (edge.x == loop[1] || edge.y == loop[1]));
 
-		const bool oriented = oldTri.OrientationMatches(mesh->vertices, newTri, edge);
+		const bool oriented = oldTri.OrientationMatches(m_mesh->vertices, newTri, edge);
 		if (!oriented)
 		{
-			for (size_t i = oldTriSize; i < mesh->triangles.size(); ++i)
+			for (size_t i = oldTriSize; i < m_mesh->triangles.size(); ++i)
 			{
-				mesh->triangles[i].Flip();
+				m_mesh->triangles[i].Flip();
 			}
 		}
 	}
 
-	std::vector<uint32_t> newLoop;
-	newLoop.reserve(mesh->vertices.size() - oldSize);
-	for (size_t i = oldSize; i < mesh->vertices.size(); ++i)
+	std::shared_ptr<std::vector<uint32_t>> newLoop = std::make_shared<ParamTypeInfo_t<ParamType::VertexSelection>::element_type>();
+	newLoop->reserve(m_mesh->vertices.size() - oldSize);
+	for (size_t i = oldSize; i < m_mesh->vertices.size(); ++i)
 	{
-		newLoop.push_back(static_cast<uint32_t>(i));
+		newLoop->push_back(static_cast<uint32_t>(i));
 	}
 
-	Log().Detail("Added %d vertices", static_cast<int>(newLoop.size()));
+	Log().Detail("Added %d vertices", static_cast<int>(newLoop->size()));
 
-	std::swap(NewLoop.Put(), newLoop);
+	m_newLoop = newLoop;
 
 	return true;
 }

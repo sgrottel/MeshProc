@@ -28,6 +28,7 @@ namespace meshproc
 
 		struct Instruction
 		{
+			std::string name;
 			std::shared_ptr<AbstractCommand> cmd;
 			std::unordered_map<std::string, std::string> setVarParam;
 			std::unordered_map<std::string, std::string> setConstParam;

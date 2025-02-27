@@ -36,25 +36,24 @@ namespace
 StlReader::StlReader(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParam("Path", Path);
-	AddParam("Mesh", Mesh);
+	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
+	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
 }
 
 bool StlReader::Invoke()
 {
-	std::wstring wfilename{ Path.Get().wstring() };
 	FILE* file = nullptr;
-	errno_t r = _wfopen_s(&file, wfilename.c_str(), L"rb");
+	errno_t r = _wfopen_s(&file, m_path.c_str(), L"rb");
 	if (r != 0) {
-		Log().Error(L"Failed to open \"%s\": %d", wfilename.c_str(), static_cast<int>(r));
+		Log().Error(L"Failed to open \"%s\": %d", m_path.c_str(), static_cast<int>(r));
 		return false;
 	}
 	if (file == nullptr) {
-		Log().Error(L"Failed to open \"%s\": returned nullptr", wfilename.c_str());
+		Log().Error(L"Failed to open \"%s\": returned nullptr", m_path.c_str());
 		return false;
 	}
 
-	Log().Message(L"Reading STL: %s", wfilename.c_str());
+	Log().Message(L"Reading STL: %s", m_path.c_str());
 
 	char header[80];
 	if (fread(header, 80, 1, file) != 1)
@@ -133,6 +132,6 @@ bool StlReader::Invoke()
 		Log().Error("Loaded mesh is not valid");
 	}
 
-	Mesh.Put() = mesh;
+	m_mesh = mesh;
 	return true;
 }

@@ -14,10 +14,11 @@ namespace meshproc
 	public:
 		PlaceMesh(const sgrottel::ISimpleLog& log);
 
-		Parameter<std::shared_ptr<data::Scene>, ParamMode::InOut> Scene;
-		Parameter<std::shared_ptr<data::Mesh>, ParamMode::In> Mesh;
-		Parameter<glm::mat4, ParamMode::In> Mat;
-
 		bool Invoke() override;
+
+	private:
+		std::shared_ptr<data::Scene> m_scene;
+		const std::shared_ptr<data::Mesh> m_mesh;
+		const glm::mat4 m_mat{ 1 };
 	};
 }

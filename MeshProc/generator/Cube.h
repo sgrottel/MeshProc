@@ -15,12 +15,13 @@ namespace meshproc
 		public:
 			Cube(const sgrottel::ISimpleLog& log);
 
-			Parameter<float, ParamMode::In> SizeX;
-			Parameter<float, ParamMode::In> SizeY;
-			Parameter<float, ParamMode::In> SizeZ;
-			Parameter<std::shared_ptr<data::Mesh>, ParamMode::Out> Mesh;
-
 			bool Invoke() override;
+
+		private:
+			const float m_sizeX{ 1.0f };
+			const float m_sizeY{ 1.0f };
+			const float m_sizeZ{ 1.0f };
+			std::shared_ptr<data::Mesh> m_mesh;
 		};
 
 	}

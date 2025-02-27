@@ -7,7 +7,7 @@ using namespace meshproc;
 generator::Icosahedron::Icosahedron(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
-	AddParam("Mesh", Mesh);
+	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
 }
 
 bool generator::Icosahedron::Invoke()
@@ -56,6 +56,6 @@ bool generator::Icosahedron::Invoke()
 	m->triangles.push_back({ 9, 5, 7 });
 	m->triangles.push_back({ 9, 10, 11 });
 
-	Mesh.Put() = m;
+	m_mesh = m;
 	return true;
 }

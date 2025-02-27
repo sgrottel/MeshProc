@@ -9,8 +9,7 @@ using namespace meshproc;
 generator::SphereIco::SphereIco(const sgrottel::ISimpleLog& log)
 	: Icosahedron(log)
 {
-	AddParam("Iterations", Iterations);
-	Iterations.Put() = 1;
+	AddParamBinding<ParamMode::In, ParamType::UInt32>("Iterations", m_iterations);
 }
 
 bool generator::SphereIco::Invoke()
@@ -20,7 +19,7 @@ bool generator::SphereIco::Invoke()
 		return false;
 	}
 
-	std::shared_ptr<data::Mesh> mesh = Mesh.Get();
+	std::shared_ptr<data::Mesh> mesh = m_mesh;
 	if (!mesh)
 	{
 		Log().Error("Mesh from Icosahedron not set");
@@ -29,7 +28,7 @@ bool generator::SphereIco::Invoke()
 
 	std::vector<data::Triangle> newTris;
 
-	for (uint32_t i = 0; i < Iterations.Get(); ++i)
+	for (uint32_t i = 0; i < m_iterations; ++i)
 	{
 		std::unordered_map<data::HashableEdge, uint32_t> edges;
 

@@ -1,237 +1,142 @@
 #pragma once
 
-#include <data/Mesh.h>
-#include <data/Scene.h>
+#include "data/Mesh.h"
+#include "data/Scene.h"
 
 #include <glm/glm.hpp>
 
-#include <cassert>
-#include <filesystem>
-#include <stdexcept>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace meshproc
 {
 
-	enum class ParamMode {
-		In,
-		InOut,
-		Out
+	enum class ParamType
+	{
+		UInt32,
+		Float,
+		String,
+		Vec3,
+		Mat4,
+		Mesh,
+		MultiMesh,
+		Scene,
+		VertexSelection, // e.g. also edges/loops
+		MultiVertexSelection,
+
+		LAST
 	};
 
-	class ParameterBase
+	const char* GetParamTypeName(ParamType pt);
+
+	template<ParamType PT>
+	struct ParamTypeInfo;
+
+	template<>
+	struct ParamTypeInfo<ParamType::UInt32>
 	{
-	public:
-		virtual ~ParameterBase() = default;
-		ParameterBase(const ParameterBase&) = delete;
-		ParameterBase(ParameterBase&&) = delete;
-		ParameterBase& operator=(const ParameterBase&) = delete;
-		ParameterBase& operator=(ParameterBase&&) = delete;
+		static constexpr const char* name = "UInt";
+		typedef uint32_t type;
+	};
 
-		virtual void PreInvoke() = 0;
-		virtual void PostInvoke() = 0;
+	template<>
+	struct ParamTypeInfo<ParamType::Float>
+	{
+		static constexpr const char* name = "Float";
+		typedef float type;
+	};
 
-		virtual bool IsWritable() const = 0;
-		virtual const char* TypeStr() const = 0;
-		virtual const char* ModeStr() const = 0;
+	template<>
+	struct ParamTypeInfo<ParamType::String>
+	{
+		static constexpr const char* name = "String";
+		typedef std::wstring type;
+	};
 
-		virtual std::shared_ptr<ParameterBase> GetVariable() const = 0;
-		virtual bool SetVariable(std::shared_ptr<ParameterBase> var) = 0;
+	template<>
+	struct ParamTypeInfo<ParamType::Vec3>
+	{
+		static constexpr const char* name = "Vec3";
+		typedef glm::vec3 type;
+	};
 
-	protected:
-		ParameterBase() = default;
+	template<>
+	struct ParamTypeInfo<ParamType::Mat4>
+	{
+		static constexpr const char* name = "Mat4";
+		typedef glm::mat4 type;
+	};
 
-	private:
+	template<>
+	struct ParamTypeInfo<ParamType::Mesh>
+	{
+		static constexpr const char* name = "Mesh";
+		typedef std::shared_ptr<data::Mesh> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::MultiMesh>
+	{
+		static constexpr const char* name = "MultiMesh";
+		typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::Scene>
+	{
+		static constexpr const char* name = "Scene";
+		typedef std::shared_ptr<data::Scene> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::VertexSelection>
+	{
+		static constexpr const char* name = "VertexSelection";
+		typedef std::shared_ptr<std::vector<uint32_t>> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::MultiVertexSelection>
+	{
+		static constexpr const char* name = "MultiVertexSelection";
+		typedef std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> type;
+	};
+
+	template<ParamType PT>
+	using ParamTypeInfo_t = typename ParamTypeInfo<PT>::type;
+
+	enum class ParamMode
+	{
+		In,
+		InOut,
+		Out,
+
+		LAST
 	};
 
 	template<ParamMode PT>
-	class LockableParameterBase;
+	struct ParamModeInfo;
 
-	template<typename T>
-	class ParameterTypeInfo;
-
-	template<typename T, ParamMode PT>
-	class Parameter : public ParameterBase, public LockableParameterBase<PT>
+	template<>
+	struct ParamModeInfo<ParamMode::In>
 	{
-	public:
-
-		T const& Get() const noexcept
-		{
-			return m_value;
-		}
-
-		T& Put()
-		{
-			if (!LockableParameterBase<PT>::isWritable)
-			{
-				throw std::runtime_error("Parameter is locked and read-only");
-			}
-			return m_value;
-		}
-
-	protected:
-
-		void PreInvoke() override
-		{
-			LockableParameterBase<PT>::ImplPreInvoke();
-		}
-		void PostInvoke() override
-		{
-			LockableParameterBase<PT>::ImplPostInvoke();
-		}
-		bool IsWritable() const override
-		{
-			return LockableParameterBase<PT>::isWritable;
-		}
-		const char* TypeStr() const override
-		{
-			return ParameterTypeInfo<T>{}.TypeStr();
-		}
-		const char* ModeStr() const override
-		{
-			return LockableParameterBase<PT>::ModeStr;
-		}
-		std::shared_ptr<ParameterBase> GetVariable() const override
-		{
-			auto p = std::make_shared<Parameter<T, ParamMode::InOut>>();
-			p->Put() = Get();
-			return p;
-		}
-		bool SetVariable(std::shared_ptr<ParameterBase> var) override
-		{
-			auto v = std::dynamic_pointer_cast<Parameter<T, ParamMode::InOut>>(var);
-			if (!v)
-			{
-				return false;
-			}
-			Put() = v->Get();
-			return true;
-		}
-
-	private:
-		T m_value{};
+		static constexpr const char* name = "In";
 	};
 
 	template<>
-	class LockableParameterBase<ParamMode::In> {
-	protected:
-		static constexpr const char* ModeStr = "In";
-		bool isWritable{ true };
-		inline void ImplPreInvoke()
-		{
-			assert(isWritable);
-			isWritable = false;
-		}
-		inline void ImplPostInvoke()
-		{
-			assert(!isWritable);
-			isWritable = true;
-		}
-	};
-
-	template<>
-	class LockableParameterBase<ParamMode::InOut> {
-	protected:
-		static constexpr const char* ModeStr = "InOut";
-		static constexpr bool const isWritable{ true };
-		inline void ImplPreInvoke() {}
-		inline void ImplPostInvoke() {}
-	};
-
-	template<>
-	class LockableParameterBase<ParamMode::Out> {
-	protected:
-		static constexpr const char* ModeStr = "Out";
-		bool isWritable{ false };
-		inline void ImplPreInvoke()
-		{
-			assert(!isWritable);
-			isWritable = true;
-		}
-		inline void ImplPostInvoke()
-		{
-			assert(isWritable);
-			isWritable = false;
-		}
-	};
-
-	template<typename T>
-	class ParameterTypeInfo
+	struct ParamModeInfo<ParamMode::InOut>
 	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return typeid(T).name();
-		}
+		static constexpr const char* name = "InOut";
 	};
 
 	template<>
-	class ParameterTypeInfo<float>
+	struct ParamModeInfo<ParamMode::Out>
 	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "float";
-		}
+		static constexpr const char* name = "Out";
 	};
 
-	template<>
-	class ParameterTypeInfo<uint32_t>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "uint32";
-		}
-	};
-
-	template<>
-	class ParameterTypeInfo<std::filesystem::path>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "string (path)";
-		}
-	};
-
-	template<>
-	class ParameterTypeInfo<std::shared_ptr<data::Mesh>>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "Mesh";
-		}
-	};
-
-	template<>
-	class ParameterTypeInfo<std::shared_ptr<data::Scene>>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "Scene";
-		}
-	};
-
-	template<>
-	class ParameterTypeInfo<glm::vec3>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "vec3";
-		}
-	};
-
-	template<>
-	class ParameterTypeInfo<glm::mat4>
-	{
-	public:
-		inline const char* TypeStr() const
-		{
-			return "mat4";
-		}
-	};
+	const char* GetParamModeName(ParamMode pm);
 
 }
