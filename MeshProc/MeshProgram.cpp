@@ -3,11 +3,14 @@
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
 #include "Parameter.h"
+#include "ParameterValue.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
+
+#include <cassert>
 
 using namespace meshproc;
 
@@ -49,46 +52,64 @@ void MeshProgram::Load(CommandFactory const& factory)
 namespace
 {
 
-	//bool DemoConstSetter(ParameterBase& p, const std::string& s)
-	//{
-	//	auto* flt1 = dynamic_cast<Parameter<float, ParamMode::In>*>(&p);
-	//	if (flt1 != nullptr)
-	//	{
-	//		flt1->Put() = static_cast<float>(std::atof(s.c_str()));
-	//		return true;
-	//	}
+	template<ParamType PT>
+	class ExplicitValue : public ParameterBinding
+	{
+	public:
+		static std::shared_ptr<ParameterBinding::ParamBindingBase> Pack(ParamTypeInfo_t<PT>& value)
+		{
+			auto p = std::make_shared<ParameterBinding::ParamBinding<ParamMode::Out, PT>>(value);
+			return p;
+		}
+	};
 
-	//	auto* mat1 = dynamic_cast<Parameter<glm::mat4, ParamMode::In>*>(&p);
-	//	if (mat1 != nullptr)
-	//	{
-	//		if (s == "0")
-	//		{
-	//			mat1->Put() = glm::mat4{ 1.0f };
-	//			return true;
-	//		}
-	//		if (s == "1")
-	//		{
-	//			mat1->Put() = glm::translate(glm::vec3(0.0f, 0.0f, 1.0f));
-	//			return true;
-	//		}
-	//	}
+	bool DemoConstSetter(ParameterValue& p, ParamType t, const std::string& s)
+	{
+		if (t == ParamType::Float)
+		{
+			float f = static_cast<float>(std::atof(s.c_str()));
+			p.Push(*ExplicitValue<ParamType::Float>::Pack(f));
+			return true;
+		}
 
-	//	auto* uint1 = dynamic_cast<Parameter<uint32_t, ParamMode::In>*> (&p);
-	//	if (uint1 != nullptr)
-	//	{
-	//		uint1->Put() = static_cast<uint32_t>(std::atoi(s.c_str()));
-	//		return true;
-	//	}
+		if (t == ParamType::Mat4)
+		{
+			glm::mat4 m;
+			if (s == "0")
+			{
+				m = glm::mat4{ 1.0f };
+				p.Push(*ExplicitValue<ParamType::Mat4>::Pack(m));
+				return true;
+			}
+			if (s == "1")
+			{
+				m = glm::translate(glm::vec3(0.5f, 0.0f, 1.5f));
+				p.Push(*ExplicitValue<ParamType::Mat4>::Pack(m));
+				return true;
+			}
+		}
 
-	//	auto* path1 = dynamic_cast<Parameter<std::filesystem::path, ParamMode::In>*> (&p);
-	//	if (path1 != nullptr)
-	//	{
-	//		path1->Put() = s;
-	//		return true;
-	//	}
+		if (t == ParamType::UInt32)
+		{
+			uint32_t u = static_cast<uint32_t>(std::atoi(s.c_str()));
+			p.Push(*ExplicitValue<ParamType::UInt32>::Pack(u));
+			return true;
+		}
 
-	//	return false;
-	//}
+		if (t == ParamType::String)
+		{
+			std::wstring w;
+			w.resize(s.size());
+			std::transform(s.begin(), s.end(), w.begin(),
+				// super-rubbish, but I don't care for now
+				[](char c) { return static_cast<wchar_t>(c); }
+			);
+			p.Push(*ExplicitValue<ParamType::String>::Pack(w));
+			return true;
+		}
+
+		return false;
+	}
 }
 
 void MeshProgram::Execution() const
@@ -96,7 +117,7 @@ void MeshProgram::Execution() const
 	m_log.Message("Executing Mesh Program:");
 	int pidx = 0;
 
-	// std::unordered_map<std::string, std::shared_ptr<ParameterBase>> variables;
+	std::unordered_map<std::string, std::shared_ptr<ParameterValue>> variables;
 
 	while (pidx < m_program.size())
 	{
@@ -112,53 +133,74 @@ void MeshProgram::Execution() const
 			return;
 		}
 
-	// 		for (auto const& s : i.setConstParam)
-	// 		{
-	// 			auto p = i.cmd->AccessParam(s.first);
-	// 			if (p == nullptr)
-	// 			{
-	// 				m_log.Error("Cannot set parameter \"%s\": not found", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 			if (!p->IsWritable())
-	// 			{
-	// 				m_log.Error("Cannot set parameter \"%s\": not writable", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 
-	// 			// TODO: Implement the real thing
-	// 
-	// 			if (!DemoConstSetter(*p, s.second))
-	// 			{
-	// 				m_log.Error("Failed to set parameter \"%s\"", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 
-	// 		}
+		for (auto const& s : i.setConstParam)
+		{
+			ParamMode pm = i.cmd->GetParamMode(s.first);
+			if (pm == ParamMode::LAST)
+			{
+				m_log.Error("Cannot get parameter \"%s\": not found", s.first.c_str());
+				continue;
+			}
+			if (pm == ParamMode::Out)
+			{
+				m_log.Error("Cannot get parameter \"%s\": mode is Out (only)", s.first.c_str());
+				continue;
+			}
 
-	// 		for (auto const& s : i.setVarParam)
-	// 		{
-	// 			auto p = i.cmd->AccessParam(s.first);
-	// 			if (p == nullptr)
-	// 			{
-	// 				m_log.Error("Cannot set parameter \"%s\": not found", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 			if (!p->IsWritable())
-	// 			{
-	// 				m_log.Error("Cannot set parameter \"%s\": not writable", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 
-	// 			auto v = variables.find(s.second);
-	// 			if (v == variables.end())
-	// 			{
-	// 				m_log.Error("Cannot set parameter \"%s\": variable not found", s.first.c_str());
-	// 				continue;
-	// 			}
-	// 
-	// 			p->SetVariable(v->second);
-	// 		}
+			ParamType pt = i.cmd->GetParamType(s.first);
+			assert(pt != ParamType::LAST);
+
+			ParameterValue constValue;
+
+			// TODO: Implement the real thing
+			if (!DemoConstSetter(constValue, pt, s.second))
+			{
+				m_log.Error("Cannot set parameter \"%s\": failed to parse const description", s.first.c_str());
+				continue;
+			}
+
+			if (!i.cmd->PushParamValue(s.first, constValue))
+			{
+				m_log.Error("Cannot set parameter \"%s\": failed to push variable", s.first.c_str());
+				continue;
+			}
+		}
+
+		for (auto const& s : i.setVarParam)
+		{
+			ParamMode pm = i.cmd->GetParamMode(s.first);
+			if (pm == ParamMode::LAST)
+			{
+				m_log.Error("Cannot get parameter \"%s\": not found", s.first.c_str());
+				continue;
+			}
+			if (pm == ParamMode::Out)
+			{
+				m_log.Error("Cannot get parameter \"%s\": mode is Out (only)", s.first.c_str());
+				continue;
+			}
+
+			auto v = variables.find(s.second);
+			if (v == variables.end())
+			{
+				m_log.Error("Cannot set parameter \"%s\": variable not found", s.first.c_str());
+				continue;
+			}
+
+			ParamType pt = i.cmd->GetParamType(s.first);
+			assert(pt != ParamType::LAST);
+			if (v->second->GetType() != pt)
+			{
+				m_log.Error("Cannot set parameter \"%s\": variable type different", s.first.c_str());
+				continue;
+			}
+
+			if (!i.cmd->PushParamValue(s.first , *v->second))
+			{
+				m_log.Error("Cannot set parameter \"%s\": failed to push variable", s.first.c_str());
+				continue;
+			}
+		}
 
 		bool invokeResult = false;
 		try
@@ -184,30 +226,34 @@ void MeshProgram::Execution() const
 
 		for (auto const& g : i.getVarParam)
 		{
-			auto p = i.cmd->AccessParam(g.first);
-			if (!p)
+			ParamMode pm = i.cmd->GetParamMode(g.first);
+			if (pm == ParamMode::LAST)
 			{
 				m_log.Error("Cannot get parameter \"%s\": not found", g.first.c_str());
 				continue;
 			}
+			if (pm == ParamMode::In)
+			{
+				m_log.Error("Cannot get parameter \"%s\": mode is in (only)", g.first.c_str());
+				continue;
+			}
 
-	// 			auto v = p->GetVariable();
-	// 			if (!v)
-	// 			{
-	// 				m_log.Error("Cannot get parameter \"%s\": failed to get variable", g.first.c_str());
-	// 				continue;
-	// 			}
-	// 
-	// 			variables[g.second] = v;
+			ParamType pt = i.cmd->GetParamType(g.first);
+			assert(pt < ParamType::LAST);
+
+			std::shared_ptr<ParameterValue> v = std::make_shared<ParameterValue>();
+			if (!i.cmd->PullParamValue(*v, g.first))
+			{
+				m_log.Error("Cannot get parameter \"%s\": failed to pull variable", g.first.c_str());
+				continue;
+			}
+
+			variables[g.second] = v;
 		}
 
 		pidx++;
 
-		break; // THIS IS DEBUGGING! REMOVE ME!
-
 	}
 
-	// 	m_log.Message("Mesh Program execution completed.");
-
-	m_log.Critical("Not implemented!");
+	m_log.Message("Mesh Program execution completed.");
 }

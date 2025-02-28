@@ -106,6 +106,8 @@
     <ClCompile Include="MeshProgram.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
+    <ClCompile Include="ParameterBinding.cpp" />
+    <ClCompile Include="ParameterValue.cpp" />
     <ClCompile Include="PlaceMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +133,8 @@
     <ClInclude Include="MeshProgram.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
+    <ClInclude Include="ParameterBinding.h" />
+    <ClInclude Include="ParameterValue.h" />
     <ClInclude Include="PlaceMesh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
