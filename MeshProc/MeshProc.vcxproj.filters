@@ -111,6 +111,12 @@
     <ClCompile Include="ParameterValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CloseLoopWithPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DevPlayground.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -180,6 +186,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParameterValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CloseLoopWithPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DevPlayground.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

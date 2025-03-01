@@ -20,6 +20,17 @@ OpenBorder::OpenBorder(const sgrottel::ISimpleLog& log)
 
 bool OpenBorder::Invoke()
 {
+	if (!m_mesh)
+	{
+		Log().Error("Mesh is empty");
+		return false;
+	}
+	if (m_mesh->triangles.empty())
+	{
+		Log().Error("Mesh has no triangles");
+		return false;
+	}
+
 	Log().Detail("Detecting open border edges");
 
 	std::unordered_set<data::HashableEdge> openEdges;

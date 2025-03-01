@@ -55,6 +55,10 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 	Switch swVerbose{ L"-v", L"Verbose output" };
 	parser.Add(swVerbose);
 
+	Command cmdDevPlayground{ L"devplayground", L"" };
+	cmdDevPlayground.HideFromHelp();
+	parser.Add(cmdDevPlayground);
+
 	Parser::Result res = parser.Parse(argc, argv);
 
 	if (res.HasCommand(cmdRun))
@@ -81,6 +85,10 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 	else if (res.HasCommand(cmdListCmds))
 	{
 		m_command = CliCommand::ListCommands;
+	}
+	else if (res.HasCommand(cmdDevPlayground))
+	{
+		m_command = CliCommand::DevPlayground;
 	}
 	else if (res.ShouldShowHelp())
 	{

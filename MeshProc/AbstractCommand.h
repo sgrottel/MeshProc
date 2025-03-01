@@ -49,7 +49,7 @@ namespace meshproc
 		template<ParamMode PM, ParamType PT, typename T>
 		inline AbstractCommand& AddParamBinding(const std::string& name, T& var)
 		{
-			static_assert(std::is_const_v<T> == (PM == ParamMode::In), "In parameters must use `const` variables");
+			static_assert(std::is_const_v<T> == (PM == ParamMode::In), "In parameters must use `const` variables. InOut and Out parameters must not use `const` variables.");
 			m_paramsRefs.AddParamBinding<PM, PT, T>(name, var);
 			return *this;
 		}

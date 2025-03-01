@@ -2,6 +2,7 @@
 
 #include "CommandFactory.h"
 
+#include "CloseLoopWithPin.h"
 #include "FlatSkirt.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
@@ -19,6 +20,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	bool succ = true;
 	log.Detail("Populating CommandFactory");
 
+	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");

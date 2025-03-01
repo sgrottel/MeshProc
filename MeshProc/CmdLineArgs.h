@@ -15,10 +15,11 @@ namespace meshproc
 
 	enum class CliCommand
 	{
+		Error,
 		RunScript,
 		ListCommands,
 		Help,
-		Error
+		DevPlayground
 	};
 
 	class CmdLineArgs

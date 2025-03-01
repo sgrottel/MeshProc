@@ -13,7 +13,7 @@ using namespace meshproc;
 FlatSkirt::FlatSkirt(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
-	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
 	AddParamBinding<ParamMode::In, ParamType::VertexSelection>("Loop", m_loop);
 	AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("NewLoop", m_newLoop);
 	AddParamBinding<ParamMode::Out, ParamType::Vec3>("Center", m_center);

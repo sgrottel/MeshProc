@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AbstractCommand.cpp" />
+    <ClCompile Include="CloseLoopWithPin.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
     <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="CommandRegistration.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="data\Mesh.cpp" />
     <ClCompile Include="data\Scene.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
+    <ClCompile Include="DevPlayground.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="generator\Cube.cpp" />
@@ -115,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractCommand.h" />
+    <ClInclude Include="CloseLoopWithPin.h" />
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CommandFactory.h" />
     <ClInclude Include="CommandRegistration.h" />
@@ -122,6 +125,7 @@
     <ClInclude Include="data\Mesh.h" />
     <ClInclude Include="data\Scene.h" />
     <ClInclude Include="data\Triangle.h" />
+    <ClInclude Include="DevPlayground.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="generator\Cube.h" />
