@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="demo.yaml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">

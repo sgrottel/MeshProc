@@ -41,15 +41,17 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 	Command cmdRun{ L"run", L"Runs a yaml script" };
 	Argument argScript{ L"script", L"The input yaml script containing the processor commands to run" };
 	Option optScriptArg{ L"-arg", L"key-value-pair", L"Specifies a script argument key-value-pair (separated by '=')" };
-
 	cmdRun.Add(argScript)
 		.Add(optScriptArg);
-
 	parser.Add(cmdRun);
+
+	Command cmdValidate{ L"validate", L"Validates a yaml script" };
+	cmdValidate.Add(argScript)
+		.Add(optScriptArg);
+	parser.Add(cmdValidate);
 
 	Command cmdListCmds{ L"lscmd", L"List available processor commands" };
 	cmdListCmds.AddAlias(L"listcommands");
-
 	parser.Add(cmdListCmds);
 
 	Switch swVerbose{ L"-v", L"Verbose output" };
@@ -61,9 +63,9 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 
 	Parser::Result res = parser.Parse(argc, argv);
 
-	if (res.HasCommand(cmdRun))
+	if (res.HasCommand(cmdRun) || res.HasCommand(cmdValidate))
 	{
-		m_command = CliCommand::RunScript;
+		m_command = res.HasCommand(cmdRun) ? CliCommand::RunScript : CliCommand::ValidateScript;
 
 		m_script = static_cast<std::wstring_view>(res.GetArgument(argScript));
 

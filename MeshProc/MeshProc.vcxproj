@@ -113,6 +113,7 @@
     <ClCompile Include="PlaceMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="demo.yaml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

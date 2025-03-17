@@ -36,10 +36,17 @@ int wmain(int argc, wchar_t **argv)
 	case CliCommand::RunScript:
 	{
 		meshproc::MeshProgram prog{ log };
-		prog.Load(cmdFactory);
+		prog.Load(cmdLine.m_script, cmdFactory);
 		prog.Execution();
 	}
-		break;
+	break;
+
+	case CliCommand::ValidateScript:
+	{
+		meshproc::MeshProgram prog{ log };
+		prog.Load(cmdLine.m_script, cmdFactory);
+	}
+	break;
 
 	case CliCommand::ListCommands:
 		log.Message("");

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -20,7 +21,8 @@ namespace meshproc
 	public:
 		MeshProgram(const sgrottel::ISimpleLog& log);
 
-		void Load(CommandFactory const& factory);
+		inline void Clear();
+		void Load(std::filesystem::path script, CommandFactory const& factory);
 
 		void Execution() const;
 
@@ -38,5 +40,10 @@ namespace meshproc
 		const sgrottel::ISimpleLog& m_log;
 		std::vector<Instruction> m_program;
 	};
+
+	void MeshProgram::Clear()
+	{
+		m_program.clear();
+	}
 
 }

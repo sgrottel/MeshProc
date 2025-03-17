@@ -19,10 +19,18 @@ MeshProgram::MeshProgram(const sgrottel::ISimpleLog& log)
 {
 }
 
-void MeshProgram::Load(CommandFactory const& factory)
+void MeshProgram::Load(std::filesystem::path script, CommandFactory const& factory)
 {
-	m_log.Warning("The current implementation of `MeshProgram::Load` is a hard-coded demo and not the final function");
+	Clear();
+
+	if (!std::filesystem::exists(script))
+	{
+		m_log.Error(L"Specified script file does not exist: %s", script.wstring().c_str());
+		return;
+	}
+
 	// TODO: Implement the real thing
+	m_log.Warning("The current implementation of `MeshProgram::Load` is a hard-coded demo and not the final function");
 
 	m_program.push_back({ "generator.Cube", factory.Instantiate("generator.Cube", m_log) });
 	m_program.back().setConstParam["SizeX"] = "2";
