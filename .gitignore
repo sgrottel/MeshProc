@@ -5,3 +5,4 @@ MeshProc/obj
 *.user
 packages
 MeshProc/cube.stl
+MeshProc/out.stl

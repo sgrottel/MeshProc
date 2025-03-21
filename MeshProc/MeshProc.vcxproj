@@ -98,6 +98,7 @@
     <ClCompile Include="DevPlayground.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
+    <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Cube.cpp" />
     <ClCompile Include="generator\Icosahedron.cpp" />
     <ClCompile Include="generator\SphereIco.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="DevPlayground.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
+    <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Cube.h" />
     <ClInclude Include="generator\Icosahedron.h" />
     <ClInclude Include="generator\SphereIco.h" />

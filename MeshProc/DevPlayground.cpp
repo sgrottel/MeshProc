@@ -7,6 +7,7 @@
 #include "FlatSkirt.h"
 #include "CloseLoopWithPin.h"
 #include "io/StlWriter.h"
+#include "generator/CrystalGrain.h"
 
 #include <cassert>
 
@@ -16,9 +17,16 @@ using namespace meshproc;
 
 void DevPlayground(const sgrottel::ISimpleLog& log)
 {
-
 	std::shared_ptr<data::Mesh> mesh;
+	glm::mat4 objMat{ 1.0f };
+
 	{
+		generator::CrystalGrain grain{ log };
+		grain.Invoke();
+		mesh = grain.GetMesh();
+	}
+	
+	/*	{
 		io::ObjReader reader{ log };
 		reader.SetPath(L"in.obj");
 		reader.Invoke();
@@ -31,7 +39,6 @@ void DevPlayground(const sgrottel::ISimpleLog& log)
 		border.Invoke();
 		openLoops = border.GetEdgeLists();
 	}
-	glm::mat4 objMat{ 1.0f };
 	if (openLoops->size() == 2)
 	{
 		std::sort(openLoops->begin(), openLoops->end(), [](auto const& a, auto const& b) { return a->size() > b->size(); });
@@ -157,6 +164,7 @@ void DevPlayground(const sgrottel::ISimpleLog& log)
 
 		mesh->vertices[close.GetNewVertexIndex()] += backDir;
 	}
+	*/
 
 	{
 		std::shared_ptr<data::Scene> scene = std::make_shared<data::Scene>();

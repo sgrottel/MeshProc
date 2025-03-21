@@ -117,6 +117,9 @@
     <ClCompile Include="DevPlayground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="generator\CrystalGrain.cpp">
+      <Filter>generator\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -194,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="DevPlayground.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\CrystalGrain.h">
+      <Filter>generator\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
