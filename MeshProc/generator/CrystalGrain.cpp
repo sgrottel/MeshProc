@@ -13,6 +13,7 @@ generator::CrystalGrain::CrystalGrain(const sgrottel::ISimpleLog& log)
 {
 	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
 	AddParamBinding<ParamMode::In, ParamType::UInt32>("RandomSeed", m_randomSeed);
+	AddParamBinding<ParamMode::In, ParamType::UInt32>("SamplingShape", m_samplingShape); // TODO: Should be enum
 	AddParamBinding<ParamMode::In, ParamType::UInt32>("NumFaces", m_numFaces);
 	AddParamBinding<ParamMode::In, ParamType::Float>("SizeX", m_sizeX);
 	AddParamBinding<ParamMode::In, ParamType::Float>("SizeY", m_sizeY);
@@ -56,6 +57,64 @@ namespace
 
 		return true;
 	}
+
+	class AbstractSampler {
+	public:
+		AbstractSampler(const glm::vec3 size, float radSigma)
+			: m_rndRad{ 1.0f, std::max<float>(0.0001f, radSigma) }
+			, m_size{ size }
+		{ }
+		virtual ~AbstractSampler() = default;
+		virtual Plane operator()(std::default_random_engine& rnd) = 0;
+	protected:
+		std::normal_distribution<float> m_rndRad;
+		const glm::vec3 m_size;
+	};
+
+	class SphereSampler final : public AbstractSampler {
+	public:
+		SphereSampler(const glm::vec3 size, float radSigma)
+			: AbstractSampler{ size, radSigma }
+			, m_rndNormal{}
+		{
+		}
+		virtual ~SphereSampler() = default;
+		Plane operator()(std::default_random_engine& rnd) override
+		{
+			glm::vec3 n{
+					m_rndNormal(rnd),
+					m_rndNormal(rnd),
+					m_rndNormal(rnd)
+			};
+			n = glm::normalize(n);
+			return AsPlane(n * m_size * m_rndRad(rnd));
+		}
+	private:
+		std::normal_distribution<float> m_rndNormal;
+	};
+
+	class SquircleSampler final : public AbstractSampler {
+	public:
+		SquircleSampler(const glm::vec3 size, float radSigma)
+			: AbstractSampler{ size, radSigma }
+			, m_rndNormal{}
+		{
+		}
+		virtual ~SquircleSampler() = default;
+		Plane operator()(std::default_random_engine& rnd) override
+		{
+			glm::vec3 n{
+					m_rndNormal(rnd),
+					m_rndNormal(rnd),
+					m_rndNormal(rnd)
+			};
+			n = glm::normalize(n * n * n * n * n);
+			return AsPlane(n * m_size * m_rndRad(rnd));
+		}
+	private:
+		std::normal_distribution<float> m_rndNormal;
+	};
+
 }
 
 bool generator::CrystalGrain::Invoke()
@@ -65,6 +124,19 @@ bool generator::CrystalGrain::Invoke()
 	std::vector<Plane> faces;
 
 	const glm::vec3 size{ std::max<float>(0.1f, m_sizeX), std::max<float>(0.1f, m_sizeY), std::max<float>(0.1f, m_sizeZ) };
+	std::unique_ptr<AbstractSampler> sampler;
+	switch (m_samplingShape)
+	{
+	case 0:
+		sampler = std::make_unique<SphereSampler>(size, m_radSigma);
+		break;
+	case 1:
+		sampler = std::make_unique<SquircleSampler>(size, m_radSigma);
+		break;
+	default:
+		sampler = std::make_unique<SphereSampler>(size, m_radSigma);
+		break;
+	}
 
 	// guards ensuring the grain will never be too large
 	faces.push_back(AsPlane(glm::vec3{ 2.0 * size.x, 0.0, 0.0 }));
@@ -75,19 +147,9 @@ bool generator::CrystalGrain::Invoke()
 	faces.push_back(AsPlane(glm::vec3{ 0.0, 0.0, -2.0 * size.z }));
 
 	std::default_random_engine rndEng{ m_randomSeed };
-	std::normal_distribution<float> rndNormal;
-	std::normal_distribution<float> rndRad{ 1.0f, std::max<float>(0.0001f, m_radSigma) };
-
 	for (uint32_t f = 0; f < m_numFaces; ++f)
 	{
-		glm::vec3 n{
-				rndNormal(rndEng),
-				rndNormal(rndEng),
-				rndNormal(rndEng)
-			};
-		n = glm::normalize(n);
-		n = glm::normalize(n * n * n);
-		faces.push_back(AsPlane(n * size * rndRad(rndEng)));
+		faces.push_back((*sampler)(rndEng));
 	}
 
 	// filter planes with same normals (only keep smaller distance)
