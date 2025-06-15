@@ -96,6 +96,7 @@
     <ClCompile Include="data\Scene.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
     <ClCompile Include="DevPlayground.cpp" />
+    <ClCompile Include="ExtractSubMesh.cpp" />
     <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="ParameterBinding.cpp" />
     <ClCompile Include="ParameterValue.cpp" />
     <ClCompile Include="PlaceMesh.cpp" />
+    <ClCompile Include="SelectBottomTriangles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.yaml" />
@@ -130,6 +132,7 @@
     <ClInclude Include="data\Scene.h" />
     <ClInclude Include="data\Triangle.h" />
     <ClInclude Include="DevPlayground.h" />
+    <ClInclude Include="ExtractSubMesh.h" />
     <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
@@ -147,6 +150,7 @@
     <ClInclude Include="ParameterBinding.h" />
     <ClInclude Include="ParameterValue.h" />
     <ClInclude Include="PlaceMesh.h" />
+    <ClInclude Include="SelectBottomTriangles.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

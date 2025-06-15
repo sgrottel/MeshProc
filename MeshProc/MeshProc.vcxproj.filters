@@ -126,6 +126,12 @@
     <ClCompile Include="io\PlyReader.cpp">
       <Filter>io\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelectBottomTriangles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtractSubMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -212,6 +218,12 @@
     </ClInclude>
     <ClInclude Include="io\PlyReader.h">
       <Filter>io\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectBottomTriangles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtractSubMesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

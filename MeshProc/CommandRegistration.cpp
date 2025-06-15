@@ -3,6 +3,7 @@
 #include "CommandFactory.h"
 
 #include "CloseLoopWithPin.h"
+#include "ExtractSubMesh.h"
 #include "FlatSkirt.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
@@ -14,6 +15,7 @@
 #include "io/StlWriter.h"
 #include "OpenBorder.h"
 #include "PlaceMesh.h"
+#include "SelectBottomTriangles.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -23,6 +25,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	log.Detail("Populating CommandFactory");
 
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
+	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
@@ -34,6 +37,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<io::StlWriter>("io.StlWriter");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<PlaceMesh>("PlaceMesh");
+	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
 
 	// Add further Commands to this registration function
 
