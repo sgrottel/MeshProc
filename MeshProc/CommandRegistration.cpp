@@ -16,6 +16,7 @@
 #include "OpenBorder.h"
 #include "PlaceMesh.h"
 #include "SelectBottomTriangles.h"
+#include "SelectVertexSelection.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -38,6 +39,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<PlaceMesh>("PlaceMesh");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
+	succ &= factory.Register<SelectVertexSelection>("SelectVertexSelection");
 
 	// Add further Commands to this registration function
 

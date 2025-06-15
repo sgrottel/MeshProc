@@ -116,6 +116,7 @@
     <ClCompile Include="ParameterValue.cpp" />
     <ClCompile Include="PlaceMesh.cpp" />
     <ClCompile Include="SelectBottomTriangles.cpp" />
+    <ClCompile Include="SelectVertexSelection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.yaml" />
@@ -151,6 +152,7 @@
     <ClInclude Include="ParameterValue.h" />
     <ClInclude Include="PlaceMesh.h" />
     <ClInclude Include="SelectBottomTriangles.h" />
+    <ClInclude Include="SelectVertexSelection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
