@@ -123,6 +123,9 @@
     <ClCompile Include="io\PlyWriter.cpp">
       <Filter>io\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\PlyReader.cpp">
+      <Filter>io\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -205,6 +208,9 @@
       <Filter>generator\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="io\PlyWriter.h">
+      <Filter>io\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="io\PlyReader.h">
       <Filter>io\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
