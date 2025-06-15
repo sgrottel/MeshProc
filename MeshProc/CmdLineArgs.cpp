@@ -97,6 +97,11 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 		m_command = CliCommand::Help;
 	}
 
+	if (m_command == CliCommand::Error)
+	{
+		res.SetError(L"You need to specify a command to run");
+	}
+
 	m_verbose = res.HasSwitch(swVerbose) > 0;
 
 	LogGreeting(log);

@@ -103,6 +103,7 @@
     <ClCompile Include="generator\Icosahedron.cpp" />
     <ClCompile Include="generator\SphereIco.cpp" />
     <ClCompile Include="io\ObjReader.cpp" />
+    <ClCompile Include="io\PlyWriter.cpp" />
     <ClCompile Include="io\StlReader.cpp" />
     <ClCompile Include="io\StlWriter.cpp" />
     <ClCompile Include="MeshProc.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="generator\Icosahedron.h" />
     <ClInclude Include="generator\SphereIco.h" />
     <ClInclude Include="io\ObjReader.h" />
+    <ClInclude Include="io\PlyWriter.h" />
     <ClInclude Include="io\StlReader.h" />
     <ClInclude Include="io\StlWriter.h" />
     <ClInclude Include="MeshProgram.h" />

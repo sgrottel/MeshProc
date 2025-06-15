@@ -8,6 +8,7 @@
 #include "generator/Icosahedron.h"
 #include "generator/SphereIco.h"
 #include "io/ObjReader.h"
+#include "io/PlyWriter.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
 #include "OpenBorder.h"
@@ -26,6 +27,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");
+	succ &= factory.Register<io::PlyWriter>("io.PlyWriter");
 	succ &= factory.Register<io::StlReader>("io.StlReader");
 	succ &= factory.Register<io::StlWriter>("io.StlWriter");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
