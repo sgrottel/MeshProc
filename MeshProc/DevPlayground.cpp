@@ -10,168 +10,153 @@
 #include "generator/CrystalGrain.h"
 
 #include <cassert>
+#include <functional>
+#include <random>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace meshproc;
 
 void DevPlayground(const sgrottel::ISimpleLog& log)
 {
-	std::shared_ptr<data::Mesh> mesh;
+	std::shared_ptr<data::Mesh> mesh = std::make_shared<data::Mesh>();
 	glm::mat4 objMat{ 1.0f };
+	objMat = glm::translate(objMat, glm::vec3{ 0, 0, -22.5 });
 
-	{
-		generator::CrystalGrain grain{ log };
-		grain.Invoke();
-		mesh = grain.GetMesh();
-	}
+	std::vector<glm::vec2> flatCoords;
 	
-	/*	{
-		io::ObjReader reader{ log };
-		reader.SetPath(L"in.obj");
-		reader.Invoke();
-		mesh = reader.GetMesh();
-	}
-	ParamTypeInfo_t<ParamType::MultiVertexSelection> openLoops;
-	{
-		OpenBorder border{ log };
-		border.SetMesh(mesh);
-		border.Invoke();
-		openLoops = border.GetEdgeLists();
-	}
-	if (openLoops->size() == 2)
-	{
-		std::sort(openLoops->begin(), openLoops->end(), [](auto const& a, auto const& b) { return a->size() > b->size(); });
-		FlatSkirt skirt{ log };
-		skirt.SetMesh(mesh);
+	std::vector<glm::vec2> flatDirs;
 
-		skirt.SetLoop(openLoops->at(0));
-		skirt.Invoke();
-		openLoops->at(0) = skirt.GetNewLoop();
+	constexpr float M_PI = 3.1415926535f;
 
-		glm::vec3 backC = skirt.GetCenter();
-		glm::vec3 backDir = skirt.GetZDir();
+	auto insertEdge = [&](const glm::vec2& next)
+		{
+			glm::vec2 prev = flatCoords.back();
+			glm::vec2 prevDir = flatDirs.back();
+			const int len = static_cast<int>(glm::distance(prev, next));
+			for (int i = 1; i < len; ++i)
+			{
+				const float b = static_cast<float>(i) / static_cast<float>(len);
+				const float a = 1.0f - b;
 
-		objMat = glm::mat4{
-			glm::vec4{ skirt.GetX2D(), 0.0f },
-			glm::vec4{ skirt.GetY2D(), 0.0f },
-			glm::vec4{ glm::cross(skirt.GetY2D(), skirt.GetX2D()), 0.0f },
-			glm::vec4{ 0.0f, 0.0f, 0.0f, 1.0f }
+				flatDirs.push_back(prevDir);
+				flatCoords.push_back(prev * a + next * b);
+			}
 		};
 
-		skirt.SetLoop(openLoops->at(1));
-		skirt.Invoke();
-		openLoops->at(1) = skirt.GetNewLoop();
-
-		glm::vec3 c = skirt.GetCenter();
-		glm::vec3 x = skirt.GetX2D();
-		glm::vec3 y = skirt.GetY2D();
-		glm::vec3 dir = skirt.GetZDir();
-		float dist = skirt.GetZDist();
-
-		std::vector<float> ang;
-		ang.reserve(openLoops->at(1)->size());
-		float d = 0.0f;
-		for (uint32_t idx : *openLoops->at(1))
+	auto pushCorner = [&](float x, float y, float r, float ang)
 		{
-			glm::vec3 v = mesh->vertices[idx] - c;
-			float l = glm::length(v);
+			bool doEdge = flatCoords.size() > 0;
 
-			v /= l;
-			float vx = glm::dot(v, x);
-			float vy = glm::dot(v, y);
-
-			ang.push_back(std::atan2f(vx, vy));
-
-			if (d < l)
+			constexpr int steps = 5;
+			for (int i = steps; i >= 0; --i)
 			{
-				d = l;
-			}
-		}
-		assert(ang.size() == openLoops->at(1)->size());
-
-		bool asc = true;
-		bool repair = false;
-		{
-			size_t cntGrow = 0;
-			size_t cntShrink = 0;
-			for (size_t i = 0; i < ang.size(); ++i)
-			{
-				if (ang[(i + 1) % ang.size()] > ang[i])
+				const float a = ang + i * 90.0f / steps;
+				const float ar = a * M_PI / 180.0f;
+				const float s = std::sin(ar);
+				const float c = std::cos(ar);
+				
+				const glm::vec2 coord{ x - c * r, y - s * r };
+				if (doEdge)
 				{
-					cntGrow++;
+					insertEdge(coord);
+				}
+				flatDirs.push_back(glm::vec2{ -c, -s });
+				flatCoords.push_back(coord);
+			}
+		};
+
+	pushCorner(1, 1, 2, 0);
+	const size_t cornerLen = flatCoords.size();
+	pushCorner(1, 91, 2, 270);
+	pushCorner(46, 91, 2, 180);
+	pushCorner(46, 1, 2, 90);
+	insertEdge(flatCoords.front());
+
+	assert(flatCoords.size() == flatDirs.size());
+
+	std::random_device r;
+	std::default_random_engine randEng(r());
+	std::uniform_real_distribution<float> randDist(0.0f, 1.0f);
+
+	auto zero = []() { return 0.0f; };
+	auto minus15 = []() { return -1.5f; };
+	auto rand05 = [&]() { return randDist(randEng) * 0.5f; };
+
+	auto pushCoords = [&](float z, std::function<float()> offset)
+		{
+			for (size_t i = 0; i < flatCoords.size(); ++i)
+			{
+				const auto& c = flatCoords[i];
+				const auto& d = flatDirs[i];
+				const float r = offset();
+
+				mesh->vertices.push_back(glm::vec3{ c + d * r, z });
+			}
+		};
+	auto pushWall = [&]()
+		{
+			uint32_t size = static_cast<uint32_t>(flatCoords.size());
+			assert(size > 2);
+			uint32_t start = static_cast<uint32_t>(mesh->vertices.size() - 2 * size);
+			for (uint32_t i = 0; i < size; ++i)
+			{
+				const uint32_t v11 = start + i;
+				const uint32_t v12 = start + (i + 1) % size;
+				const uint32_t v21 = start + size + i;
+				const uint32_t v22 = start + size + (i + 1) % size;
+
+				if (((v11 / size) + (v11 % size)) % 2)
+				{
+					mesh->triangles.push_back(data::Triangle{ v12, v11, v21 });
+					mesh->triangles.push_back(data::Triangle{ v12, v21, v22 });
 				}
 				else
 				{
-					cntShrink++;
+					mesh->triangles.push_back(data::Triangle{ v12, v11, v22 });
+					mesh->triangles.push_back(data::Triangle{ v11, v21, v22 });
 				}
 			}
-			if (cntShrink > cntGrow)
-			{
-				asc = false;
-			}
-			if (cntShrink > 1 && cntGrow > 1)
-			{
-				repair = true;
-			}
-		}
-
-		while (repair)
+		};
+	auto pushCap = [&](bool flip)
 		{
-			repair = false;
-			for (size_t i1 = 0; i1 < ang.size(); ++i1)
+			uint32_t size = static_cast<uint32_t>(flatCoords.size());
+			assert(size > 2);
+			uint32_t start = static_cast<uint32_t>(mesh->vertices.size() - size);
+			for (uint32_t i = 2; i < size; ++i)
 			{
-				const size_t i2 = (i1 + 1) % ang.size();
-				if ((!asc && (ang[i2] > ang[i1]))
-					|| (asc && (ang[i2] < ang[i1])))
-				{
-					if (std::abs(ang[i1] - ang[i2]) > 3.14159)
-					{
-						// likely the wraparound, so lets ignore that.
-						continue;
-					}
-					// Would need to check if swapping i1<->i0 or i2<->i3 would resolve the issue as well, with a smaller error
-					std::swap(ang[i1], ang[i2]);
-					repair = true;
-				}
+				const uint32_t v1 = start;
+				const uint32_t v2 = start + i - 1;
+				const uint32_t v3 = start + i;
+
+				mesh->triangles.push_back(data::Triangle{ v1, flip ? v3 : v2, flip ? v2 : v3 });
 			}
-		}
+		};
 
-		d *= 1.1f;
-		for (size_t i = 0; i < ang.size(); ++i)
-		{
-			uint32_t idx = openLoops->at(1)->at(i);
-			mesh->vertices[idx] = c + (y * std::cos(ang[i]) + x * std::sin(ang[i])) * d;
-		}
-
-		skirt.SetLoop(openLoops->at(1));
-		skirt.Invoke();
-		openLoops->at(1) = skirt.GetNewLoop();
-
-		for (uint32_t idx : *openLoops->at(1))
-		{
-			float l = 0.6f * glm::dot(backC - mesh->vertices[idx], dir);
-			mesh->vertices[idx] += dir * l;
-		}
-
-		CloseLoopWithPin close{ log };
-		close.SetMesh(mesh);
-		close.SetLoop(openLoops->at(1));
-		close.Invoke();
-
-		close.SetLoop(openLoops->at(0));
-		close.Invoke();
-
-		mesh->vertices[close.GetNewVertexIndex()] += backDir;
+	pushCoords(0.0f, zero);
+//	pushCap(false);
+	for (int z = 1; z < 18; ++z)
+	{
+		pushCoords(static_cast<float>(z), rand05);
+		pushWall();
 	}
-	*/
+	pushCoords(18.0f, zero);
+	pushWall();
+	pushCoords(18.0f, minus15);
+	pushWall();
+	pushCoords(0.0, minus15);
+	pushWall();
+	pushCoords(0.0f, zero);
+	pushWall();
+	//	pushCap(true);
 
 	{
 		std::shared_ptr<data::Scene> scene = std::make_shared<data::Scene>();
 		scene->m_meshes.push_back({ mesh, objMat });
 
 		io::StlWriter writer{ log };
-		writer.SetPath(L"out.stl");
+		writer.SetPath(L"randHull.stl");
 		writer.SetScene(scene);
 		writer.Invoke();
 	}
