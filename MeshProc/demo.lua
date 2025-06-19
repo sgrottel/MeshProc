@@ -2,15 +2,10 @@ log.write("Test script")
 
 cube = meshproc._createCommand("generator.Cube");
 
-io.write("mo = ", cube:get(), "\n")
-cube:set(12)
-io.write("mo = ", cube:get(), "\n")
-print(cube)
-
-cube = nil
-
-collectgarbage()
-
-log.write(nil)
+if cube:invoke() then
+	log.write("Cube generated")
+else
+	log.error("Cube failed")
+end
 
 log.write("end of script.")

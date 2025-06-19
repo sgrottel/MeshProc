@@ -37,11 +37,13 @@ namespace meshproc
 		static int CallbackCreateCommand(lua_State* lua);
 		static int CallbackCommandDelete(lua_State* lua);
 		static int CallbackCommandToString(lua_State* lua);
+		static int CallbackCommandInvoke(lua_State* lua);
 
 		bool AssertStateReady();
 		bool RegisterLogFunctions();
 		void CallbackLogImpl(lua_State* lua, uint32_t flags);
 		int CallbackCreateCommandImpl(lua_State* lua);
+		int CallbackCommandInvokeImpl(lua_State* lua);
 
 		sgrottel::ISimpleLog& m_log;
 		CommandFactory& m_factory;

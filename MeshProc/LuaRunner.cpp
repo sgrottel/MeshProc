@@ -83,9 +83,10 @@ bool LuaRunner::RegisterCommands()
 	static const struct luaL_Reg commandObjectLib_memberFunc[] = {
 		{"__tostring", &LuaRunner::CallbackCommandToString},
 		{"__gc", &LuaRunner::CallbackCommandDelete},
+		{"invoke", &LuaRunner::CallbackCommandInvoke},
 		{"set", setMyObjectValue},
 		{"get", getMyObjectValue},
-		{NULL, NULL}
+		{nullptr, nullptr}
 	};
 
 	// The member functions for the commandObject
@@ -192,6 +193,53 @@ int LuaRunner::CallbackCreateCommand(lua_State* lua)
 	return that->CallbackCreateCommandImpl(lua);
 }
 
+int LuaRunner::CallbackCommandDelete(lua_State* lua)
+{
+	CommandObject* cmdObj = GetCommandObject(lua);
+	if (cmdObj != nullptr)
+	{
+		cmdObj->cmd.reset();
+	}
+	return 0;
+}
+
+int LuaRunner::CallbackCommandToString(lua_State* lua)
+{
+	CommandObject* cmdObj = GetCommandObject(lua);
+	if (cmdObj == nullptr || cmdObj->cmd == nullptr)
+	{
+		lua_pushstring(lua, "nil");
+		return 1;
+	}
+
+	auto that = GetThis(lua);
+	if (that == nullptr)
+	{
+		lua_pushstring(lua, "nil");
+		return 1;
+	}
+
+	const char* name = that->m_factory.FindName(cmdObj->cmd.get());
+	if (name == nullptr)
+	{
+		lua_pushstring(lua, "nil");
+		return 1;
+	}
+
+	lua_pushstring(lua, name);
+	return 1;
+}
+
+int LuaRunner::CallbackCommandInvoke(lua_State* lua)
+{
+	auto that = GetThis(lua);
+	if (that == nullptr)
+	{
+		return 0;
+	}
+	return that->CallbackCommandInvokeImpl(lua);
+}
+
 bool LuaRunner::AssertStateReady()
 {
 	if (!m_state)
@@ -220,6 +268,8 @@ bool LuaRunner::RegisterLogFunctions()
 	lua_setglobal(m_state.get(), "log"); // sets global chost = table, and pops table from stack
 
 	// lua_pop(m_state.get(), 1); // Remove a loaded table from the stack
+
+	return true;
 }
 
 void LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
@@ -276,39 +326,35 @@ int LuaRunner::CallbackCreateCommandImpl(lua_State* lua)
 	return 1; // cmdObj is on stack
 }
 
-int LuaRunner::CallbackCommandDelete(lua_State* lua)
-{
-	CommandObject* cmdObj = GetCommandObject(lua);
-	if (cmdObj != nullptr)
-	{
-		cmdObj->cmd.reset();
-	}
-	return 0;
-}
-
-int LuaRunner::CallbackCommandToString(lua_State* lua)
+int LuaRunner::CallbackCommandInvokeImpl(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj == nullptr || cmdObj->cmd == nullptr)
 	{
-		lua_pushstring(lua, "nil");
-		return 1;
+		return 0;
 	}
 
-	auto that = GetThis(lua);
-	if (that == nullptr)
+	const char* name = m_factory.FindName(cmdObj->cmd.get());
+	if (name == nullptr) name = "<UNKNOWN>";
+
+	try
 	{
-		lua_pushstring(lua, "nil");
+		m_log.Detail("Invoking %s", name);
+		bool rv = cmdObj->cmd->Invoke();
+		if (!rv)
+		{
+			m_log.Warning("Invoking %s returned unsuccessful", name);
+		}
+		lua_pushboolean(lua, rv ? 1 : 0);
 		return 1;
 	}
-
-	const char* name = that->m_factory.FindName(cmdObj->cmd.get());
-	if (name == nullptr)
+	catch (std::exception& ex)
 	{
-		lua_pushstring(lua, "nil");
-		return 1;
+		m_log.Error("Exception trying to invoke %s: %s", name, ex.what());
 	}
-
-	lua_pushstring(lua, name);
-	return 1;
+	catch (...)
+	{
+		m_log.Error("Unknown exception trying to invoke %s", name);
+	}
+	return 0;
 }
