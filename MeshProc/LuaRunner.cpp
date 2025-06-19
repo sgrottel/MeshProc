@@ -59,23 +59,6 @@ bool LuaRunner::Init()
 	return true;
 }
 
-
-static int setMyObjectValue(lua_State* L)
-{
-	CommandObject* mo = GetCommandObject(L);
-	int value = static_cast<int>(luaL_checkinteger(L, 2));
-	mo->value = value;
-	return 0;
-}
-
-static int getMyObjectValue(lua_State* L)
-{
-	CommandObject* mo = GetCommandObject(L);
-	lua_pushinteger(L, mo->value);
-	return 1;
-}
-
-
 bool LuaRunner::RegisterCommands()
 {
 	if (!AssertStateReady()) return false;
@@ -84,8 +67,8 @@ bool LuaRunner::RegisterCommands()
 		{"__tostring", &LuaRunner::CallbackCommandToString},
 		{"__gc", &LuaRunner::CallbackCommandDelete},
 		{"invoke", &LuaRunner::CallbackCommandInvoke},
-		{"set", setMyObjectValue},
-		{"get", getMyObjectValue},
+		{"set", &LuaRunner::CallbackCommandSet},
+		{"get", &LuaRunner::CallbackCommandGet},
 		{nullptr, nullptr}
 	};
 
@@ -165,32 +148,32 @@ LuaRunner* LuaRunner::GetThis(lua_State* lua)
 	return nullptr;
 }
 
-int LuaRunner::CallbackLogWrite(lua_State* lua)
+template<typename FN, typename... ARGS>
+int LuaRunner::CallLuaImpl(FN fn, lua_State* lua, ARGS... args)
 {
 	auto that = GetThis(lua);
-	if (that != nullptr) that->CallbackLogImpl(lua, sgrottel::ISimpleLog::FlagLevelMessage);
-	return 0;
+	if (that == nullptr) return 0;
+	return (that->*fn)(lua, args...);
+}
+
+int LuaRunner::CallbackLogWrite(lua_State* lua)
+{
+	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelMessage);
 }
 
 int LuaRunner::CallbackLogWarn(lua_State* lua)
 {
-	auto that = GetThis(lua);
-	if (that != nullptr) that->CallbackLogImpl(lua, sgrottel::ISimpleLog::FlagLevelWarning);
-	return 0;
+	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelWarning);
 }
 
 int LuaRunner::CallbackLogError(lua_State* lua)
 {
-	auto that = GetThis(lua);
-	if (that != nullptr) that->CallbackLogImpl(lua, sgrottel::ISimpleLog::FlagLevelError);
-	return 0;
+	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelError);
 }
 
 int LuaRunner::CallbackCreateCommand(lua_State* lua)
 {
-	auto that = GetThis(lua);
-	if (that == nullptr) return 0;
-	return that->CallbackCreateCommandImpl(lua);
+	return CallLuaImpl(&LuaRunner::CallbackCreateCommandImpl, lua);
 }
 
 int LuaRunner::CallbackCommandDelete(lua_State* lua)
@@ -232,12 +215,17 @@ int LuaRunner::CallbackCommandToString(lua_State* lua)
 
 int LuaRunner::CallbackCommandInvoke(lua_State* lua)
 {
-	auto that = GetThis(lua);
-	if (that == nullptr)
-	{
-		return 0;
-	}
-	return that->CallbackCommandInvokeImpl(lua);
+	return CallLuaImpl(&LuaRunner::CallbackCommandInvokeImpl, lua);
+}
+
+int LuaRunner::CallbackCommandGet(lua_State* lua)
+{
+	return CallLuaImpl(&LuaRunner::CallbackCommandGetImpl, lua);
+}
+
+int LuaRunner::CallbackCommandSet(lua_State* lua)
+{
+	return CallLuaImpl(&LuaRunner::CallbackCommandSetImpl, lua);
 }
 
 bool LuaRunner::AssertStateReady()
@@ -272,7 +260,7 @@ bool LuaRunner::RegisterLogFunctions()
 	return true;
 }
 
-void LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
+int LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
 {
 	int nargs = lua_gettop(lua);
 	for (int i = 1; i <= nargs; i++)
@@ -286,6 +274,7 @@ void LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
 			lua_pop(lua, 1);	// Remove result of luaL_tolstring
 		}
 	}
+	return 0;
 }
 
 int LuaRunner::CallbackCreateCommandImpl(lua_State* lua)
@@ -356,5 +345,20 @@ int LuaRunner::CallbackCommandInvokeImpl(lua_State* lua)
 	{
 		m_log.Error("Unknown exception trying to invoke %s", name);
 	}
+	return 0;
+}
+
+int LuaRunner::CallbackCommandGetImpl(lua_State* lua)
+{
+	CommandObject* mo = GetCommandObject(lua);
+	lua_pushinteger(lua, mo->value);
+	return 1;
+}
+
+int LuaRunner::CallbackCommandSetImpl(lua_State* lua)
+{
+	CommandObject* mo = GetCommandObject(lua);
+	int value = static_cast<int>(luaL_checkinteger(lua, 3));
+	mo->value = value;
 	return 0;
 }
