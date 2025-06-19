@@ -132,10 +132,13 @@
     <ClCompile Include="SelectVertexSelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LuaRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="demo.yaml" />
+    <None Include="demo.lua" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
@@ -223,6 +226,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectVertexSelection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaRunner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

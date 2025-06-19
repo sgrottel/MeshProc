@@ -108,6 +108,7 @@
     <ClCompile Include="io\PlyWriter.cpp" />
     <ClCompile Include="io\StlReader.cpp" />
     <ClCompile Include="io\StlWriter.cpp" />
+    <ClCompile Include="LuaRunner.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
@@ -118,7 +119,7 @@
     <ClCompile Include="SelectVertexSelection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="demo.yaml" />
+    <None Include="demo.lua" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="io\PlyWriter.h" />
     <ClInclude Include="io\StlReader.h" />
     <ClInclude Include="io\StlWriter.h" />
+    <ClInclude Include="LuaRunner.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterBinding.h" />
