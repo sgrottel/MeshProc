@@ -1,7 +1,6 @@
 #include "CmdLineArgs.h"
 #include "CommandFactory.h"
 #include "CommandRegistration.h"
-#include "MeshProgram.h"
 #include "DevPlayground.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -35,16 +34,12 @@ int wmain(int argc, wchar_t **argv)
 	{
 	case CliCommand::RunScript:
 	{
+		/*
 		meshproc::MeshProgram prog{ log };
 		prog.Load(cmdLine.m_script, cmdFactory);
 		prog.Execution();
-	}
-	break;
-
-	case CliCommand::ValidateScript:
-	{
-		meshproc::MeshProgram prog{ log };
-		prog.Load(cmdLine.m_script, cmdFactory);
+		*/
+		log.Critical("CLI command %d not implemented", cmdLine.m_command);
 	}
 	break;
 

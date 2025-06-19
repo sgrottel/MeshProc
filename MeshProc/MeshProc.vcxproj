@@ -109,7 +109,6 @@
     <ClCompile Include="io\StlReader.cpp" />
     <ClCompile Include="io\StlWriter.cpp" />
     <ClCompile Include="MeshProc.cpp" />
-    <ClCompile Include="MeshProgram.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterBinding.cpp" />
@@ -145,7 +144,6 @@
     <ClInclude Include="io\PlyWriter.h" />
     <ClInclude Include="io\StlReader.h" />
     <ClInclude Include="io\StlWriter.h" />
-    <ClInclude Include="MeshProgram.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterBinding.h" />
@@ -159,6 +157,7 @@
     <Import Project="..\packages\glm.1.0.1\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.1\build\native\glm.targets')" />
     <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets')" />
     <Import Project="..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets" Condition="Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" />
+    <Import Project="..\packages\lua.5.4.8\build\native\Lua.targets" Condition="Exists('..\packages\lua.5.4.8\build\native\Lua.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -167,5 +166,6 @@
     <Error Condition="!Exists('..\packages\glm.1.0.1\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.1\build\native\glm.targets'))" />
     <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.2.0\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
     <Error Condition="!Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets'))" />
+    <Error Condition="!Exists('..\packages\lua.5.4.8\build\native\Lua.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\lua.5.4.8\build\native\Lua.targets'))" />
   </Target>
 </Project>

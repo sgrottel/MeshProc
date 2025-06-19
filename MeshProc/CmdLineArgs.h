@@ -17,7 +17,6 @@ namespace meshproc
 	{
 		Error,
 		RunScript,
-		ValidateScript,
 		ListCommands,
 		Help,
 		DevPlayground

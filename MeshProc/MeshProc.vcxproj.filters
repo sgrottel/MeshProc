@@ -102,9 +102,6 @@
     <ClCompile Include="PlaceMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ParameterBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -196,9 +193,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlaceMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParameterBinding.h">
