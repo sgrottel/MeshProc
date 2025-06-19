@@ -2,6 +2,8 @@
 
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
+#include "ParameterBinding.h"
+#include "utilities/StringUtilities.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -20,12 +22,109 @@ namespace
 	struct CommandObject
 	{
 		std::shared_ptr<AbstractCommand> cmd;
-		int value;
 	};
 
 	static CommandObject* GetCommandObject(lua_State* lua) {
 		void* ud = luaL_checkudata(lua, 1, CommandObjectClass);
 		return reinterpret_cast<CommandObject*>(ud);
+	}
+
+	template<ParamType PT>
+	struct LuaParamMapping;
+
+	template<>
+	struct LuaParamMapping<ParamType::UInt32>
+	{
+		static void PushVal(lua_State* lua, const uint32_t& v)
+		{
+			lua_pushinteger(lua, v);
+		}
+		static bool SetVal(lua_State* lua, uint32_t& tar)
+		{
+			if (lua_isnumber(lua, 3))
+			{
+				tar = static_cast<uint32_t>(lua_tonumber(lua, 3));
+				return true;
+			}
+			if (lua_isinteger(lua, 3))
+			{
+				tar = static_cast<uint32_t>(lua_tointeger(lua, 3));
+				return true;
+			}
+			return false;
+		}
+	};
+
+	template<>
+	struct LuaParamMapping<ParamType::Float>
+	{
+		static void PushVal(lua_State* lua, const float& v)
+		{
+			lua_pushnumber(lua, v);
+		}
+		static bool SetVal(lua_State* lua, float& tar)
+		{
+			if (lua_isnumber(lua, 3))
+			{
+				tar = static_cast<float>(lua_tonumber(lua, 3));
+				return true;
+			}
+			if (lua_isinteger(lua, 3))
+			{
+				tar = static_cast<float>(lua_tointeger(lua, 3));
+				return true;
+			}
+			return false;
+		}
+	};
+
+	template<>
+	struct LuaParamMapping<ParamType::String>
+	{
+		static void PushVal(lua_State* lua, const std::wstring& v)
+		{
+			lua_pushstring(lua, ToUtf8(v).c_str());
+		}
+		static bool SetVal(lua_State* lua, std::wstring& tar)
+		{
+			if (lua_isstring(lua, 3))
+			{
+				const char* str = lua_tostring(lua, 3);
+				tar = FromUtf8(str);
+				return true;
+			}
+			return false;
+		}
+	};
+
+	template<ParamType PT>
+	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
+	{
+		const ParamTypeInfo_t<PT>* v = ParameterBinding::GetValueSource<PT>(param.get());
+		if (v == nullptr)
+		{
+			log.Error("Parameter value type mismatch");
+			return 0;
+		}
+		LuaParamMapping<PT>::PushVal(lua, *v);
+		return 1;
+	}
+
+	template<ParamType PT>
+	static bool LuaTrySetVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
+	{
+		ParamTypeInfo_t<PT>* v = ParameterBinding::GetValueTarget<PT>(param.get());
+		if (v == nullptr)
+		{
+			log.Error("Parameter value type mismatch");
+			return false;
+		}
+		if (!LuaParamMapping<PT>::SetVal(lua, *v))
+		{
+			log.Error("Failed to set parameter value; likely type mismatch");
+			return false;
+		}
+		return true;
 	}
 
 }
@@ -92,6 +191,7 @@ bool LuaRunner::RegisterCommands()
 bool LuaRunner::LoadScript(const std::filesystem::path& script)
 {
 	if (!AssertStateReady()) return false;
+	// TODO: Support UTF16 paths!
 	if (luaL_loadfile(m_state.get(), script.generic_string().c_str()))
 	{
 		m_log.Critical("Failed to load lua script: %s", lua_tostring(m_state.get(), -1));
@@ -269,7 +369,7 @@ int LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
 		const char* s = luaL_tolstring(lua, i, &len);
 		if (s)
 		{
-			m_log.Write(flags & sgrottel::ISimpleLog::FlagLevelMask, "%s", s);
+			m_log.Write(flags & sgrottel::ISimpleLog::FlagLevelMask, L"%s", FromUtf8(s).c_str());
 
 			lua_pop(lua, 1);	// Remove result of luaL_tolstring
 		}
@@ -310,7 +410,6 @@ int LuaRunner::CallbackCreateCommandImpl(lua_State* lua)
 	luaL_getmetatable(lua, CommandObjectClass);
 	lua_setmetatable(lua, -2);
 	cmdObj->cmd = cmd;
-	cmdObj->value = 42;
 
 	return 1; // cmdObj is on stack
 }
@@ -350,15 +449,110 @@ int LuaRunner::CallbackCommandInvokeImpl(lua_State* lua)
 
 int LuaRunner::CallbackCommandGetImpl(lua_State* lua)
 {
-	CommandObject* mo = GetCommandObject(lua);
-	lua_pushinteger(lua, mo->value);
+	CommandObject* cmdObj = GetCommandObject(lua);
+	if (cmdObj == nullptr || cmdObj->cmd == nullptr) return 0;
+
+	int nargs = lua_gettop(lua);
+	if (nargs != 2)
+	{
+		m_log.Error("Field name argument missing");
+		return 0;
+	}
+	if (!lua_isstring(lua, 2))
+	{
+		m_log.Error("Field name argument of wrong type");
+		return 0;
+	}
+
+	size_t len;
+	std::string name = luaL_tolstring(lua, 2, &len); // copy type string
+
+	// lua_pop(lua, 2); // remove args and obj from stack
+
+	std::shared_ptr<ParameterBinding::ParamBindingBase> param = cmdObj->cmd->GetParam(name);
+	if (!param)
+	{
+		m_log.Error("Field name %s not found", name.c_str());
+		return 0;
+	}
+
+	switch (param->m_type)
+	{
+	case ParamType::UInt32:
+		return LuaTryPushVal<ParamType::UInt32>(lua, param, m_log);
+	case ParamType::Float:
+		return LuaTryPushVal<ParamType::Float>(lua, param, m_log);
+	case ParamType::String:
+		return LuaTryPushVal<ParamType::String>(lua, param, m_log);
+	//	Vec3,
+	//	Mat4,
+	//	Mesh,
+	//	MultiMesh,
+	//	Scene,
+	//	VertexSelection, // e.g. also edges/loops
+	//	MultiVertexSelection,
+	default:
+		m_log.Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
+		return 0;
+	}
+
 	return 1;
 }
 
 int LuaRunner::CallbackCommandSetImpl(lua_State* lua)
 {
-	CommandObject* mo = GetCommandObject(lua);
-	int value = static_cast<int>(luaL_checkinteger(lua, 3));
-	mo->value = value;
+	CommandObject* cmdObj = GetCommandObject(lua);
+	if (cmdObj == nullptr || cmdObj->cmd == nullptr) return 0;
+
+	int nargs = lua_gettop(lua);
+	if (nargs != 3)
+	{
+		m_log.Error("Field name argument missing");
+		return 0;
+	}
+	if (!lua_isstring(lua, 3))
+	{
+		m_log.Error("Field name argument of wrong type");
+		return 0;
+	}
+
+	size_t len;
+	std::string name = luaL_tolstring(lua, 2, &len); // copy type string
+
+	std::shared_ptr<ParameterBinding::ParamBindingBase> param = cmdObj->cmd->GetParam(name);
+	if (!param)
+	{
+		m_log.Error("Field name %s not found", name.c_str());
+		return 0;
+	}
+	if (param->m_mode == ParamMode::Out)
+	{
+		m_log.Error("Field name %s is read only", name.c_str());
+		return 0;
+	}
+
+	switch (param->m_type)
+	{
+	case ParamType::UInt32:
+		LuaTrySetVal<ParamType::UInt32>(lua, param, m_log);
+		break;
+	case ParamType::Float:
+		LuaTrySetVal<ParamType::Float>(lua, param, m_log);
+		break;
+	case ParamType::String:
+		LuaTrySetVal<ParamType::String>(lua, param, m_log);
+		break;
+		//	Vec3,
+		//	Mat4,
+		//	Mesh,
+		//	MultiMesh,
+		//	Scene,
+		//	VertexSelection, // e.g. also edges/loops
+		//	MultiVertexSelection,
+	default:
+		m_log.Error("Setting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
+		return 0;
+	}
+
 	return 0;
 }

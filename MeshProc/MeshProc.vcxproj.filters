@@ -40,6 +40,15 @@
     <Filter Include="data\Source Files">
       <UniqueIdentifier>{4c310969-4a80-46fd-8cc3-50d1f9d6943f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{c4815f0c-f761-4dec-b074-3ec5e371375a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utilities\Header Files">
+      <UniqueIdentifier>{12b874f3-3af5-4922-848f-6b2538136a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utilities\Source Files">
+      <UniqueIdentifier>{0c836a34-7e50-4305-bfc0-923400a13301}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -105,9 +114,6 @@
     <ClCompile Include="ParameterBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ParameterValue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CloseLoopWithPin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -134,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="LuaRunner.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities\StringUtilities.cpp">
+      <Filter>utilities\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -201,9 +210,6 @@
     <ClInclude Include="ParameterBinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParameterValue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CloseLoopWithPin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -230,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="LuaRunner.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\StringUtilities.h">
+      <Filter>utilities\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

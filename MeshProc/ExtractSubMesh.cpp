@@ -41,7 +41,7 @@ bool ExtractSubMesh::Invoke()
 		{
 			if (!vMap.contains(t[i]))
 			{
-				vMap[t[i]] = vMap.size();
+				vMap[t[i]] = static_cast<uint32_t>(vMap.size());
 			}
 		}
 	}
