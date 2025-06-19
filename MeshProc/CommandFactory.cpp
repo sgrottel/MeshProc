@@ -39,6 +39,18 @@ std::shared_ptr<class AbstractCommand> CommandFactory::Instantiate(const std::st
 	return t->second->Instantiate(log);
 }
 
+const char* CommandFactory::FindName(const class AbstractCommand* cmd) const
+{
+	for (auto const& ct : m_commandTemplates)
+	{
+		if (ct.second->IsTypeOf(cmd))
+		{
+			return ct.first.c_str();
+		}
+	}
+	return nullptr;
+}
+
 void CommandFactory::Log(const char* msg, const char* a)
 {
 	m_log.Error(msg, a);

@@ -36,8 +36,9 @@ int wmain(int argc, wchar_t **argv)
 	{
 	case CliCommand::RunScript:
 	{
-		meshproc::LuaRunner lua{ log };
+		meshproc::LuaRunner lua{ log, cmdFactory };
 		if (!lua.Init()) break;
+		if (!lua.RegisterCommands()) break;
 
 		log.Detail(L"Loading Lua: %s", cmdLine.m_script.wstring().c_str());
 		if (!lua.LoadScript(cmdLine.m_script)) break;

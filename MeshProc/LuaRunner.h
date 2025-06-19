@@ -14,10 +14,14 @@ namespace sgrottel
 namespace meshproc
 {
 
+	class CommandFactory;
+
 	class LuaRunner
 	{
 	public:
-		LuaRunner(sgrottel::ISimpleLog& log);
+		LuaRunner(sgrottel::ISimpleLog& log, CommandFactory& factory);
+
+		bool RegisterCommands();
 
 		bool Init();
 		bool LoadScript(const std::filesystem::path& script);
@@ -30,11 +34,17 @@ namespace meshproc
 		static int CallbackLogWarn(lua_State* lua);
 		static int CallbackLogError(lua_State* lua);
 
+		static int CallbackCreateCommand(lua_State* lua);
+		static int CallbackCommandDelete(lua_State* lua);
+		static int CallbackCommandToString(lua_State* lua);
+
 		bool AssertStateReady();
 		bool RegisterLogFunctions();
 		void CallbackLogImpl(lua_State* lua, uint32_t flags);
+		int CallbackCreateCommandImpl(lua_State* lua);
 
 		sgrottel::ISimpleLog& m_log;
+		CommandFactory& m_factory;
 		std::shared_ptr<lua_State> m_state;
 	};
 
