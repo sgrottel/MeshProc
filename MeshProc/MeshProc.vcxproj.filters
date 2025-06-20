@@ -49,6 +49,15 @@
     <Filter Include="utilities\Source Files">
       <UniqueIdentifier>{0c836a34-7e50-4305-bfc0-923400a13301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{d96fd3ee-a82e-462a-a61c-0514440d8fb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Header Files">
+      <UniqueIdentifier>{04d2ff38-361a-410c-8ffc-33a0b4600db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Source Files">
+      <UniqueIdentifier>{850a899b-7e12-417b-8a05-b68b0820cb3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -138,11 +147,11 @@
     <ClCompile Include="SelectVertexSelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LuaRunner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="utilities\StringUtilities.cpp">
       <Filter>utilities\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\Runner.cpp">
+      <Filter>lua\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -234,11 +243,11 @@
     <ClInclude Include="SelectVertexSelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LuaRunner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utilities\StringUtilities.h">
       <Filter>utilities\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\Runner.h">
+      <Filter>lua\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

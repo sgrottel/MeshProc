@@ -1,4 +1,4 @@
-#include "LuaRunner.h"
+#include "Runner.h"
 
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 using namespace meshproc;
+using namespace meshproc::lua;
 
 namespace
 {
@@ -129,14 +130,14 @@ namespace
 
 }
 
-LuaRunner::LuaRunner(sgrottel::ISimpleLog& log, CommandFactory& factory)
+Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
 	: m_log{ log }
 	, m_factory{ factory }
 {
 	// intentionally empty
 }
 
-bool LuaRunner::Init()
+bool Runner::Init()
 {
 	if (m_state)
 	{
@@ -158,16 +159,16 @@ bool LuaRunner::Init()
 	return true;
 }
 
-bool LuaRunner::RegisterCommands()
+bool Runner::RegisterCommands()
 {
 	if (!AssertStateReady()) return false;
 
 	static const struct luaL_Reg commandObjectLib_memberFunc[] = {
-		{"__tostring", &LuaRunner::CallbackCommandToString},
-		{"__gc", &LuaRunner::CallbackCommandDelete},
-		{"invoke", &LuaRunner::CallbackCommandInvoke},
-		{"set", &LuaRunner::CallbackCommandSet},
-		{"get", &LuaRunner::CallbackCommandGet},
+		{"__tostring", &Runner::CallbackCommandToString},
+		{"__gc", &Runner::CallbackCommandDelete},
+		{"invoke", &Runner::CallbackCommandInvoke},
+		{"set", &Runner::CallbackCommandSet},
+		{"get", &Runner::CallbackCommandGet},
 		{nullptr, nullptr}
 	};
 
@@ -180,7 +181,7 @@ bool LuaRunner::RegisterCommands()
 
 	lua_newtable(m_state.get());
 
-	lua_pushcfunction(m_state.get(), &LuaRunner::CallbackCreateCommand);
+	lua_pushcfunction(m_state.get(), &Runner::CallbackCreateCommand);
 	lua_setfield(m_state.get(), -2, "_createCommand");
 
 	lua_setglobal(m_state.get(), "meshproc");
@@ -188,10 +189,12 @@ bool LuaRunner::RegisterCommands()
 	return true;
 }
 
-bool LuaRunner::LoadScript(const std::filesystem::path& script)
+bool Runner::LoadScript(const std::filesystem::path& script)
 {
 	if (!AssertStateReady()) return false;
+
 	// TODO: Support UTF16 paths!
+
 	if (luaL_loadfile(m_state.get(), script.generic_string().c_str()))
 	{
 		m_log.Critical("Failed to load lua script: %s", lua_tostring(m_state.get(), -1));
@@ -200,7 +203,7 @@ bool LuaRunner::LoadScript(const std::filesystem::path& script)
 	return true;
 }
 
-bool LuaRunner::RunScript()
+bool Runner::RunScript()
 {
 	if (!AssertStateReady()) return false;
 	try
@@ -228,7 +231,7 @@ bool LuaRunner::RunScript()
 	return true;
 }
 
-LuaRunner* LuaRunner::GetThis(lua_State* lua)
+Runner* Runner::GetThis(lua_State* lua)
 {
 	if (lua == nullptr) return nullptr;
 	try
@@ -239,7 +242,7 @@ LuaRunner* LuaRunner::GetThis(lua_State* lua)
 		lua_pop(lua, 1);	// pop table from stack
 		if (that != nullptr)
 		{
-			return reinterpret_cast<LuaRunner*>(that);
+			return reinterpret_cast<Runner*>(that);
 		}
 	}
 	catch(...)
@@ -249,34 +252,34 @@ LuaRunner* LuaRunner::GetThis(lua_State* lua)
 }
 
 template<typename FN, typename... ARGS>
-int LuaRunner::CallLuaImpl(FN fn, lua_State* lua, ARGS... args)
+int Runner::CallLuaImpl(FN fn, lua_State* lua, ARGS... args)
 {
 	auto that = GetThis(lua);
 	if (that == nullptr) return 0;
 	return (that->*fn)(lua, args...);
 }
 
-int LuaRunner::CallbackLogWrite(lua_State* lua)
+int Runner::CallbackLogWrite(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelMessage);
+	return CallLuaImpl(&Runner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelMessage);
 }
 
-int LuaRunner::CallbackLogWarn(lua_State* lua)
+int Runner::CallbackLogWarn(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelWarning);
+	return CallLuaImpl(&Runner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelWarning);
 }
 
-int LuaRunner::CallbackLogError(lua_State* lua)
+int Runner::CallbackLogError(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelError);
+	return CallLuaImpl(&Runner::CallbackLogImpl, lua, sgrottel::ISimpleLog::FlagLevelError);
 }
 
-int LuaRunner::CallbackCreateCommand(lua_State* lua)
+int Runner::CallbackCreateCommand(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackCreateCommandImpl, lua);
+	return CallLuaImpl(&Runner::CallbackCreateCommandImpl, lua);
 }
 
-int LuaRunner::CallbackCommandDelete(lua_State* lua)
+int Runner::CallbackCommandDelete(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj != nullptr)
@@ -286,7 +289,7 @@ int LuaRunner::CallbackCommandDelete(lua_State* lua)
 	return 0;
 }
 
-int LuaRunner::CallbackCommandToString(lua_State* lua)
+int Runner::CallbackCommandToString(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj == nullptr || cmdObj->cmd == nullptr)
@@ -313,22 +316,22 @@ int LuaRunner::CallbackCommandToString(lua_State* lua)
 	return 1;
 }
 
-int LuaRunner::CallbackCommandInvoke(lua_State* lua)
+int Runner::CallbackCommandInvoke(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackCommandInvokeImpl, lua);
+	return CallLuaImpl(&Runner::CallbackCommandInvokeImpl, lua);
 }
 
-int LuaRunner::CallbackCommandGet(lua_State* lua)
+int Runner::CallbackCommandGet(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackCommandGetImpl, lua);
+	return CallLuaImpl(&Runner::CallbackCommandGetImpl, lua);
 }
 
-int LuaRunner::CallbackCommandSet(lua_State* lua)
+int Runner::CallbackCommandSet(lua_State* lua)
 {
-	return CallLuaImpl(&LuaRunner::CallbackCommandSetImpl, lua);
+	return CallLuaImpl(&Runner::CallbackCommandSetImpl, lua);
 }
 
-bool LuaRunner::AssertStateReady()
+bool Runner::AssertStateReady()
 {
 	if (!m_state)
 	{
@@ -338,7 +341,7 @@ bool LuaRunner::AssertStateReady()
 	return true;
 }
 
-bool LuaRunner::RegisterLogFunctions()
+bool Runner::RegisterLogFunctions()
 {
 	if (!AssertStateReady()) return false;
 
@@ -347,11 +350,11 @@ bool LuaRunner::RegisterLogFunctions()
 	// This would be for overwriting a function in an existing table
 	// lua_getglobal(m_state.get(), "io"); // Get the global 'io' table
 
-	lua_pushcfunction(m_state.get(), &LuaRunner::CallbackLogWrite);		// Push your custom function
+	lua_pushcfunction(m_state.get(), &Runner::CallbackLogWrite);		// Push your custom function
 	lua_setfield(m_state.get(), -2, "write");			// Assign it to the 'write' field in the io table, and pops from stack
-	lua_pushcfunction(m_state.get(), &LuaRunner::CallbackLogWarn);		// Push your custom function
+	lua_pushcfunction(m_state.get(), &Runner::CallbackLogWarn);		// Push your custom function
 	lua_setfield(m_state.get(), -2, "warn");			// Assign it to the 'write' field in the io table, and pops from stack
-	lua_pushcfunction(m_state.get(), &LuaRunner::CallbackLogError);		// Push your custom function
+	lua_pushcfunction(m_state.get(), &Runner::CallbackLogError);		// Push your custom function
 	lua_setfield(m_state.get(), -2, "error");			// Assign it to the 'write' field in the io table, and pops from stack
 	lua_setglobal(m_state.get(), "log"); // sets global chost = table, and pops table from stack
 
@@ -360,7 +363,7 @@ bool LuaRunner::RegisterLogFunctions()
 	return true;
 }
 
-int LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
+int Runner::CallbackLogImpl(lua_State* lua, uint32_t flags)
 {
 	int nargs = lua_gettop(lua);
 	for (int i = 1; i <= nargs; i++)
@@ -377,7 +380,7 @@ int LuaRunner::CallbackLogImpl(lua_State* lua, uint32_t flags)
 	return 0;
 }
 
-int LuaRunner::CallbackCreateCommandImpl(lua_State* lua)
+int Runner::CallbackCreateCommandImpl(lua_State* lua)
 {
 	int nargs = lua_gettop(lua);
 	if (nargs != 1)
@@ -414,7 +417,7 @@ int LuaRunner::CallbackCreateCommandImpl(lua_State* lua)
 	return 1; // cmdObj is on stack
 }
 
-int LuaRunner::CallbackCommandInvokeImpl(lua_State* lua)
+int Runner::CallbackCommandInvokeImpl(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj == nullptr || cmdObj->cmd == nullptr)
@@ -447,7 +450,7 @@ int LuaRunner::CallbackCommandInvokeImpl(lua_State* lua)
 	return 0;
 }
 
-int LuaRunner::CallbackCommandGetImpl(lua_State* lua)
+int Runner::CallbackCommandGetImpl(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj == nullptr || cmdObj->cmd == nullptr) return 0;
@@ -466,8 +469,6 @@ int LuaRunner::CallbackCommandGetImpl(lua_State* lua)
 
 	size_t len;
 	std::string name = luaL_tolstring(lua, 2, &len); // copy type string
-
-	// lua_pop(lua, 2); // remove args and obj from stack
 
 	std::shared_ptr<ParameterBinding::ParamBindingBase> param = cmdObj->cmd->GetParam(name);
 	if (!param)
@@ -499,7 +500,7 @@ int LuaRunner::CallbackCommandGetImpl(lua_State* lua)
 	return 1;
 }
 
-int LuaRunner::CallbackCommandSetImpl(lua_State* lua)
+int Runner::CallbackCommandSetImpl(lua_State* lua)
 {
 	CommandObject* cmdObj = GetCommandObject(lua);
 	if (cmdObj == nullptr || cmdObj->cmd == nullptr) return 0;

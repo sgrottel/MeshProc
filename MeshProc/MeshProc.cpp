@@ -2,7 +2,7 @@
 #include "CommandFactory.h"
 #include "CommandRegistration.h"
 #include "DevPlayground.h"
-#include "LuaRunner.h"
+#include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -36,7 +36,7 @@ int wmain(int argc, wchar_t **argv)
 	{
 	case CliCommand::RunScript:
 	{
-		meshproc::LuaRunner lua{ log, cmdFactory };
+		meshproc::lua::Runner lua{ log, cmdFactory };
 		if (!lua.Init()) break;
 		if (!lua.RegisterCommands()) break;
 
