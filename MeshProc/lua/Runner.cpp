@@ -186,6 +186,26 @@ bool Runner::RegisterCommands()
 
 	lua_setglobal(m_state.get(), "meshproc");
 
+	for (const std::string& name : m_factory.GetAllNames())
+	{
+		std::string func = "meshproc." + name + " = meshproc." + name + " or {}\n"
+			+ "function meshproc." + name + ".new()\n"
+			+ "  return meshproc._createCommand(\"" + name + "\")\n"
+			+ "end";
+		if (auto dotPos = std::find(name.begin(), name.end(), '.'); dotPos != name.end())
+		{
+			const std::string gn = "meshproc." + name.substr(0, std::distance(name.begin(), dotPos));
+			func = gn + " = " + gn + " or {}\n" + func;
+		}
+
+		if (luaL_dostring(m_state.get(), func.c_str()) != LUA_OK)
+		{
+			const char* errormsg = lua_tostring(m_state.get(), -1);
+			m_log.Error("Failed to define lua function \"meshproc.%s\": %s", name.c_str(), errormsg);
+			lua_pop(m_state.get(), 1);
+		}
+	}
+
 	return true;
 }
 

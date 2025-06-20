@@ -28,6 +28,8 @@ namespace meshproc
 
 		const char* FindName(const class AbstractCommand* cmd) const;
 
+		std::vector<std::string> GetAllNames() const;
+
 	private:
 		class CommandTemplateBase
 		{

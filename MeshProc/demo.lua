@@ -2,7 +2,7 @@ log.write("Test script")
 
 log.warn("破滅");
 
-cube = meshproc._createCommand("generator.Cube");
+cube = meshproc.generator.Cube.new()
 
 log.write("cube.x = " .. cube:get("SizeX"))
 log.write("cube.y = " .. cube:get("SizeY"))
@@ -11,7 +11,7 @@ log.write("cube.z = " .. cube:get("SizeZ"))
 
 --log.write("cube.invalid = " .. cube:get("invalid"))
 
-cube:set("SizeX", 4);
+cube:set("SizeX", 4)
 log.write("cube.x = " .. cube:get("SizeX"))
 
 if cube:invoke() then
@@ -20,8 +20,8 @@ else
 	log.error("Cube failed")
 end
 
-ply = meshproc._createCommand("io.PlyWriter");
-ply:set("Path", "out.ply");
+ply = meshproc.io.PlyWriter.new()
+ply:set("Path", "out.ply")
 log.write("ply.path = " .. ply:get("Path"))
 
 --log.write("cube.mesh = " .. cube:get("Mesh"))

@@ -51,6 +51,17 @@ const char* CommandFactory::FindName(const class AbstractCommand* cmd) const
 	return nullptr;
 }
 
+std::vector<std::string> CommandFactory::GetAllNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(m_commandTemplates.size());
+	for (auto const& ct : m_commandTemplates)
+	{
+		names.push_back(ct.first);
+	}
+	return names;
+}
+
 void CommandFactory::Log(const char* msg, const char* a)
 {
 	m_log.Error(msg, a);
