@@ -26,8 +26,6 @@ namespace meshproc
 
 		std::shared_ptr<class AbstractCommand> Instantiate(const std::string& name, const sgrottel::ISimpleLog& log) const;
 
-		const char* FindName(const class AbstractCommand* cmd) const;
-
 		std::vector<std::string> GetAllNames() const;
 
 	private:
@@ -37,8 +35,6 @@ namespace meshproc
 			virtual ~CommandTemplateBase() = default;
 
 			virtual std::shared_ptr<class AbstractCommand> Instantiate(const sgrottel::ISimpleLog& log) = 0;
-
-			virtual bool IsTypeOf(const class AbstractCommand* cmd) const = 0;
 
 		protected:
 			CommandTemplateBase() = default;
@@ -53,11 +49,6 @@ namespace meshproc
 			std::shared_ptr<class AbstractCommand> Instantiate(const sgrottel::ISimpleLog& log) override
 			{
 				return std::make_shared<TCMD>(log);
-			}
-
-			bool IsTypeOf(const class AbstractCommand* cmd) const override
-			{
-				return dynamic_cast<const TCMD*>(cmd) != nullptr;
 			}
 		};
 

@@ -153,6 +153,24 @@
     <ClCompile Include="lua\Runner.cpp">
       <Filter>lua\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\LogFunctions.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\CommandType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\CommandCreator.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\MeshType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\AbstractType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\SceneType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -247,6 +265,24 @@
       <Filter>utilities\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lua\Runner.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\LogFunctions.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\CommandType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\CommandCreator.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\MeshType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\AbstractType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\SceneType.h">
       <Filter>lua\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

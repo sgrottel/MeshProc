@@ -30,6 +30,14 @@ namespace meshproc
 			return m_paramsRefs.GetParam(name);
 		}
 
+		inline const std::string& TypeName() const
+		{
+			return m_typeName;
+		}
+
+		// only to be called from within CommandFactory
+		void InitTypeName(std::string const& name);
+
 	protected:
 
 		// To be called during Ctor to register all parameter object available to the framework
@@ -65,6 +73,7 @@ namespace meshproc
 		};
 
 		const sgrottel::ISimpleLog& m_log;
+		std::string m_typeName;
 		ParamBindingRefs m_paramsRefs;
 	};
 

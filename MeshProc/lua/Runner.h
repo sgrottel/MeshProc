@@ -22,6 +22,52 @@ namespace meshproc
 		class Runner
 		{
 		public:
+
+			template<typename IMPL>
+			class Component
+			{
+			public:
+				Component(Runner& owner)
+					: m_owner(owner)
+				{ }
+
+			protected:
+
+				template<typename FN, typename... ARGS>
+				static int CallLuaImpl(FN fn, lua_State* lua, ARGS... args)
+				{
+					auto that = Runner::GetThis(lua);
+					if (that == nullptr) return 0;
+					auto comp = that->GetComponent<IMPL>();
+					if (comp == nullptr) return 0;
+					return (comp->*fn)(lua, args...);
+				}
+
+				inline bool AssertStateReady() const
+				{
+					return m_owner.AssertStateReady();
+				}
+
+				inline lua_State* lua() const
+				{
+					return m_owner.m_state.get();
+				}
+
+				inline sgrottel::ISimpleLog& Log() const
+				{
+					return m_owner.m_log;
+				}
+
+				template<typename T>
+				T* GetComponent() const
+				{
+					return m_owner.GetComponent<T>();
+				}
+
+			private:
+				Runner& m_owner;
+			};
+
 			Runner(sgrottel::ISimpleLog& log, CommandFactory& factory);
 
 			bool RegisterCommands();
@@ -31,32 +77,17 @@ namespace meshproc
 			bool RunScript();
 
 		private:
+			class Components;
+
 			static Runner* GetThis(lua_State* lua);
-			template<typename FN, typename... ARGS>
-			static int CallLuaImpl(FN fn, lua_State* lua, ARGS... args);
-
-			static int CallbackLogWrite(lua_State* lua);
-			static int CallbackLogWarn(lua_State* lua);
-			static int CallbackLogError(lua_State* lua);
-
-			static int CallbackCreateCommand(lua_State* lua);
-			static int CallbackCommandDelete(lua_State* lua);
-			static int CallbackCommandToString(lua_State* lua);
-			static int CallbackCommandInvoke(lua_State* lua);
-			static int CallbackCommandGet(lua_State* lua);
-			static int CallbackCommandSet(lua_State* lua);
-
+			template<typename T>
+			T* GetComponent() const;
 			bool AssertStateReady();
-			bool RegisterLogFunctions();
-			int CallbackLogImpl(lua_State* lua, uint32_t flags);
-			int CallbackCreateCommandImpl(lua_State* lua);
-			int CallbackCommandInvokeImpl(lua_State* lua);
-			int CallbackCommandGetImpl(lua_State* lua);
-			int CallbackCommandSetImpl(lua_State* lua);
 
 			sgrottel::ISimpleLog& m_log;
-			CommandFactory& m_factory;
 			std::shared_ptr<lua_State> m_state;
+			std::shared_ptr<Components> m_components;
 		};
+
 	}
 }

@@ -17,6 +17,19 @@ void AbstractCommand::LogInfo(const sgrottel::ISimpleLog& log, bool verbose) con
 	m_paramsRefs.LogInfo(log, verbose);
 }
 
+void AbstractCommand::InitTypeName(std::string const& name)
+{
+	if (m_typeName.empty())
+	{
+		m_typeName = name;
+	}
+	else
+	{
+		m_log.Critical("AbstractCommand::InitTypeName must only be called once");
+		exit(-1);
+	}
+}
+
 void AbstractCommand::ParamBindingRefs::LogInfo(const sgrottel::ISimpleLog& log, bool verbose) const
 {
 	if (!verbose)
