@@ -4,7 +4,10 @@
 #include "CommandType.h"
 #include "LogFunctions.h"
 #include "MeshType.h"
+#include "MultiMeshType.h"
+#include "MultiVertexSelectionType.h"
 #include "SceneType.h"
+#include "VertexSelectionType.h"
 
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
@@ -32,7 +35,10 @@ public:
 		, m_commandType{ owner }
 		, m_logFunctions{ owner }
 		, m_meshType{ owner }
+		, m_multiMeshType{ owner }
+		, m_multiVertexSelectionType{ owner }
 		, m_sceneType{ owner }
+		, m_vertexSelectionType{ owner }
 	{ }
 
 	bool Init();
@@ -41,7 +47,10 @@ public:
 	CommandType m_commandType;
 	LogFunctions m_logFunctions;
 	MeshType m_meshType;
+	MultiMeshType m_multiMeshType;
+	MultiVertexSelectionType m_multiVertexSelectionType;
 	SceneType m_sceneType;
+	VertexSelectionType m_vertexSelectionType;
 };
 
 bool Runner::Components::Init()
@@ -49,7 +58,10 @@ bool Runner::Components::Init()
 	if (!m_logFunctions.Init()) return false;
 	if (!m_commandType.Init()) return false;
 	if (!m_meshType.Init()) return false;
+	if (!m_multiMeshType.Init()) return false;
+	if (!m_multiVertexSelectionType.Init()) return false;
 	if (!m_sceneType.Init()) return false;
+	if (!m_vertexSelectionType.Init()) return false;
 	return true;
 }
 
@@ -65,7 +77,10 @@ IMPL_RUNNER_GET_COMPONENT(CommandCreator, m_commandCreator)
 IMPL_RUNNER_GET_COMPONENT(CommandType, m_commandType)
 IMPL_RUNNER_GET_COMPONENT(LogFunctions, m_logFunctions)
 IMPL_RUNNER_GET_COMPONENT(MeshType, m_meshType)
+IMPL_RUNNER_GET_COMPONENT(MultiMeshType, m_multiMeshType)
+IMPL_RUNNER_GET_COMPONENT(MultiVertexSelectionType, m_multiVertexSelectionType)
 IMPL_RUNNER_GET_COMPONENT(SceneType, m_sceneType)
+IMPL_RUNNER_GET_COMPONENT(VertexSelectionType, m_vertexSelectionType)
 
 Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
 	: m_log{ log }

@@ -1,7 +1,10 @@
 #include "CommandType.h"
 
 #include "MeshType.h"
+#include "MultiMeshType.h"
+#include "MultiVertexSelectionType.h"
 #include "SceneType.h"
+#include "VertexSelectionType.h"
 
 #include "AbstractCommand.h"
 #include "utilities/StringUtilities.h"
@@ -83,16 +86,16 @@ namespace
 		}
 	};
 
-	template<>
-	struct LuaParamMapping<ParamType::Mesh>
+	template<typename WRAPPEDTYPE, typename NATIVETYPE>
+	struct LuaWrappedParamMapping
 	{
-		static void PushVal(lua_State* lua, const std::shared_ptr<data::Mesh>& v)
+		static void PushVal(lua_State* lua, const std::shared_ptr<NATIVETYPE>& v)
 		{
-			MeshType::LuaPush(lua, v);
+			WRAPPEDTYPE::LuaPush(lua, v);
 		}
-		static bool SetVal(lua_State* lua, std::shared_ptr<data::Mesh>& tar)
+		static bool SetVal(lua_State* lua, std::shared_ptr<NATIVETYPE>& tar)
 		{
-			auto m = MeshType::LuaGet(lua, 3);
+			auto m = WRAPPEDTYPE::LuaGet(lua, 3);
 			if (m)
 			{
 				tar = m;
@@ -103,23 +106,19 @@ namespace
 	};
 
 	template<>
-	struct LuaParamMapping<ParamType::Scene>
-	{
-		static void PushVal(lua_State* lua, const std::shared_ptr<data::Scene>& v)
-		{
-			SceneType::LuaPush(lua, v);
-		}
-		static bool SetVal(lua_State* lua, std::shared_ptr<data::Scene>& tar)
-		{
-			auto m = SceneType::LuaGet(lua, 3);
-			if (m)
-			{
-				tar = m;
-				return true;
-			}
-			return false;
-		}
-	};
+	struct LuaParamMapping<ParamType::Mesh> : LuaWrappedParamMapping<MeshType, data::Mesh> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::MultiMesh> : LuaWrappedParamMapping<MultiMeshType, std::vector<std::shared_ptr<data::Mesh>>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::VertexSelection> : LuaWrappedParamMapping<VertexSelectionType, std::vector<uint32_t>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::MultiVertexSelection> : LuaWrappedParamMapping<MultiVertexSelectionType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
 
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
@@ -266,11 +265,14 @@ int CommandType::GetImpl(lua_State* lua)
 		//	Mat4, ==> Look at library https://github.com/xyz-ai-dev/xyz_math
 	case ParamType::Mesh:
 		return LuaTryPushVal<ParamType::Mesh>(lua, param, Log());
-		//	MultiMesh,
+	case ParamType::MultiMesh:
+		return LuaTryPushVal<ParamType::MultiMesh>(lua, param, Log());
 	case ParamType::Scene:
 		return LuaTryPushVal<ParamType::Scene>(lua, param, Log());
-		//	VertexSelection, // e.g. also edges/loops
-		//	MultiVertexSelection,
+	case ParamType::VertexSelection:
+		return LuaTryPushVal<ParamType::VertexSelection>(lua, param, Log());
+	case ParamType::MultiVertexSelection:
+		return LuaTryPushVal<ParamType::MultiVertexSelection>(lua, param, Log());
 	default:
 		Log().Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
 		return 0;
@@ -330,12 +332,18 @@ int CommandType::SetImpl(lua_State* lua)
 	case ParamType::Mesh:
 		LuaTrySetVal<ParamType::Mesh>(lua, param, Log());
 		break;
-		//	MultiMesh,
+	case ParamType::MultiMesh:
+		LuaTrySetVal<ParamType::MultiMesh>(lua, param, Log());
+		break;
 	case ParamType::Scene:
 		LuaTrySetVal<ParamType::Scene>(lua, param, Log());
 		break;
-		//	VertexSelection, // e.g. also edges/loops
-		//	MultiVertexSelection,
+	case ParamType::VertexSelection:
+		LuaTrySetVal<ParamType::VertexSelection>(lua, param, Log());
+		break;
+	case ParamType::MultiVertexSelection:
+		LuaTrySetVal<ParamType::MultiVertexSelection>(lua, param, Log());
+		break;
 	default:
 		Log().Error("Setting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
 		return 0;
