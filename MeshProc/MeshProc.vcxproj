@@ -173,6 +173,10 @@
     <ClInclude Include="SelectBottomTriangles.h" />
     <ClInclude Include="SelectVertexSelection.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
+    <ClInclude Include="VersionInfo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VersionInfo.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

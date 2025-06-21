@@ -309,5 +309,13 @@
     <ClInclude Include="lua\MultiVertexSelectionType.h">
       <Filter>lua\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VersionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VersionInfo.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
