@@ -130,6 +130,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
+    <None Include="lua\xyz_math\README.md" />
+    <None Include="lua\xyz_math\xyz_math.lua" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +162,7 @@
     <ClInclude Include="lua\CommandCreator.h" />
     <ClInclude Include="lua\CommandType.h" />
     <ClInclude Include="lua\LogFunctions.h" />
+    <ClInclude Include="lua\LuaResources.h" />
     <ClInclude Include="lua\MeshType.h" />
     <ClInclude Include="lua\MultiMeshType.h" />
     <ClInclude Include="lua\MultiVertexSelectionType.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="lua\LuaResources.rc" />
     <ResourceCompile Include="VersionInfo.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

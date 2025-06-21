@@ -80,9 +80,13 @@ namespace meshproc
 			class Components;
 
 			static Runner* GetThis(lua_State* lua);
+
+			static int LuaLibLoader(lua_State* lua);
+
 			template<typename T>
 			T* GetComponent() const;
 			bool AssertStateReady();
+
 
 			sgrottel::ISimpleLog& m_log;
 			std::shared_ptr<lua_State> m_state;

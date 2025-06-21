@@ -1,3 +1,5 @@
+local xyz_math = require("xyz_math")
+
 log.write("Test script")
 
 log.warn("破滅");
@@ -25,6 +27,16 @@ log.write("mesh = " .. tostring(cube:get("Mesh")))
 
 place = meshproc.PlaceMesh.new()
 place:set("Mesh", cube:get("Mesh"))
+place:invoke()
+
+local mat = XMat4.translate(0, 0, 2) * XMat4.rotation_z(math.pi/4) * XMat4.scale(1, 2, 1)
+
+place:set("Mat", mat)
+place:invoke()
+
+local muc = place:get("Mat") * XMat4.translate(5, 0, 0);
+
+place:set("Mat", muc)
 place:invoke()
 
 ply = meshproc.io.PlyWriter.new()

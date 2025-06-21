@@ -58,6 +58,12 @@
     <Filter Include="lua\Source Files">
       <UniqueIdentifier>{850a899b-7e12-417b-8a05-b68b0820cb3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua\xyz_math">
+      <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Resource Files">
+      <UniqueIdentifier>{bca1de8b-64cd-4c2c-bdc6-966fa2bd4586}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -187,6 +193,12 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="demo.lua" />
+    <None Include="lua\xyz_math\xyz_math.lua">
+      <Filter>lua\xyz_math</Filter>
+    </None>
+    <None Include="lua\xyz_math\README.md">
+      <Filter>lua\xyz_math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
@@ -312,8 +324,14 @@
     <ClInclude Include="VersionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lua\LuaResources.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="lua\LuaResources.rc">
+      <Filter>lua\Resource Files</Filter>
+    </ResourceCompile>
     <ResourceCompile Include="VersionInfo.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>

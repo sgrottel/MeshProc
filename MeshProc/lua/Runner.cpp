@@ -3,6 +3,7 @@
 #include "CommandCreator.h"
 #include "CommandType.h"
 #include "LogFunctions.h"
+#include "LuaResources.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
 #include "MultiVertexSelectionType.h"
@@ -104,8 +105,17 @@ bool Runner::Init()
 	lua_pushlightuserdata(m_state.get(), reinterpret_cast<void*>(this));
 	lua_settable(m_state.get(), LUA_REGISTRYINDEX);
 
+	// load default libs
 	luaL_openlibs(m_state.get());
 
+	// register lib-loader callback function for embedded libs
+	lua_getglobal(m_state.get(), "package");
+	lua_getfield(m_state.get(), -1, "searchers");
+	lua_pushcfunction(m_state.get(), &Runner::LuaLibLoader);
+	lua_rawseti(m_state.get(), -2, luaL_len(m_state.get(), -2) + 1);
+	lua_pop(m_state.get(), 2);
+
+	// initialize components
 	if (!m_components) return false;
 	if (!m_components->Init()) return false;
 
@@ -179,6 +189,65 @@ Runner* Runner::GetThis(lua_State* lua)
 	{
 	}
 	return nullptr;
+}
+
+int Runner::LuaLibLoader(lua_State* lua)
+{
+	const char* module_name = luaL_checkstring(lua, 1);
+
+	if (strcmp(module_name, "xyz_math") == 0)
+	{
+		HRSRC res = FindResourceW(nullptr, MAKEINTRESOURCE(LUA_LIB_XYZ_MATH), RT_RCDATA);
+		if (res == nullptr)
+		{
+			return 0;
+		}
+
+		HGLOBAL resHandle = LoadResource(nullptr, res);
+		if (resHandle == nullptr)
+		{
+			return 0;
+		}
+
+		void* data = LockResource(resHandle);
+		if (data == nullptr)
+		{
+			return 0;
+		}
+
+		DWORD size = SizeofResource(nullptr, res);
+		if (size == 0)
+		{
+			return 0;
+		}
+
+		std::string libData{ static_cast<const char*>(data), size };
+
+		const std::string wrong = "XMat4.new(unpack(c))";
+		const std::string fix = "XMat4.new(table.unpack(c))";
+		size_t start_pos = 0;
+		while ((start_pos = libData.find(wrong, start_pos)) != std::string::npos) {
+			libData.replace(start_pos, wrong.length(), fix);
+			start_pos += fix.length();
+		}
+
+		libData += R"(
+debug.getregistry()["XVec2_mt"] = getmetatable(XVec2.new())
+debug.getregistry()["XVec3_mt"] = getmetatable(XVec3.new())
+debug.getregistry()["XVec4_mt"] = getmetatable(XVec4.new())
+debug.getregistry()["XMat3_mt"] = getmetatable(XMat3.new())
+debug.getregistry()["XMat4_mt"] = getmetatable(XMat4.new())
+)";
+		if (luaL_loadbuffer(lua, libData.c_str(), libData.size(), "lib") != LUA_OK)
+		{
+			// signal error instead of returning lib init function
+			lua_pushstring(lua, lua_tostring(lua, -1));
+		}
+
+		return 1;
+	}
+
+	return 0; // Let Lua continue trying other searchers
 }
 
 bool Runner::AssertStateReady()
