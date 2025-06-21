@@ -45,3 +45,30 @@ ply:set("Scene", place:get("Scene"))
 log.write("ply.path = " .. tostring(ply:get("Path")))
 ply:invoke()
 
+local close = meshproc.CloseLoopWithPin.new()
+
+local vec = XVec3(2, 2, 4)
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec3(1, 2, 3))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec2(4, 5))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(7, 8, 9, 0))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(10, 11, 12, 1))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(8, 4, 6, 2))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))

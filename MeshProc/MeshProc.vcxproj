@@ -113,6 +113,7 @@
     <ClCompile Include="lua\CommandCreator.cpp" />
     <ClCompile Include="lua\CommandType.cpp" />
     <ClCompile Include="lua\LogFunctions.cpp" />
+    <ClCompile Include="lua\LuaUtilities.cpp" />
     <ClCompile Include="lua\MeshType.cpp" />
     <ClCompile Include="lua\MultiMeshType.cpp" />
     <ClCompile Include="lua\MultiVertexSelectionType.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="lua\CommandType.h" />
     <ClInclude Include="lua\LogFunctions.h" />
     <ClInclude Include="lua\LuaResources.h" />
+    <ClInclude Include="lua\LuaUtilities.h" />
     <ClInclude Include="lua\MeshType.h" />
     <ClInclude Include="lua\MultiMeshType.h" />
     <ClInclude Include="lua\MultiVertexSelectionType.h" />

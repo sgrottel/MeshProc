@@ -232,9 +232,9 @@ int Runner::LuaLibLoader(lua_State* lua)
 		}
 
 		libData += R"(
-debug.getregistry()["XVec2_mt"] = getmetatable(XVec2.new())
-debug.getregistry()["XVec3_mt"] = getmetatable(XVec3.new())
-debug.getregistry()["XVec4_mt"] = getmetatable(XVec4.new())
+debug.getregistry()["XVec2_mt"] = getmetatable(XVec2(0, 0))
+debug.getregistry()["XVec3_mt"] = getmetatable(XVec3(0, 0, 0))
+debug.getregistry()["XVec4_mt"] = getmetatable(XVec4(0, 0, 0, 1))
 debug.getregistry()["XMat3_mt"] = getmetatable(XMat3.new())
 debug.getregistry()["XMat4_mt"] = getmetatable(XMat4.new())
 )";

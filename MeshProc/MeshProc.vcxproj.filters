@@ -189,6 +189,9 @@
     <ClCompile Include="lua\MultiVertexSelectionType.cpp">
       <Filter>lua\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\LuaUtilities.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -325,6 +328,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lua\LuaResources.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\LuaUtilities.h">
       <Filter>lua\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "CommandType.h"
 
+#include "LuaUtilities.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
 #include "MultiVertexSelectionType.h"
@@ -204,6 +205,113 @@ namespace
 		}
 	};
 
+	template<>
+	struct LuaParamMapping<ParamType::Vec3>
+	{
+		static void PushVal(lua_State* lua, const glm::vec3& v)
+		{
+			lua_createtable(lua, 0, 3); // Preallocate array part
+			lua_pushnumber(lua, v.x);
+			lua_setfield(lua, -2, "x");
+			lua_pushnumber(lua, v.y);
+			lua_setfield(lua, -2, "y");
+			lua_pushnumber(lua, v.z);
+			lua_setfield(lua, -2, "z");
+
+			// Step 2: Set the XVec3 metatable
+			lua_getfield(lua, LUA_REGISTRYINDEX, "XVec3_mt");
+			if (!lua_istable(lua, -1)) {
+				lua_pop(lua, 2); // cleanup table and non-table
+				luaL_error(lua, "XVec3_mt not found in registry. Is xyz_math loaded?");
+				return;
+			}
+			lua_setmetatable(lua, -2); // Set metatable on the matrix table
+		}
+
+		static bool SetVal(lua_State* lua, glm::vec3& tar)
+		{
+			luaL_checktype(lua, 3, LUA_TTABLE);
+			int checkVecType = 0;
+			do {
+				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec3_mt");  // Push expected metatable
+				if (!lua_getmetatable(lua, 3)) {
+					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
+				}
+				if (lua_rawequal(lua, -1, -2))
+				{
+					checkVecType = 3;
+					break;
+				}
+				lua_pop(lua, 2);
+
+				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec2_mt");  // Push expected metatable
+				if (!lua_getmetatable(lua, 3)) {
+					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
+				}
+				if (lua_rawequal(lua, -1, -2))
+				{
+					checkVecType = 2;
+					break;
+				}
+				lua_pop(lua, 2);
+
+				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec4_mt");  // Push expected metatable
+				if (!lua_getmetatable(lua, 3)) {
+					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
+				}
+				if (lua_rawequal(lua, -1, -2))
+				{
+					checkVecType = 4;
+				}
+			} while (false);
+			lua_pop(lua, 2);
+			if (checkVecType == 0)
+			{
+				return luaL_error(lua, "Expected XVec3, but argument has unknown metatable");
+			}
+
+			float x, y, z{ 0.0f };
+
+			lua_getfield(lua, 3, "x");
+			x = (float)luaL_checknumber(lua, -1);
+			lua_pop(lua, 1);
+
+			lua_getfield(lua, 3, "y");
+			y = (float)luaL_checknumber(lua, -1);
+			lua_pop(lua, 1);
+
+			if (checkVecType > 2)
+			{
+				lua_getfield(lua, 3, "z");
+				z = (float)luaL_checknumber(lua, -1);
+				lua_pop(lua, 1);
+			}
+
+			if (checkVecType == 4)
+			{
+				lua_getfield(lua, 3, "w");
+				float w = (float)luaL_checknumber(lua, -1);
+				lua_pop(lua, 1);
+
+				if (std::abs(w) < 0.00001f || std::abs(w - 1.0) < 0.00001f)
+				{
+					// 'w' is either zero or one -> ignore w
+				}
+				else
+				{
+					// 'w' is a number, do perspective divide
+					x /= w;
+					y /= w;
+					z /= w;
+				}
+			}
+
+			tar = glm::vec3{ x, y, z };
+
+			return true;
+		}
+	};
+
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
 	{
@@ -345,7 +453,8 @@ int CommandType::GetImpl(lua_State* lua)
 		return LuaTryPushVal<ParamType::Float>(lua, param, Log());
 	case ParamType::String:
 		return LuaTryPushVal<ParamType::String>(lua, param, Log());
-		//	Vec3, ==> Look at library https://github.com/xyz-ai-dev/xyz_math
+	case ParamType::Vec3:
+		return LuaTryPushVal<ParamType::Vec3>(lua, param, Log());
 	case ParamType::Mat4:
 		return LuaTryPushVal<ParamType::Mat4>(lua, param, Log());
 	case ParamType::Mesh:
@@ -412,7 +521,9 @@ int CommandType::SetImpl(lua_State* lua)
 	case ParamType::String:
 		LuaTrySetVal<ParamType::String>(lua, param, Log());
 		break;
-		//	Vec3, ==> Look at library https://github.com/xyz-ai-dev/xyz_math
+	case ParamType::Vec3:
+		LuaTrySetVal<ParamType::Vec3>(lua, param, Log());
+		break;
 	case ParamType::Mat4:
 		LuaTrySetVal<ParamType::Mat4>(lua, param, Log());
 		break;
