@@ -16,8 +16,6 @@ namespace sgrottel
 
 namespace meshproc
 {
-	class ParameterValue;
-
 	class AbstractCommand
 	{
 	public:
@@ -27,21 +25,18 @@ namespace meshproc
 
 		void LogInfo(const sgrottel::ISimpleLog& log, bool verbose) const;
 
-		inline ParamType GetParamType(const std::string& name) const
+		inline std::shared_ptr<ParameterBinding::ParamBindingBase> GetParam(const std::string& name) const
 		{
-			auto p = m_paramsRefs.GetParam(name);
-			return p ? p->m_type : ParamType::LAST;
+			return m_paramsRefs.GetParam(name);
 		}
 
-		inline ParamMode GetParamMode(const std::string& name) const
+		inline const std::string& TypeName() const
 		{
-			auto p = m_paramsRefs.GetParam(name);
-			return p ? p->m_mode : ParamMode::LAST;
+			return m_typeName;
 		}
 
-		bool PullParamValue(ParameterValue& target, const std::string& name) const;
-
-		bool PushParamValue(const std::string& name, const ParameterValue& source);
+		// only to be called from within CommandFactory
+		void InitTypeName(std::string const& name);
 
 	protected:
 
@@ -78,6 +73,7 @@ namespace meshproc
 		};
 
 		const sgrottel::ISimpleLog& m_log;
+		std::string m_typeName;
 		ParamBindingRefs m_paramsRefs;
 	};
 

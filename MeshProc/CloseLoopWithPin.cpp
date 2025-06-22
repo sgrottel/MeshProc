@@ -8,6 +8,7 @@ CloseLoopWithPin::CloseLoopWithPin(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::InOut, ParamType::Vec3>("PinOffset", m_offset);
 	AddParamBinding<ParamMode::In, ParamType::VertexSelection>("Loop", m_loop);
 	AddParamBinding<ParamMode::Out, ParamType::UInt32>("NewVertexIndex", m_newVertexIndex);
 }
@@ -33,6 +34,8 @@ bool CloseLoopWithPin::Invoke()
 		center += m_mesh->vertices[i];
 	}
 	center /= m_loop->size();
+
+	center += m_offset;
 
 	uint32_t vi1 = m_loop->at(0);
 	uint32_t vi2 = m_loop->at(1);

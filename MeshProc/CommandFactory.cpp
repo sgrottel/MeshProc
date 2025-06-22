@@ -36,7 +36,20 @@ std::shared_ptr<class AbstractCommand> CommandFactory::Instantiate(const std::st
 		m_log.Error("Unable to instantiate command \"%s\": not found", name.c_str());
 		return nullptr;
 	}
-	return t->second->Instantiate(log);
+	std::shared_ptr<class AbstractCommand> cmd = t->second->Instantiate(log);
+	cmd->InitTypeName(t->first);
+	return cmd;
+}
+
+std::vector<std::string> CommandFactory::GetAllNames() const
+{
+	std::vector<std::string> names;
+	names.reserve(m_commandTemplates.size());
+	for (auto const& ct : m_commandTemplates)
+	{
+		names.push_back(ct.first);
+	}
+	return names;
 }
 
 void CommandFactory::Log(const char* msg, const char* a)

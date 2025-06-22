@@ -63,7 +63,9 @@ bool PlyWriter::Invoke()
 	{
 		for (auto const& vertex : mesh.first->vertices)
 		{
-			fwrite(glm::value_ptr(vertex), 4, 3, file);
+			glm::vec4 v = mesh.second * glm::vec4{ vertex, 1.0f };
+			v *= 1.0f / v.w;
+			fwrite(glm::value_ptr(v), 4, 3, file);
 		}
 	}
 

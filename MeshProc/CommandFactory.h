@@ -26,6 +26,8 @@ namespace meshproc
 
 		std::shared_ptr<class AbstractCommand> Instantiate(const std::string& name, const sgrottel::ISimpleLog& log) const;
 
+		std::vector<std::string> GetAllNames() const;
+
 	private:
 		class CommandTemplateBase
 		{

@@ -23,6 +23,23 @@ namespace meshproc
 			}
 		};
 
+		template<ParamType PT>
+		static const ParamTypeInfo_t<PT>* GetValueSource(const ParamBindingBase* binding)
+		{
+			if (auto o = dynamic_cast<const ParamBinding<ParamMode::In, PT>*>(binding); o != nullptr) return &o->m_var;
+			if (auto o = dynamic_cast<const ParamBinding<ParamMode::InOut, PT>*>(binding); o != nullptr) return &o->m_var;
+			if (auto o = dynamic_cast<const ParamBinding<ParamMode::Out, PT>*>(binding); o != nullptr) return &o->m_var;
+			return nullptr;
+		}
+
+		template<ParamType PT>
+		static ParamTypeInfo_t<PT>* GetValueTarget(const ParamBindingBase* binding)
+		{
+			if (auto o = dynamic_cast<const ParamBinding<ParamMode::In, PT>*>(binding); o != nullptr) return &o->m_var;
+			if (auto o = dynamic_cast<const ParamBinding<ParamMode::InOut, PT>*>(binding); o != nullptr) return &o->m_var;
+			return nullptr;
+		}
+
 	protected:
 
 		template<ParamMode PM, ParamType PT>
@@ -56,7 +73,7 @@ namespace meshproc
 	template<ParamType PT>
 	struct ParameterBinding::ParamBinding<ParamMode::Out, PT> final : public ParamBindingBase
 	{
-		ParamTypeInfo_t<PT>& m_var;
+		const ParamTypeInfo_t<PT>& m_var;
 
 		ParamBinding(ParamTypeInfo_t<PT>& var)
 			: ParamBindingBase(ParamMode::Out, PT)

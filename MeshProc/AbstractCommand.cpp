@@ -1,7 +1,5 @@
 #include "AbstractCommand.h"
 
-#include "ParameterValue.h"
-
 #include <SimpleLog/SimpleLog.hpp>
 
 #include <stdexcept>
@@ -19,50 +17,17 @@ void AbstractCommand::LogInfo(const sgrottel::ISimpleLog& log, bool verbose) con
 	m_paramsRefs.LogInfo(log, verbose);
 }
 
-bool AbstractCommand::PullParamValue(ParameterValue& target, const std::string& name) const
+void AbstractCommand::InitTypeName(std::string const& name)
 {
-	auto p = m_paramsRefs.GetParam(name);
-	if (!p)
+	if (m_typeName.empty())
 	{
-		// not found
-		return false;
+		m_typeName = name;
 	}
-	if (p->m_mode != ParamMode::InOut && p->m_mode != ParamMode::Out)
+	else
 	{
-		// not readable
-		return false;
+		m_log.Critical("AbstractCommand::InitTypeName must only be called once");
+		exit(-1);
 	}
-
-	if (!target.Push(*p))
-	{
-		// failed to push for unknown reason
-		return false;
-	}
-
-	return true;
-}
-
-bool AbstractCommand::PushParamValue(const std::string& name, const ParameterValue& source)
-{
-	auto p = m_paramsRefs.GetParam(name);
-	if (!p)
-	{
-		// not found
-		return false;
-	}
-	if (p->m_mode != ParamMode::InOut && p->m_mode != ParamMode::In)
-	{
-		// not writable
-		return false;
-	}
-
-	if (!source.Pull(*p))
-	{
-		// failed to push for unknown reason
-		return false;
-	}
-
-	return true;
 }
 
 void AbstractCommand::ParamBindingRefs::LogInfo(const sgrottel::ISimpleLog& log, bool verbose) const

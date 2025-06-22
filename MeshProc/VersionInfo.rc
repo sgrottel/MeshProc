@@ -1,0 +1,47 @@
+
+#include <WinVer.h>
+
+#include "VersionInfo.h"
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+#error "This file can be edited in code. Do not open in Visual Studio Resource Editor."
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< This file can be edited in code. Do not open in Visual Studio Resource Editor. >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+100 ICON "..\\images\\meshproc.ico"
+
+#define _str(a) _inner_str(a)
+#define _inner_str(a) #a
+
+1 VERSIONINFO
+	FILEVERSION    MESHPROC_VER_MAJOR, MESHPROC_VER_MINOR, MESHPROC_VER_PATCH, MESHPROC_VER_BUILD
+	PRODUCTVERSION MESHPROC_VER_MAJOR, MESHPROC_VER_MINOR, MESHPROC_VER_PATCH, 0
+	FILEFLAGSMASK  VS_FFI_FILEFLAGSMASK
+	FILEFLAGS      0x0L
+	FILEOS         VOS__WINDOWS32
+	FILETYPE       VFT_APP
+	FILESUBTYPE    VFT2_UNKNOWN
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "000004b0"
+		BEGIN
+			VALUE "CompanyName", "SGrottel"
+			VALUE "FileDescription", "MeshProc - Simple Triangle Mesh Processor."
+			VALUE "FileVersion", _str(MESHPROC_VER_MAJOR.MESHPROC_VER_MINOR.MESHPROC_VER_PATCH.MESHPROC_VER_BUILD)
+			VALUE "InternalName", "MeshProc"
+			VALUE "LegalCopyright", "Copyright " MESHPROC_VER_YEARSTR ", SGrottel"
+			VALUE "OriginalFilename", "MeshProc.exe"
+			VALUE "ProductName", "MeshProc"
+			VALUE "ProductVersion", _str(MESHPROC_VER_MAJOR.MESHPROC_VER_MINOR.MESHPROC_VER_PATCH.0)
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x0, 1200
+	END
+END

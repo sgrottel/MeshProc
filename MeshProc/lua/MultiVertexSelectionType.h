@@ -1,0 +1,24 @@
+#pragma once
+
+#include "AbstractMultiType.h"
+
+#include <cstdint>
+#include <vector>
+
+namespace meshproc
+{
+	namespace lua
+	{
+		class MultiVertexSelectionType : public AbstractMultiType<std::vector<uint32_t>, MultiVertexSelectionType>
+		{
+		public:
+			static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.MultiVertexSelection";
+
+			MultiVertexSelectionType(Runner& owner)
+				: AbstractMultiType<std::vector<uint32_t>, MultiVertexSelectionType>{ owner }
+			{};
+			bool Init();
+		};
+	}
+}
+

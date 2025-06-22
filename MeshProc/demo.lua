@@ -1,0 +1,74 @@
+local xyz_math = require("xyz_math")
+
+log.write("Test script")
+
+log.warn("破滅");
+
+cube = meshproc.generator.Cube.new()
+
+log.write("cube.x = " .. tostring(cube:get("SizeX")))
+log.write("cube.y = " .. tostring(cube:get("SizeY")))
+log.write("cube.z = " .. tostring(cube:get("SizeZ")))
+log.write("mesh = " .. tostring(cube:get("Mesh")))
+
+-- Accessing a field that does not exist with stop the script with a critical error
+-- log.write("cube.invalid = " .. tostring(cube:get("invalid")))
+
+cube:set("SizeX", 4)
+log.write("cube.x = " .. tostring(cube:get("SizeX")))
+
+if cube:invoke() then
+	log.write("Cube generated")
+else
+	log.error("Cube failed")
+end
+
+log.write("mesh = " .. tostring(cube:get("Mesh")))
+
+place = meshproc.PlaceMesh.new()
+place:set("Mesh", cube:get("Mesh"))
+place:invoke()
+
+local mat = XMat4.translate(0, 0, 2) * XMat4.rotation_z(math.pi/4) * XMat4.scale(1, 2, 1)
+
+place:set("Mat", mat)
+place:invoke()
+
+local muc = place:get("Mat") * XMat4.translate(5, 0, 0);
+
+place:set("Mat", muc)
+place:invoke()
+
+ply = meshproc.io.PlyWriter.new()
+ply:set("Path", "out.ply")
+ply:set("Scene", place:get("Scene"))
+log.write("ply.path = " .. tostring(ply:get("Path")))
+ply:invoke()
+
+local close = meshproc.CloseLoopWithPin.new()
+
+local vec = XVec3(2, 2, 4)
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec3(1, 2, 3))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec2(4, 5))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(7, 8, 9, 0))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(10, 11, 12, 1))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+
+close:set("PinOffset", XVec4(8, 4, 6, 2))
+vec = close:get("PinOffset")
+log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))

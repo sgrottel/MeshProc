@@ -1,4 +1,4 @@
-# Mesh Proc™  <img src="meshproc_icon_x48.png" alt="MeshProc Icon" align="left" style="height:1.25em;margin-right:0.25em">
+# MeshProc™  <img src="images\meshproc_icon_x48.png" alt="MeshProc Icon" align="left" style="height:1.25em;margin-right:0.25em">
 Simple Triangle Mesh Processor.
 
 [![GitHub](https://img.shields.io/github/license/sgrottel/meshproc)](LICENSE)

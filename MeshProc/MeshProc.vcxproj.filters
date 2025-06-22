@@ -40,6 +40,30 @@
     <Filter Include="data\Source Files">
       <UniqueIdentifier>{4c310969-4a80-46fd-8cc3-50d1f9d6943f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{c4815f0c-f761-4dec-b074-3ec5e371375a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utilities\Header Files">
+      <UniqueIdentifier>{12b874f3-3af5-4922-848f-6b2538136a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utilities\Source Files">
+      <UniqueIdentifier>{0c836a34-7e50-4305-bfc0-923400a13301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{d96fd3ee-a82e-462a-a61c-0514440d8fb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Header Files">
+      <UniqueIdentifier>{04d2ff38-361a-410c-8ffc-33a0b4600db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Source Files">
+      <UniqueIdentifier>{850a899b-7e12-417b-8a05-b68b0820cb3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\xyz_math">
+      <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\Resource Files">
+      <UniqueIdentifier>{bca1de8b-64cd-4c2c-bdc6-966fa2bd4586}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -102,13 +126,7 @@
     <ClCompile Include="PlaceMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshProgram.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ParameterBinding.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ParameterValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CloseLoopWithPin.cpp">
@@ -135,10 +153,55 @@
     <ClCompile Include="SelectVertexSelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utilities\StringUtilities.cpp">
+      <Filter>utilities\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\Runner.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\LogFunctions.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\CommandType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\CommandCreator.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\MeshType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\AbstractType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\SceneType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\VertexSelectionType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\AbstractMultiType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\MultiMeshType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\MultiVertexSelectionType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\LuaUtilities.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="demo.yaml" />
+    <None Include="demo.lua" />
+    <None Include="lua\xyz_math\xyz_math.lua">
+      <Filter>lua\xyz_math</Filter>
+    </None>
+    <None Include="lua\xyz_math\README.md">
+      <Filter>lua\xyz_math</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
@@ -198,13 +261,7 @@
     <ClInclude Include="PlaceMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MeshProgram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParameterBinding.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ParameterValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CloseLoopWithPin.h">
@@ -231,5 +288,58 @@
     <ClInclude Include="SelectVertexSelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utilities\StringUtilities.h">
+      <Filter>utilities\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\Runner.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\LogFunctions.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\CommandType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\CommandCreator.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\MeshType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\AbstractType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\SceneType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\VertexSelectionType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\AbstractMultiType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\MultiMeshType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\MultiVertexSelectionType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\LuaResources.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\LuaUtilities.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="lua\LuaResources.rc">
+      <Filter>lua\Resource Files</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="VersionInfo.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

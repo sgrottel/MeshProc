@@ -1,8 +1,8 @@
-#include "CmdLineArgs.h"
+﻿#include "CmdLineArgs.h"
 #include "CommandFactory.h"
 #include "CommandRegistration.h"
-#include "MeshProgram.h"
 #include "DevPlayground.h"
+#include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -12,10 +12,11 @@
 #include <memory>
 #include <cwctype>
 
-using namespace meshproc;
-
 int wmain(int argc, wchar_t **argv)
 {
+	using meshproc::CmdLineArgs;
+	using meshproc::CliCommand;
+
 	sgrottel::NullLog nullLog;
 	sgrottel::EchoingSimpleLog log{ nullLog };
 
@@ -35,16 +36,16 @@ int wmain(int argc, wchar_t **argv)
 	{
 	case CliCommand::RunScript:
 	{
-		meshproc::MeshProgram prog{ log };
-		prog.Load(cmdLine.m_script, cmdFactory);
-		prog.Execution();
-	}
-	break;
+		meshproc::lua::Runner lua{ log, cmdFactory };
+		if (!lua.Init()) break;
+		if (!lua.RegisterCommands()) break;
 
-	case CliCommand::ValidateScript:
-	{
-		meshproc::MeshProgram prog{ log };
-		prog.Load(cmdLine.m_script, cmdFactory);
+		log.Detail(L"Loading Lua: %s", cmdLine.m_script.wstring().c_str());
+		if (!lua.LoadScript(cmdLine.m_script)) break;
+
+		if (!lua.RunScript()) break;
+
+		log.Message("done.");
 	}
 	break;
 
