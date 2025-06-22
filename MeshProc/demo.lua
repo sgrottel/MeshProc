@@ -24,8 +24,9 @@ shape:add(XVec2(4, 0), 2)
 
 shape:add(XVec2(3, 0.5), 3)
 shape:add(XVec2(2.5, 1), 3)
-shape:add(XVec2(3, 1.5), 3)
+-- strange order of verties on purpose to have an intersection in the loops
 shape:add(XVec2(3.5, 1), 3)
+shape:add(XVec2(3, 1.5), 3)
 
 make = meshproc.generator.LinearExtrude2DMesh.new()
 make:set("Shape2D", shape)
