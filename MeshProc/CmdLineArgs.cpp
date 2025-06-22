@@ -47,6 +47,7 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 
 	Command cmdListCmds{ L"lscmd", L"List available processor commands" };
 	cmdListCmds.AddAlias(L"listcommands");
+	cmdListCmds.SetErrorOnUnmatchedArguments(Command::OnUnmatchedArguments::NoError);
 	parser.Add(cmdListCmds);
 
 	Switch swVerbose{ L"-v", L"Verbose output" };

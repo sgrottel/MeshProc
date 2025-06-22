@@ -3,78 +3,57 @@
 #include "AbstractCommand.h"
 
 #include <stdexcept>
+#include <array>
 
 using namespace meshproc;
 
 namespace
 {
-
-	template<unsigned int VAL>
-	struct ParamTypeSelector;
-
-	template<>
-	struct ParamTypeSelector<0>
+	template<ParamType TYPE>
+	consteval const char* GetName()
 	{
-		static const char* GetName(ParamType t)
-		{
-			if (0 == static_cast<unsigned int>(t))
-			{
-				return ParamTypeInfo<static_cast<ParamType>(0)>::name;
-			}
-			return nullptr;
-		}
-	};
+		return ParamTypeInfo<TYPE>::name;
+	}
 
-	template<unsigned int VAL>
-	struct ParamTypeSelector
+	template<ParamMode MODE>
+	consteval const char* GetName()
 	{
-		static const char* GetName(ParamType t)
-		{
-			if (VAL == static_cast<unsigned int>(t))
-			{
-				return ParamTypeInfo<static_cast<ParamType>(VAL)>::name;
-			}
-			return ParamTypeSelector<VAL - 1>::GetName(t);
-		}
-	};
+		return ParamModeInfo<MODE>::name;
+	}
 
-	template<unsigned int VAL>
-	struct ParamModeSelector;
+	template <typename TENUM, size_t... Es >
+	consteval auto MakeNameTableValues(std::integer_sequence<size_t, Es...>) {
+		return std::array<const char*, sizeof...(Es)>{ GetName<static_cast<TENUM>(Es)>()... };
+	}
 
-	template<>
-	struct ParamModeSelector<0>
-	{
-		static const char* GetName(ParamMode t)
-		{
-			if (0 == static_cast<unsigned int>(t))
-			{
-				return ParamModeInfo<static_cast<ParamMode>(0)>::name;
-			}
-			return nullptr;
-		}
-	};
-
-	template<unsigned int VAL>
-	struct ParamModeSelector
-	{
-		static const char* GetName(ParamMode t)
-		{
-			if (VAL == static_cast<unsigned int>(t))
-			{
-				return ParamModeInfo<static_cast<ParamMode>(VAL)>::name;
-			}
-			return ParamModeSelector<VAL - 1>::GetName(t);
-		}
-	};
+	template <typename TENUM>
+	consteval auto MakeNameTable() {
+		auto seq = []<size_t... I>(std::index_sequence<I...>) {
+			return std::integer_sequence<size_t, static_cast<size_t>(I)...>{};
+		}(std::make_index_sequence<static_cast<size_t>(TENUM::LAST)>{});
+		return MakeNameTableValues<TENUM>(seq);
+	}
 
 }
 
 const char* meshproc::GetParamTypeName(ParamType pt)
 {
-	return ParamTypeSelector<static_cast<unsigned int>(ParamType::LAST) - 1>::GetName(pt);
+	static constexpr auto nametable = MakeNameTable<ParamType>();
+	const size_t idx = static_cast<size_t>(pt);
+	if (idx >= nametable.size())
+	{
+		return nullptr;
+	}
+	return nametable[idx];
 }
 
 const char* meshproc::GetParamModeName(ParamMode pm)
 {
-	return ParamModeSelector<static_cast<unsigned int>(ParamMode::LAST) - 1>::GetName(pm);
+	static constexpr auto nametable = MakeNameTable<ParamMode>();
+	const size_t idx = static_cast<size_t>(pm);
+	if (idx >= nametable.size())
+	{
+		return nullptr;
+	}
+	return nametable[idx];
 }
