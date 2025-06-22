@@ -1,1 +1,9 @@
 ﻿desktop.ini
+.vs
+bin
+MeshProc/obj
+*.user
+packages
+MeshProc/cube.stl
+MeshProc/out.stl
+MeshProc/out.ply

@@ -1,0 +1,9 @@
+#pragma once
+
+#define MESHPROC_VER_MAJOR 0
+#define MESHPROC_VER_MINOR 1
+#define MESHPROC_VER_PATCH 0
+#define MESHPROC_VER_BUILD 0
+
+#define MESHPROC_VER_YEARSTR "2025"
+

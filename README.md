@@ -1,4 +1,4 @@
-# Mesh Proc™  <img src="meshproc_icon_x48.png" alt="MeshProc Icon" align="left" style="height:1.25em;margin-right:0.25em">
+# MeshProc™  <img src="images\meshproc_icon_x48.png" alt="MeshProc Icon" align="left" style="height:1.25em;margin-right:0.25em">
 Simple Triangle Mesh Processor.
 
 [![GitHub](https://img.shields.io/github/license/sgrottel/meshproc)](LICENSE)
@@ -12,11 +12,22 @@ It's aiming to complement those in a greater processing pipeline.
 
 ### Senarios
 
-- load multiple meshes, place them, save one combined mesh
-- automatically remove non-manifold geometry
-- automatically close (small) holes
-- cut in holes
-- stitch mesh holes
+- Scriptable via Lua
+	- ☑ load multiple meshes, place them, save one combined mesh
+- Boolean mesh combiners:
+	- A&B union
+	- A-B subtract
+	- A^B intersection
+	- Note: only B needs to be watertight to provide a clean definition of "inside"
+- Mega-Heal: Auto cleanup of meshes with the option to force them to be watertight
+	- automatically remove non-manifold geometry
+	- automatically close (small) holes
+- Manual fixing:
+	- select open edge loops, intersection-free
+	- linear-extrude loop (including chamfer)
+	- close loop hole (non-convex, intersection-free loops) if planar, and if non-planar
+- Cookie-cutter: cut in holes, dents, add triangulation
+- Stitch/connect mesh holes
 - partially morph/blend meshes (create seamless connections) and merge meshes by re-meshing
 - free deform meshes with a tri-linear, tri-quadratic, or tri-cubic volume
 - shear and tighten meshes
