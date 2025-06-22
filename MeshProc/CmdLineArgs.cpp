@@ -39,7 +39,7 @@ bool meshproc::CmdLineArgs::Parse(sgrottel::ISimpleLog& log, int argc, wchar_t c
 	Parser parser{ L"MeshProc.exe", L"Simple Triangle Mesh Processor Command Line Utility" };
 
 	Command cmdRun{ L"run", L"Runs a Lua script" };
-	Argument argScript{ L"script", L"The input Lua script containing the processor commands to run" };
+	Argument argScript{ L"script", L"The input Lua script containing the processor commands to run (encoded as UTF8 without BOM)" };
 	Option optScriptArg{ L"-arg", L"key-value-pair", L"Specifies a script argument key-value-pair (separated by '=')" };
 	cmdRun.Add(argScript)
 		.Add(optScriptArg);

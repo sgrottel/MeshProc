@@ -12,9 +12,12 @@ It's aiming to complement those in a greater processing pipeline.
 
 ### Senarios
 
-- Scriptable, e.g. yaml
-[/] load multiple meshes, place them, save one combined mesh
-- Boolean mesh combiners: A-B subtract, A^B intersection
+- Scriptable via Lua
+	- ☑ load multiple meshes, place them, save one combined mesh
+- Boolean mesh combiners:
+	- A&B union
+	- A-B subtract
+	- A^B intersection
 	- Note: only B needs to be watertight to provide a clean definition of "inside"
 - Mega-Heal: Auto cleanup of meshes with the option to force them to be watertight
 	- automatically remove non-manifold geometry
