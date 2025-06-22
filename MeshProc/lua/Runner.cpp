@@ -115,6 +115,10 @@ bool Runner::Init()
 	lua_rawseti(m_state.get(), -2, luaL_len(m_state.get(), -2) + 1);
 	lua_pop(m_state.get(), 2);
 
+	// initialize runner main global
+	lua_newtable(m_state.get());
+	lua_setglobal(m_state.get(), "meshproc");
+
 	// initialize components
 	if (!m_components) return false;
 	if (!m_components->Init()) return false;

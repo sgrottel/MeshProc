@@ -123,9 +123,6 @@
     <ClCompile Include="CommandRegistration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlaceMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ParameterBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -192,6 +189,12 @@
     <ClCompile Include="lua\LuaUtilities.cpp">
       <Filter>lua\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\GlmMat4Type.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\GlmVec3Type.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -256,9 +259,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommandRegistration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlaceMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParameterBinding.h">
@@ -331,6 +331,12 @@
       <Filter>lua\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lua\LuaUtilities.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\GlmMat4Type.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\GlmVec3Type.h">
       <Filter>lua\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,7 @@
 #include "CommandType.h"
 
+#include "GlmMat4Type.h"
+#include "GlmVec3Type.h"
 #include "LuaUtilities.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
@@ -128,80 +130,12 @@ namespace
 	{
 		static void PushVal(lua_State* lua, const glm::mat4& v)
 		{
-			glm::mat4 m = glm::transpose(v);
-			auto values = glm::value_ptr(m);
-
-			// Step 1: Create the table
-			lua_createtable(lua, 16, 0); // Preallocate array part with 16 elements
-			for (int i = 0; i < 16; ++i) {
-				lua_pushnumber(lua, values[i]);
-				lua_rawseti(lua, -2, i + 1); // Lua is 1-indexed
-			}
-
-			// Step 2: Set the XMat4 metatable
-			lua_getfield(lua, LUA_REGISTRYINDEX, "XMat4_mt");
-			if (!lua_istable(lua, -1)) {
-				lua_pop(lua, 2); // cleanup table and non-table
-				luaL_error(lua, "XMat4_mt not found in registry. Is xyz_math loaded?");
-				return;
-			}
-			lua_setmetatable(lua, -2); // Set metatable on the matrix table
+			GlmMat4Type::Push(lua, v);
 		}
 
 		static bool SetVal(lua_State* lua, glm::mat4& tar)
 		{
-			luaL_checktype(lua, 3, LUA_TTABLE);
-			auto tableLen = lua_rawlen(lua, 3);
-			if (tableLen == 16)
-			{ // assume 4x4 matrix
-				lua_getfield(lua, LUA_REGISTRYINDEX, "XMat4_mt"); // push expected metatable
-				if (!lua_getmetatable(lua, 3)) { // push actual metatable of value
-					return luaL_error(lua, "Expected XMat4, but value has no metatable");
-				}
-				if (!lua_rawequal(lua, -1, -2)) {
-					return luaL_error(lua, "Expected XMat4, incorrect metatable");
-				}
-				lua_pop(lua, 2); // pop both metatables
-
-				// Extract matrix
-				glm::mat4 m;
-				float* mat = glm::value_ptr(m);
-				for (int i = 0; i < 16; ++i) {
-					lua_rawgeti(lua, 3, i + 1);
-					mat[i] = (float)luaL_checknumber(lua, -1);
-					lua_pop(lua, 1);
-				}
-				tar = glm::transpose(m);
-				return true;
-			}
-			else if (tableLen == 9)
-			{ // assume 3x3 matrix
-				lua_getfield(lua, LUA_REGISTRYINDEX, "XMat3_mt"); // push expected metatable
-				if (!lua_getmetatable(lua, 3)) { // push actual metatable of value
-					return luaL_error(lua, "Expected XMat4, but value has no metatable");
-				}
-				if (!lua_rawequal(lua, -1, -2)) {
-					return luaL_error(lua, "Expected XMat4, incorrect metatable");
-				}
-				lua_pop(lua, 2); // pop both metatables
-
-				// Extract matrix
-				glm::mat3 m;
-				float* mat = glm::value_ptr(m);
-				for (int i = 0; i < 9; ++i) {
-					lua_rawgeti(lua, 3, i + 1);
-					mat[i] = (float)luaL_checknumber(lua, -1);
-					lua_pop(lua, 1);
-				}
-				tar = glm::transpose(m);
-				return true;
-			}
-			else
-			{
-				return luaL_error(lua, "Expected XMat4, but value has wrong size");
-			}
-
-			return false;
+			return GlmMat4Type::TryGet(lua, 3, tar);
 		}
 	};
 
@@ -210,105 +144,12 @@ namespace
 	{
 		static void PushVal(lua_State* lua, const glm::vec3& v)
 		{
-			lua_createtable(lua, 0, 3); // Preallocate array part
-			lua_pushnumber(lua, v.x);
-			lua_setfield(lua, -2, "x");
-			lua_pushnumber(lua, v.y);
-			lua_setfield(lua, -2, "y");
-			lua_pushnumber(lua, v.z);
-			lua_setfield(lua, -2, "z");
-
-			// Step 2: Set the XVec3 metatable
-			lua_getfield(lua, LUA_REGISTRYINDEX, "XVec3_mt");
-			if (!lua_istable(lua, -1)) {
-				lua_pop(lua, 2); // cleanup table and non-table
-				luaL_error(lua, "XVec3_mt not found in registry. Is xyz_math loaded?");
-				return;
-			}
-			lua_setmetatable(lua, -2); // Set metatable on the matrix table
+			GlmVec3Type::Push(lua, v);
 		}
 
 		static bool SetVal(lua_State* lua, glm::vec3& tar)
 		{
-			luaL_checktype(lua, 3, LUA_TTABLE);
-			int checkVecType = 0;
-			do {
-				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec3_mt");  // Push expected metatable
-				if (!lua_getmetatable(lua, 3)) {
-					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
-				}
-				if (lua_rawequal(lua, -1, -2))
-				{
-					checkVecType = 3;
-					break;
-				}
-				lua_pop(lua, 2);
-
-				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec2_mt");  // Push expected metatable
-				if (!lua_getmetatable(lua, 3)) {
-					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
-				}
-				if (lua_rawequal(lua, -1, -2))
-				{
-					checkVecType = 2;
-					break;
-				}
-				lua_pop(lua, 2);
-
-				lua_getfield(lua, LUA_REGISTRYINDEX, "XVec4_mt");  // Push expected metatable
-				if (!lua_getmetatable(lua, 3)) {
-					return luaL_error(lua, "Expected XVec3, but argument has no metatable");
-				}
-				if (lua_rawequal(lua, -1, -2))
-				{
-					checkVecType = 4;
-				}
-			} while (false);
-			lua_pop(lua, 2);
-			if (checkVecType == 0)
-			{
-				return luaL_error(lua, "Expected XVec3, but argument has unknown metatable");
-			}
-
-			float x, y, z{ 0.0f };
-
-			lua_getfield(lua, 3, "x");
-			x = (float)luaL_checknumber(lua, -1);
-			lua_pop(lua, 1);
-
-			lua_getfield(lua, 3, "y");
-			y = (float)luaL_checknumber(lua, -1);
-			lua_pop(lua, 1);
-
-			if (checkVecType > 2)
-			{
-				lua_getfield(lua, 3, "z");
-				z = (float)luaL_checknumber(lua, -1);
-				lua_pop(lua, 1);
-			}
-
-			if (checkVecType == 4)
-			{
-				lua_getfield(lua, 3, "w");
-				float w = (float)luaL_checknumber(lua, -1);
-				lua_pop(lua, 1);
-
-				if (std::abs(w) < 0.00001f || std::abs(w - 1.0) < 0.00001f)
-				{
-					// 'w' is either zero or one -> ignore w
-				}
-				else
-				{
-					// 'w' is a number, do perspective divide
-					x /= w;
-					y /= w;
-					z /= w;
-				}
-			}
-
-			tar = glm::vec3{ x, y, z };
-
-			return true;
+			return GlmVec3Type::TryGet(lua, 3, tar);
 		}
 	};
 

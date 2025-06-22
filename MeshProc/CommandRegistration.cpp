@@ -5,6 +5,7 @@
 #include "CloseLoopWithPin.h"
 #include "ExtractSubMesh.h"
 #include "FlatSkirt.h"
+#include "generator/CrystalGrain.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
 #include "generator/SphereIco.h"
@@ -14,7 +15,6 @@
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
 #include "OpenBorder.h"
-#include "PlaceMesh.h"
 #include "SelectBottomTriangles.h"
 #include "SelectVertexSelection.h"
 
@@ -28,6 +28,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
+	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
@@ -37,7 +38,6 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<io::StlReader>("io.StlReader");
 	succ &= factory.Register<io::StlWriter>("io.StlWriter");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
-	succ &= factory.Register<PlaceMesh>("PlaceMesh");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
 	succ &= factory.Register<SelectVertexSelection>("SelectVertexSelection");
 

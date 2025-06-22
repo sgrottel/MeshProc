@@ -36,7 +36,8 @@ namespace meshproc
 				std::shared_ptr<TVAR> val;
 			};
 
-			static wrapped* GetWrappedObject(lua_State* lua, int idx) {
+			static wrapped* GetWrappedObject(lua_State* lua, int idx)
+			{
 				void* ud = luaL_checkudata(lua, idx, TIMPL::LUA_TYPE_NAME);
 				return reinterpret_cast<wrapped*>(ud);
 			}
@@ -99,6 +100,8 @@ namespace meshproc
 			lua_pushvalue(Runner::Component<TIMPL>::lua(), -2);	// pushes the metatable
 			lua_settable(Runner::Component<TIMPL>::lua(), -3);	// metatable.__index = metatable
 			luaL_setfuncs(Runner::Component<TIMPL>::lua(), memberFuncs, 0);
+
+			lua_pop(Runner::Component<TIMPL>::lua(), 1);
 
 			return true;
 		}

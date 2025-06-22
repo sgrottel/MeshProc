@@ -25,23 +25,19 @@ end
 
 log.write("mesh = " .. tostring(cube:get("Mesh")))
 
-place = meshproc.PlaceMesh.new()
-place:set("Mesh", cube:get("Mesh"))
-place:invoke()
+local mesh = cube:get("Mesh");
+
+local scene = meshproc.Scene.new()
+scene:place(mesh);
 
 local mat = XMat4.translate(0, 0, 2) * XMat4.rotation_z(math.pi/4) * XMat4.scale(1, 2, 1)
+scene:place(mesh, mat);
 
-place:set("Mat", mat)
-place:invoke()
-
-local muc = place:get("Mat") * XMat4.translate(5, 0, 0);
-
-place:set("Mat", muc)
-place:invoke()
+scene:place(mesh, mat * XMat4.translate(5, 0, 0));
 
 ply = meshproc.io.PlyWriter.new()
 ply:set("Path", "out.ply")
-ply:set("Scene", place:get("Scene"))
+ply:set("Scene", scene)
 log.write("ply.path = " .. tostring(ply:get("Path")))
 ply:invoke()
 

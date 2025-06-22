@@ -15,12 +15,10 @@ bool CommandCreator::RegisterCommands()
 {
 	if (!AssertStateReady()) return false;
 
-	lua_newtable(lua());
-
+	lua_getglobal(lua(), "meshproc");
 	lua_pushcfunction(lua(), &CommandCreator::CallbackCreateCommand);
 	lua_setfield(lua(), -2, "_createCommand");
-
-	lua_setglobal(lua(), "meshproc");
+	lua_pop(lua(), 1);
 
 	for (const std::string& name : m_factory.GetAllNames())
 	{

@@ -10,7 +10,7 @@ namespace
 		for (int i = 0; i < depth; ++i) std::cout << "  ";
 	}
 
-	void dump_value(lua_State* L, int index, int depth) {
+	void dump_value(lua_State* L, int index, int depth, const void* prevPtr = nullptr) {
 		int type = lua_type(L, index);
 		switch (type) {
 		case LUA_TNUMBER:
@@ -23,19 +23,30 @@ namespace
 			std::cout << (lua_toboolean(L, index) ? "true" : "false");
 			break;
 		case LUA_TTABLE:
-			std::cout << "table @" << lua_topointer(L, index) << " {\n";
-			lua_pushnil(L);  // first key
-			while (lua_next(L, index < 0 ? index - 1 : index)) {
-				indent(depth + 1);
-				std::cout << "[";
-				dump_value(L, -2, depth + 1);  // key
-				std::cout << "] = ";
-				dump_value(L, -1, depth + 1);  // value
-				std::cout << "\n";
-				lua_pop(L, 1);  // remove value, keep key for next iteration
+		{
+			const void* tabPtr = lua_topointer(L, index);
+			std::cout << "table @" << tabPtr;
+			if (prevPtr != tabPtr)
+			{
+				std::cout << " {\n";
+				lua_pushnil(L);  // first key
+				while (lua_next(L, index < 0 ? index - 1 : index)) {
+					indent(depth + 1);
+					std::cout << "[";
+					dump_value(L, -2, depth + 1);  // key
+					std::cout << "] = ";
+					dump_value(L, -1, depth + 1, tabPtr);  // value
+					std::cout << "\n";
+					lua_pop(L, 1);  // remove value, keep key for next iteration
+				}
+				indent(depth);
+				std::cout << "}";
 			}
-			indent(depth);
-			std::cout << "}";
+			else
+			{
+				std::cout << "<recursion>";
+			}
+		}
 			break;
 		default:
 			std::cout << lua_typename(L, type) << " @" << lua_topointer(L, index);

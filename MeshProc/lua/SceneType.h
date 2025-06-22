@@ -20,6 +20,11 @@ namespace meshproc
 				: AbstractType<data::Scene, SceneType>{ owner }
 			{};
 			bool Init();
+
+		private:
+			static int CallbackCtor(lua_State* lua);
+			static int CallbackPlaceMesh(lua_State* lua);
+
 		};
 	}
 }
