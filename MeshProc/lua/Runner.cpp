@@ -137,13 +137,41 @@ bool Runner::LoadScript(const std::filesystem::path& script)
 {
 	if (!AssertStateReady()) return false;
 
-	// TODO: Support UTF16 paths!
+	// script is assumed to be utf8 without BOM
 
-	if (luaL_loadfile(m_state.get(), script.generic_string().c_str()))
+	std::vector<char> data;
+
+	FILE* file = nullptr;
+	errno_t e = _wfopen_s(&file, script.wstring().c_str(), L"rb");
+	if (e != 0 || file == nullptr)
+	{
+		m_log.Critical("Failed to load lua script: failed to open");
+		return false;
+	}
+
+	{
+		fseek(file, 0, SEEK_END);
+		long size = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		data.resize(size);
+
+		long size2 = static_cast<long>(fread(data.data(), 1, size, file));
+		if (size2 != size)
+		{
+			m_log.Critical("Failed to read lua script: failed to read");
+			return false;
+		}
+	}
+
+	fclose(file);
+
+	if (luaL_loadbuffer(m_state.get(), data.data(), data.size(), ""))
 	{
 		m_log.Critical("Failed to load lua script: %s", lua_tostring(m_state.get(), -1));
 		return false;
 	}
+
 	return true;
 }
 

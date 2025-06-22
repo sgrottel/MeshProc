@@ -19,6 +19,7 @@ namespace meshproc
 		private:
 
 			static int CallbackLogWrite(lua_State* lua);
+			static int CallbackLogDetail(lua_State* lua);
 			static int CallbackLogWarn(lua_State* lua);
 			static int CallbackLogError(lua_State* lua);
 

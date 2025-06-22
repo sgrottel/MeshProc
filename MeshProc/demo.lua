@@ -13,12 +13,12 @@ local argsStr = 'args:'
 for k, v in pairs(args) do
 	argsStr = argsStr .. '\n  "' .. k .. '" = "' .. v .. '"';
 end
-log.write(argsStr)
+log.detail(argsStr)
 if args.sizex then
-	log.write("args.sizex is set")
+	log.detail("args.sizex is set")
 end
 if not args.nope then
-	log.write("args.not is not set")
+	log.detail("args.not is not set")
 end
 
 local dev = meshproc._createCommand("DevPlayground");

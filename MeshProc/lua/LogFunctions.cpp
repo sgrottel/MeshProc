@@ -20,6 +20,8 @@ bool LogFunctions::Init()
 
 	lua_pushcfunction(lua(), &LogFunctions::CallbackLogWrite);		// Push your custom function
 	lua_setfield(lua(), -2, "write");			// Assign it to the 'write' field in the io table, and pops from stack
+	lua_pushcfunction(lua(), &LogFunctions::CallbackLogDetail);		// Push your custom function
+	lua_setfield(lua(), -2, "detail");			// Assign it to the 'write' field in the io table, and pops from stack
 	lua_pushcfunction(lua(), &LogFunctions::CallbackLogWarn);		// Push your custom function
 	lua_setfield(lua(), -2, "warn");			// Assign it to the 'write' field in the io table, and pops from stack
 	lua_pushcfunction(lua(), &LogFunctions::CallbackLogError);		// Push your custom function
@@ -35,6 +37,11 @@ bool LogFunctions::Init()
 int LogFunctions::CallbackLogWrite(lua_State* lua)
 {
 	return CallLuaImpl(&LogFunctions::WriteLogImpl, lua, sgrottel::ISimpleLog::FlagLevelMessage);
+}
+
+int LogFunctions::CallbackLogDetail(lua_State* lua)
+{
+	return CallLuaImpl(&LogFunctions::WriteLogImpl, lua, sgrottel::ISimpleLog::FlagLevelDetail);
 }
 
 int LogFunctions::CallbackLogWarn(lua_State* lua)
