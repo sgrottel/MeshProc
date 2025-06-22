@@ -84,7 +84,9 @@ namespace meshproc
 		{
 			throw std::logic_error("Cannot add param. Another param with same name already registered");
 		}
-		m_params[name] = std::make_shared<struct ParamBinding<PM, PT>>(var);
+		auto newParamBinding = std::make_shared<struct ParamBinding<PM, PT>>(var);
+		newParamBinding->m_idx = m_params.size();
+		m_params[name] = newParamBinding;
 	}
 
 }

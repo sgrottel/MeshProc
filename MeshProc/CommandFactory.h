@@ -28,6 +28,8 @@ namespace meshproc
 
 		std::vector<std::string> GetAllNames() const;
 
+		void HideCommand(const std::string& name);
+
 	private:
 		class CommandTemplateBase
 		{
@@ -36,8 +38,19 @@ namespace meshproc
 
 			virtual std::shared_ptr<class AbstractCommand> Instantiate(const sgrottel::ISimpleLog& log) = 0;
 
+			inline void SetHide(bool hide) noexcept
+			{
+				m_hidden = hide;
+			}
+			inline bool IsHidden() const noexcept
+			{
+				return m_hidden;
+			}
+
 		protected:
 			CommandTemplateBase() = default;
+		private:
+			bool m_hidden{ false };
 		};
 
 		template<typename TCMD>

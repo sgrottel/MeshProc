@@ -17,11 +17,6 @@ namespace meshproc
 
 			bool Invoke() override;
 
-			inline std::shared_ptr<data::Mesh> GetMesh() const
-			{
-				return m_mesh;
-			}
-
 		protected:
 			std::shared_ptr<data::Mesh> m_mesh{};
 			const uint32_t m_randomSeed{ static_cast<uint32_t>(time(0)) };

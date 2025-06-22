@@ -13,6 +13,7 @@ namespace meshproc
 		{
 			ParamMode m_mode;
 			ParamType m_type;
+			size_t m_idx{ 0 };
 
 			virtual ~ParamBindingBase() = default;
 

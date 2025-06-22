@@ -15,10 +15,10 @@ void CommandFactory::ListCommands(bool verbose) const
 {
 	sgrottel::NullLog nullLog;
 
-	for (auto const& ct : m_commandTemplates)
+	for (auto const& name : GetAllNames())
 	{
-		m_log.Message("%s", ct.first.c_str());
-		std::shared_ptr<AbstractCommand> cmd = ct.second->Instantiate(nullLog);
+		m_log.Message("%s", name.c_str());
+		std::shared_ptr<AbstractCommand> cmd = m_commandTemplates.at(name)->Instantiate(nullLog);
 		cmd->LogInfo(m_log, verbose);
 	}
 	m_log.Message("");
@@ -47,9 +47,20 @@ std::vector<std::string> CommandFactory::GetAllNames() const
 	names.reserve(m_commandTemplates.size());
 	for (auto const& ct : m_commandTemplates)
 	{
+		if (ct.second->IsHidden()) continue; // hides from `meshproc` lua alias', still works via `meshproc._createCommand`
 		names.push_back(ct.first);
 	}
+	std::sort(names.begin(), names.end());
 	return names;
+}
+
+void CommandFactory::HideCommand(const std::string& name)
+{
+	auto t = m_commandTemplates.find(name);
+	if (t != m_commandTemplates.end())
+	{
+		t->second->SetHide(true);
+	}
 }
 
 void CommandFactory::Log(const char* msg, const char* a)

@@ -3,6 +3,7 @@
 #include "CommandFactory.h"
 
 #include "CloseLoopWithPin.h"
+#include "DevPlayground.h"
 #include "ExtractSubMesh.h"
 #include "FlatSkirt.h"
 #include "generator/CrystalGrain.h"
@@ -26,6 +27,8 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	log.Detail("Populating CommandFactory");
 
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
+	succ &= factory.Register<DevPlayground>("DevPlayground");
+	factory.HideCommand("DevPlayground");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
 	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");

@@ -2,6 +2,9 @@ local xyz_math = require("xyz_math")
 
 log.write("Test script")
 
+local dev = meshproc._createCommand("DevPlayground");
+dev:invoke();
+
 log.warn("破滅");
 
 cube = meshproc.generator.Cube.new()

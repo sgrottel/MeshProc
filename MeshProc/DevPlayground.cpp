@@ -1,25 +1,19 @@
 #include "DevPlayground.h"
 
-#include "data/Mesh.h"
-#include "data/Scene.h"
-#include "io/ObjReader.h"
-#include "OpenBorder.h"
-#include "FlatSkirt.h"
-#include "CloseLoopWithPin.h"
-#include "io/StlWriter.h"
-#include "generator/CrystalGrain.h"
-
-#include <cassert>
-#include <functional>
-#include <random>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <SimpleLog/SimpleLog.hpp>
 
 using namespace meshproc;
 
-void DevPlayground(const sgrottel::ISimpleLog& log)
+DevPlayground::DevPlayground(const sgrottel::ISimpleLog& log)
+	: AbstractCommand{log}
 {
+}
+
+bool DevPlayground::Invoke()
+{
+	Log().Message("Nothing to see here...");
+
+#if 0
 	std::shared_ptr<data::Mesh> mesh = std::make_shared<data::Mesh>();
 	glm::mat4 objMat{ 1.0f };
 	objMat = glm::translate(objMat, glm::vec3{ 0, 0, -22.5 });
@@ -310,4 +304,6 @@ void DevPlayground(const sgrottel::ISimpleLog& log)
 	}
 
 #endif
+#endif
+	return true;
 }

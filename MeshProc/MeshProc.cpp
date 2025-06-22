@@ -55,10 +55,6 @@ int wmain(int argc, wchar_t **argv)
 		cmdFactory.ListCommands(cmdLine.m_verbose);
 		break;
 
-	case CliCommand::DevPlayground:
-		DevPlayground(log);
-		break;
-
 	default:
 		log.Critical("CLI command %d not implemented", cmdLine.m_command);
 		break;

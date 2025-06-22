@@ -18,8 +18,7 @@ namespace meshproc
 		Error,
 		RunScript,
 		ListCommands,
-		Help,
-		DevPlayground
+		Help
 	};
 
 	class CmdLineArgs

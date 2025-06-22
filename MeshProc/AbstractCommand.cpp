@@ -36,7 +36,11 @@ void AbstractCommand::ParamBindingRefs::LogInfo(const sgrottel::ISimpleLog& log,
 	{
 		return;
 	}
-	for (auto const& p : m_params)
+	std::vector<std::pair<std::string, std::shared_ptr<ParamBindingBase>>> params;
+	params.resize(m_params.size());
+	std::copy(m_params.begin(), m_params.end(), params.begin());
+	std::sort(params.begin(), params.end(), [](auto& a, auto& b) { return std::get<1>(a)->m_idx < std::get<1>(b)->m_idx; });
+	for (auto const& p : params)
 	{
 		log.Detail("  %s  [%s]  %s", p.first.c_str(), GetParamModeName(p.second->m_mode), GetParamTypeName(p.second->m_type));
 	}
