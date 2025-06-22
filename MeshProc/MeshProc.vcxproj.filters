@@ -195,6 +195,18 @@
     <ClCompile Include="lua\GlmVec3Type.cpp">
       <Filter>lua\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="data\Shape2D.cpp">
+      <Filter>data\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\Shape2DType.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\GlmVec2Type.cpp">
+      <Filter>lua\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generator\LinearExtrude2DMesh.cpp">
+      <Filter>generator\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -338,6 +350,18 @@
     </ClInclude>
     <ClInclude Include="lua\GlmVec3Type.h">
       <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="data\Shape2D.h">
+      <Filter>data\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\Shape2DType.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\GlmVec2Type.h">
+      <Filter>lua\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\LinearExtrude2DMesh.h">
+      <Filter>generator\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

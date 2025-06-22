@@ -7,6 +7,7 @@
 #include "MultiMeshType.h"
 #include "MultiVertexSelectionType.h"
 #include "SceneType.h"
+#include "Shape2DType.h"
 #include "VertexSelectionType.h"
 
 #include "AbstractCommand.h"
@@ -118,6 +119,9 @@ namespace
 
 	template<>
 	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::Shape2D> : LuaWrappedParamMapping<Shape2DType, data::Shape2D> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::VertexSelection> : LuaWrappedParamMapping<VertexSelectionType, std::vector<uint32_t>> {};
@@ -304,6 +308,8 @@ int CommandType::GetImpl(lua_State* lua)
 		return LuaTryPushVal<ParamType::MultiMesh>(lua, param, Log());
 	case ParamType::Scene:
 		return LuaTryPushVal<ParamType::Scene>(lua, param, Log());
+	case ParamType::Shape2D:
+		return LuaTryPushVal<ParamType::Shape2D>(lua, param, Log());
 	case ParamType::VertexSelection:
 		return LuaTryPushVal<ParamType::VertexSelection>(lua, param, Log());
 	case ParamType::MultiVertexSelection:
@@ -376,6 +382,9 @@ int CommandType::SetImpl(lua_State* lua)
 		break;
 	case ParamType::Scene:
 		LuaTrySetVal<ParamType::Scene>(lua, param, Log());
+		break;
+	case ParamType::Shape2D:
+		LuaTrySetVal<ParamType::Shape2D>(lua, param, Log());
 		break;
 	case ParamType::VertexSelection:
 		LuaTrySetVal<ParamType::VertexSelection>(lua, param, Log());

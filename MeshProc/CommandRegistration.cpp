@@ -9,6 +9,7 @@
 #include "generator/CrystalGrain.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
+#include "generator/LinearExtrude2DMesh.h"
 #include "generator/SphereIco.h"
 #include "io/ObjReader.h"
 #include "io/PlyReader.h"
@@ -34,6 +35,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
+	succ &= factory.Register<generator::LinearExtrude2DMesh>("generator.LinearExtrude2DMesh");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");
 	succ &= factory.Register<io::PlyReader>("io.PlyReader");

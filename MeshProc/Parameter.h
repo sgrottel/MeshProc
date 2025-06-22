@@ -1,8 +1,5 @@
 #pragma once
 
-#include "data/Mesh.h"
-#include "data/Scene.h"
-
 #include <glm/glm.hpp>
 
 #include <cstdint>
@@ -12,6 +9,12 @@
 
 namespace meshproc
 {
+	namespace data
+	{
+		class Mesh;
+		class Scene;
+		class Shape2D;
+	}
 
 	enum class ParamType
 	{
@@ -23,6 +26,7 @@ namespace meshproc
 		Mesh,
 		MultiMesh,
 		Scene,
+		Shape2D,
 		VertexSelection, // e.g. also edges/loops
 		MultiVertexSelection,
 
@@ -88,6 +92,13 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Scene";
 		typedef std::shared_ptr<data::Scene> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::Shape2D>
+	{
+		static constexpr const char* name = "Shape2D";
+		typedef std::shared_ptr<data::Shape2D> type;
 	};
 
 	template<>
