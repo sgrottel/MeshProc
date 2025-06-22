@@ -1,6 +1,25 @@
+--
+-- This script is a wild playground during development
+-- It's not ment as an example or as a test or anything
+--
+-- run demo.lua -v -arg sizex=3 -arg hello
+--
+
 local xyz_math = require("xyz_math")
 
 log.write("Test script")
+
+local argsStr = 'args:'
+for k, v in pairs(args) do
+	argsStr = argsStr .. '\n  "' .. k .. '" = "' .. v .. '"';
+end
+log.write(argsStr)
+if args.sizex then
+	log.write("args.sizex is set")
+end
+if not args.nope then
+	log.write("args.not is not set")
+end
 
 local dev = meshproc._createCommand("DevPlayground");
 dev:invoke();
@@ -17,7 +36,7 @@ log.write("mesh = " .. tostring(cube:get("Mesh")))
 -- Accessing a field that does not exist with stop the script with a critical error
 -- log.write("cube.invalid = " .. tostring(cube:get("invalid")))
 
-cube:set("SizeX", 4)
+cube:set("SizeX", tonumber(args.sizex or 4))
 log.write("cube.x = " .. tostring(cube:get("SizeX")))
 
 if cube:invoke() then

@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <unordered_map>
 
 // forward declaration
 typedef struct lua_State lua_State;
@@ -74,6 +75,7 @@ namespace meshproc
 
 			bool Init();
 			bool LoadScript(const std::filesystem::path& script);
+			bool SetArgs(const std::unordered_map<std::wstring_view, std::wstring_view>& args);
 			bool RunScript();
 
 		private:

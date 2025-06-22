@@ -42,7 +42,7 @@ int wmain(int argc, wchar_t **argv)
 
 		log.Detail(L"Loading Lua: %s", cmdLine.m_script.wstring().c_str());
 		if (!lua.LoadScript(cmdLine.m_script)) break;
-
+		if (!lua.SetArgs(cmdLine.m_scriptArgs)) break;
 		if (!lua.RunScript()) break;
 
 		log.Message("done.");

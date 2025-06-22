@@ -147,6 +147,20 @@ bool Runner::LoadScript(const std::filesystem::path& script)
 	return true;
 }
 
+bool Runner::SetArgs(const std::unordered_map<std::wstring_view, std::wstring_view>& args)
+{
+	lua_newtable(m_state.get());
+
+	for (const auto& arg : args)
+	{
+		lua_pushstring(m_state.get(), ToUtf8(arg.second).c_str());
+		lua_setfield(m_state.get(), -2, ToUtf8(arg.first).c_str());
+	}
+
+	lua_setglobal(m_state.get(), "args");
+	return true;
+}
+
 bool Runner::RunScript()
 {
 	if (!AssertStateReady()) return false;
