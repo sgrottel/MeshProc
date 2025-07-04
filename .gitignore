@@ -7,3 +7,4 @@ packages
 MeshProc/cube.stl
 MeshProc/out.stl
 MeshProc/out.ply
+*.csv

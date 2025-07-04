@@ -105,6 +105,7 @@
     <ClCompile Include="generator\Icosahedron.cpp" />
     <ClCompile Include="generator\LinearExtrude2DMesh.cpp" />
     <ClCompile Include="generator\SphereIco.cpp" />
+    <ClCompile Include="io\CsvShape2DWriter.cpp" />
     <ClCompile Include="io\ObjReader.cpp" />
     <ClCompile Include="io\PlyReader.cpp" />
     <ClCompile Include="io\PlyWriter.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="generator\Icosahedron.h" />
     <ClInclude Include="generator\LinearExtrude2DMesh.h" />
     <ClInclude Include="generator\SphereIco.h" />
+    <ClInclude Include="io\CsvShape2DWriter.h" />
     <ClInclude Include="io\ObjReader.h" />
     <ClInclude Include="io\PlyReader.h" />
     <ClInclude Include="io\PlyWriter.h" />

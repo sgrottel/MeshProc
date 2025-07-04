@@ -28,6 +28,11 @@ shape:add(XVec2(2.5, 1), 3)
 shape:add(XVec2(3.5, 1), 3)
 shape:add(XVec2(3, 1.5), 3)
 
+csv = meshproc.io.CsvShape2DWriter.new()
+csv:set("Shape", shape)
+csv:set("Path", "shape2d.csv")
+csv:invoke()
+
 make = meshproc.generator.LinearExtrude2DMesh.new()
 make:set("Shape2D", shape)
 make:invoke()

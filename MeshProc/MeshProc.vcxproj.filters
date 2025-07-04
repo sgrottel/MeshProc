@@ -207,6 +207,9 @@
     <ClCompile Include="generator\LinearExtrude2DMesh.cpp">
       <Filter>generator\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\CsvShape2DWriter.cpp">
+      <Filter>io\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -362,6 +365,9 @@
     </ClInclude>
     <ClInclude Include="generator\LinearExtrude2DMesh.h">
       <Filter>generator\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CsvShape2DWriter.h">
+      <Filter>io\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
