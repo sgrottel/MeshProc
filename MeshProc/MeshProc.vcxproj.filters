@@ -210,6 +210,12 @@
     <ClCompile Include="io\CsvShape2DWriter.cpp">
       <Filter>io\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Extract2DLoops.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Convex2DHull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -368,6 +374,12 @@
     </ClInclude>
     <ClInclude Include="io\CsvShape2DWriter.h">
       <Filter>io\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extract2DLoops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Convex2DHull.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
