@@ -93,6 +93,7 @@ namespace meshproc
 			sgrottel::ISimpleLog& m_log;
 			std::shared_ptr<lua_State> m_state;
 			std::shared_ptr<Components> m_components;
+			std::filesystem::path m_workingDirectory;
 		};
 
 	}

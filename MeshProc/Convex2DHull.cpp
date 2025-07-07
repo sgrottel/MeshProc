@@ -31,7 +31,7 @@ bool Convex2DHull::Invoke()
 {
 	if (!m_loops)
 	{
-		Log().Error("Mesh not set");
+		Log().Error("Loops not set");
 		return false;
 	}
 

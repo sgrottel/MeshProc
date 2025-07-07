@@ -58,7 +58,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)3rd-party\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -75,7 +75,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)3rd-party\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3rd-party\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="AbstractCommand.cpp" />
     <ClCompile Include="CloseLoopWithPin.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="io\PlyWriter.cpp" />
     <ClCompile Include="io\StlReader.cpp" />
     <ClCompile Include="io\StlWriter.cpp" />
+    <ClCompile Include="io\SvgShape2DWriter.cpp" />
     <ClCompile Include="lua\AbstractMultiType.cpp" />
     <ClCompile Include="lua\AbstractType.cpp" />
     <ClCompile Include="lua\CommandCreator.cpp" />
@@ -138,12 +140,14 @@
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="3rd-party\tinyxml2\README.md" />
     <None Include="demo.lua" />
     <None Include="lua\xyz_math\README.md" />
     <None Include="lua\xyz_math\xyz_math.lua" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h" />
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="CloseLoopWithPin.h" />
     <ClInclude Include="CmdLineArgs.h" />
@@ -171,6 +175,7 @@
     <ClInclude Include="io\PlyWriter.h" />
     <ClInclude Include="io\StlReader.h" />
     <ClInclude Include="io\StlWriter.h" />
+    <ClInclude Include="io\SvgShape2DWriter.h" />
     <ClInclude Include="lua\AbstractMultiType.h" />
     <ClInclude Include="lua\AbstractType.h" />
     <ClInclude Include="lua\CommandCreator.h" />

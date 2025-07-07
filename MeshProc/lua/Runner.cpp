@@ -171,6 +171,8 @@ bool Runner::LoadScript(const std::filesystem::path& script)
 
 	fclose(file);
 
+	m_workingDirectory = script.parent_path();
+
 	if (luaL_loadbuffer(m_state.get(), data.data(), data.size(), ""))
 	{
 		m_log.Critical("Failed to load lua script: %s", lua_tostring(m_state.get(), -1));
@@ -197,6 +199,15 @@ bool Runner::SetArgs(const std::unordered_map<std::wstring_view, std::wstring_vi
 bool Runner::RunScript()
 {
 	if (!AssertStateReady()) return false;
+
+	std::filesystem::path oldCurrentPath = std::filesystem::current_path();
+	bool retval = false;
+
+	if (!m_workingDirectory.empty())
+	{
+		std::filesystem::current_path(m_workingDirectory);
+	}
+
 	try
 	{
 		if (lua_pcall(m_state.get(),
@@ -206,20 +217,26 @@ bool Runner::RunScript()
 		))
 		{
 			m_log.Critical("Failed to run lua script: %s", lua_tostring(m_state.get(), -1));
-			return false;
+		}
+		else
+		{
+			retval = true;
 		}
 	}
 	catch (const std::exception& ex)
 	{
 		m_log.Critical("Exception while running lua script: %s", ex.what());
-		return false;
 	}
 	catch (...)
 	{
 		m_log.Critical("Unknown exception while running lua script");
-		return false;
 	}
-	return true;
+
+	if (!m_workingDirectory.empty())
+	{
+		std::filesystem::current_path(oldCurrentPath);
+	}
+	return retval;
 }
 
 Runner* Runner::GetThis(lua_State* lua)
