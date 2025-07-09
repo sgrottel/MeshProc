@@ -58,9 +58,6 @@
     <Filter Include="lua\Source Files">
       <UniqueIdentifier>{850a899b-7e12-417b-8a05-b68b0820cb3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lua\xyz_math">
-      <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lua\Resource Files">
       <UniqueIdentifier>{bca1de8b-64cd-4c2c-bdc6-966fa2bd4586}</UniqueIdentifier>
     </Filter>
@@ -69,6 +66,9 @@
     </Filter>
     <Filter Include="3rd-party\tinyxml2">
       <UniqueIdentifier>{1fb3d052-f449-4485-bbc1-e69b39394bd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd-party\xyz_math">
+      <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -232,14 +232,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="demo.lua" />
-    <None Include="lua\xyz_math\xyz_math.lua">
-      <Filter>lua\xyz_math</Filter>
-    </None>
-    <None Include="lua\xyz_math\README.md">
-      <Filter>lua\xyz_math</Filter>
-    </None>
     <None Include="3rd-party\tinyxml2\README.md">
       <Filter>3rd-party\tinyxml2</Filter>
+    </None>
+    <None Include="3rd-party\xyz_math\xyz_math.lua">
+      <Filter>3rd-party\xyz_math</Filter>
+    </None>
+    <None Include="3rd-party\xyz_math\README.md">
+      <Filter>3rd-party\xyz_math</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -141,9 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="3rd-party\tinyxml2\README.md" />
+    <None Include="3rd-party\xyz_math\README.md" />
+    <None Include="3rd-party\xyz_math\xyz_math.lua" />
     <None Include="demo.lua" />
-    <None Include="lua\xyz_math\README.md" />
-    <None Include="lua\xyz_math\xyz_math.lua" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,9 @@ namespace meshproc
 		private:
 			static int CallbackCtor(lua_State* lua);
 			static int CallbackAdd(lua_State* lua);
+			static int CallbackSize(lua_State* lua);
+			static int CallbackId(lua_State* lua);
+			static int CallbackGet(lua_State* lua);
 
 		};
 	}

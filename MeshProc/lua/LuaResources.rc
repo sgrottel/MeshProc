@@ -10,5 +10,5 @@ END
 
 #include "LuaResources.h"
 
-LUA_LIB_XYZ_MATH RCDATA "xyz_math/xyz_math.lua"
+LUA_LIB_XYZ_MATH RCDATA "3rd-party/xyz_math/xyz_math.lua"
 

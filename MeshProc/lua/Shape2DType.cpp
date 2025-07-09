@@ -19,6 +19,9 @@ bool Shape2DType::Init()
 		{"__tostring", &Shape2DType::CallbackToString},
 		{"__gc", &Shape2DType::CallbackDelete},
 		{"add", &Shape2DType::CallbackAdd},
+		{"size", &Shape2DType::CallbackSize}, // number of loops or size of loop by id
+		{"id", &Shape2DType::CallbackId}, // id by number
+		{"get", &Shape2DType::CallbackGet}, // point b from loop id = a
 		{nullptr, nullptr}
 	};
 	if (!InitImpl(memberFuncs))
@@ -77,4 +80,105 @@ int Shape2DType::CallbackAdd(lua_State* lua)
 	shape2d->loops[loopIdx].push_back(pt);
 
 	return 0;
+}
+
+int Shape2DType::CallbackSize(lua_State* lua)
+{
+	const int size = lua_gettop(lua);
+	if (size != 1 && size != 2)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1 or 2, is %d", size);
+	}
+	const auto shape2d = Shape2DType::LuaGet(lua, 1);
+	if (!shape2d)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Shape2D");
+	}
+	if (size == 1)
+	{
+		lua_pushinteger(lua, shape2d->loops.size());
+	}
+	else
+	{
+		assert(size == 2);
+		uint32_t id;
+		if (lua::GetLuaUint32(lua, 2, id) != GetResult::Ok)
+		{
+			return luaL_error(lua, "First argument expected to be an integer loop id");
+		}
+
+		if (!shape2d->loops.contains(id))
+		{
+			return luaL_error(lua, "First argument is an unknown loop id: %d", id);
+		}
+
+		lua_pushinteger(lua, shape2d->loops.at(id).size());
+	}
+
+	return 1;
+}
+
+int Shape2DType::CallbackId(lua_State* lua)
+{
+	const int size = lua_gettop(lua);
+	if (size != 2)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", size);
+	}
+	const auto shape2d = Shape2DType::LuaGet(lua, 1);
+	if (!shape2d)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Shape2D");
+	}
+	uint32_t idx;
+	if (lua::GetLuaUint32(lua, 2, idx) != GetResult::Ok)
+	{
+		return luaL_error(lua, "First argument expected to be an integer index");
+	}
+	if (idx <= 0 || shape2d->loops.size() < idx)
+	{
+		return luaL_error(lua, "First argument out of bounds, expected [1..%d], got %d", shape2d->loops.size(), idx);
+	}
+
+	auto it = shape2d->loops.begin();
+	std::advance(it, idx - 1);
+	lua_pushinteger(lua, it->first);
+
+	return 1;
+}
+
+int Shape2DType::CallbackGet(lua_State* lua)
+{
+	const int size = lua_gettop(lua);
+	if (size != 3)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 3, is %d", size);
+	}
+	const auto shape2d = Shape2DType::LuaGet(lua, 1);
+	if (!shape2d)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Shape2D");
+	}
+	uint32_t id;
+	if (lua::GetLuaUint32(lua, 2, id) != GetResult::Ok)
+	{
+		return luaL_error(lua, "First argument expected to be an integer index");
+	}
+	if (!shape2d->loops.contains(id))
+	{
+		return luaL_error(lua, "First argument is an unknown loop id: %d", id);
+	}
+	auto const& loop = shape2d->loops.at(id);
+	uint32_t idx;
+	if (lua::GetLuaUint32(lua, 3, idx) != GetResult::Ok)
+	{
+		return luaL_error(lua, "Second argument expected to be an integer index");
+	}
+	if (idx <= 0 || loop.size() < idx)
+	{
+		return luaL_error(lua, "second argument out of bounds, expected [1..%d], got %d", loop.size(), idx);
+	}
+
+	GlmVec2Type::Push(lua, loop[idx - 1]);
+	return 1;
 }

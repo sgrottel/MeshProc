@@ -249,5 +249,7 @@ bool Extract2DLoops::Invoke()
 		}
 	}
 
+	Log().Detail("Extracted %d loops", static_cast<int>(m_loops->loops.size()));
+
 	return true;
 }

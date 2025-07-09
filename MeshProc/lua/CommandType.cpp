@@ -38,17 +38,7 @@ namespace
 		}
 		static bool GetVal(lua_State* lua, uint32_t& tar)
 		{
-			if (lua_isnumber(lua, 3))
-			{
-				tar = static_cast<uint32_t>(lua_tonumber(lua, 3));
-				return true;
-			}
-			if (lua_isinteger(lua, 3))
-			{
-				tar = static_cast<uint32_t>(lua_tointeger(lua, 3));
-				return true;
-			}
-			return false;
+			return GetLuaUint32(lua, 3, tar) == GetResult::Ok;
 		}
 	};
 
