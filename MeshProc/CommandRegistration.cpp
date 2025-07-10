@@ -4,6 +4,7 @@
 
 #include "CloseLoopWithPin.h"
 #include "Convex2DHull.h"
+#include "CutHalfSpace.h"
 #include "DevPlayground.h"
 #include "Extract2DLoops.h"
 #include "ExtractSubMesh.h"
@@ -33,6 +34,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	succ &= factory.Register<Convex2DHull>("Convex2DHull");
+	succ &= factory.Register<CutHalfSpace>("CutHalfSpace");
 	succ &= factory.Register<DevPlayground>("DevPlayground");
 	factory.HideCommand("DevPlayground");
 	succ &= factory.Register<Extract2DLoops>("Extract2DLoops");

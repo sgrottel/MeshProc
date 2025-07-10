@@ -21,7 +21,7 @@ Extract2DLoops::Extract2DLoops(const sgrottel::ISimpleLog& log)
 	, m_loops{ nullptr }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding < ParamMode::In, ParamType::Vec3>("PlaneNormal", m_planeNormal);
+	AddParamBinding<ParamMode::In, ParamType::Vec3>("PlaneNormal", m_planeNormal);
 	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneDist", m_planeDist);
 	AddParamBinding<ParamMode::Out, ParamType::Shape2D>("Loops", m_loops);
 }
@@ -70,6 +70,7 @@ bool Extract2DLoops::Invoke()
 
 		std::unordered_set<glm::vec2> pts;
 
+		// TODO: this can be improved by hashing not over the point's coordinates, but over the hashable-edges of the triangles instead.
 		auto mkPt = [](float x, float y)
 			{
 				constexpr double prec = 256 * 1024.0;
@@ -130,6 +131,7 @@ bool Extract2DLoops::Invoke()
 		vec2d[p.second] = p.first;
 	}
 
+	// TODO: should be merged with the code in OpenBorder and moved to a utility function
 	auto addLoop = [&](const std::vector<size_t>& l)
 		{
 			std::vector<glm::vec2> pl;

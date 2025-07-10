@@ -228,6 +228,9 @@
     <ClCompile Include="io\SvgShape2DWriter.cpp">
       <Filter>io\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CutHalfSpace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -401,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="io\SvgShape2DWriter.h">
       <Filter>io\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CutHalfSpace.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

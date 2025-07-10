@@ -50,6 +50,7 @@ bool OpenBorder::Invoke()
 		}
 	}
 
+	// TODO: should be merged with the code in Extract2DLoops and moved to a utility function
 	std::unordered_map<uint32_t, std::unordered_set<uint32_t>> halfEdges;
 	halfEdges.reserve(openEdges.size());
 	for (data::HashableEdge const& e : openEdges)
