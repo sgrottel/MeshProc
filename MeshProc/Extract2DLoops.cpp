@@ -16,13 +16,12 @@ using namespace meshproc;
 Extract2DLoops::Extract2DLoops(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 	, m_mesh{ nullptr }
-	, m_planeNormal{ 0.0f, 0.0f, 1.0f }
-	, m_planeDist{ 0.0f }
+	, m_halfSpace{}
 	, m_loops{ nullptr }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::In, ParamType::Vec3>("PlaneNormal", m_planeNormal);
-	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneDist", m_planeDist);
+	AddParamBinding<ParamMode::In, ParamType::Vec3>("PlaneNormal", m_halfSpace.GetPlaneNormalParam());
+	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneDist", m_halfSpace.GetPlaneDistParam());
 	AddParamBinding<ParamMode::Out, ParamType::Shape2D>("Loops", m_loops);
 }
 
@@ -33,19 +32,16 @@ bool Extract2DLoops::Invoke()
 		Log().Error("Mesh not set");
 		return false;
 	}
-	if (glm::length(m_planeNormal) < 0.00001f)
+	if (!m_halfSpace.ValidateParams(Log()))
 	{
-		Log().Error("PlaneNormal too small (zero?)");
 		return false;
 	}
 
-	const glm::vec3 pNormal = glm::normalize(m_planeNormal);
-	const glm::vec3 plane = pNormal * m_planeDist;
-	const glm::vec3 projXTemp = (std::abs(std::abs(pNormal.x) - 1.0f) < 0.00001f)
+	const glm::vec3 projXTemp = (std::abs(std::abs(m_halfSpace.Normal().x) - 1.0f) < 0.00001f)
 		? glm::vec3{ 0.0f, 1.0f, 0.0f }
 		: glm::vec3{ 1.0f, 0.0f, 0.0f };
-	const glm::vec3 projY = glm::normalize(glm::cross(pNormal, projXTemp));
-	const glm::vec3 projX = glm::normalize(glm::cross(projY, pNormal));
+	const glm::vec3 projY = glm::normalize(glm::cross(m_halfSpace.Normal(), projXTemp));
+	const glm::vec3 projX = glm::normalize(glm::cross(projY, m_halfSpace.Normal()));
 
 	std::unordered_map<glm::vec2, size_t> v2d;
 	std::vector<std::array<size_t, 2>> edges2d;
@@ -57,8 +53,7 @@ bool Extract2DLoops::Invoke()
 		bool pos[3]; // is v in pos halfspace
 		for (int i = 0; i < 3; ++i)
 		{
-			v[i] = m_mesh->vertices[t[i]] - plane;
-			pos[i] = (dist[i] = glm::dot(v[i], pNormal)) >= 0.0f;
+			pos[i] = (dist[i] = m_halfSpace.Dist(v[i] = m_mesh->vertices[t[i]])) >= 0.0f;
 		}
 
 		if (pos[0] == pos[1] && pos[0] == pos[2])

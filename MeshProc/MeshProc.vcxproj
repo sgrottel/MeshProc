@@ -94,6 +94,7 @@
     <ClCompile Include="CommandRegistration.cpp" />
     <ClCompile Include="Convex2DHull.cpp" />
     <ClCompile Include="CutHalfSpace.cpp" />
+    <ClCompile Include="data\HalfSpace.cpp" />
     <ClCompile Include="data\HashableEdge.cpp" />
     <ClCompile Include="data\Mesh.cpp" />
     <ClCompile Include="data\Scene.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="CommandRegistration.h" />
     <ClInclude Include="Convex2DHull.h" />
     <ClInclude Include="CutHalfSpace.h" />
+    <ClInclude Include="data\HalfSpace.h" />
     <ClInclude Include="data\HashableEdge.h" />
     <ClInclude Include="data\Mesh.h" />
     <ClInclude Include="data\Scene.h" />

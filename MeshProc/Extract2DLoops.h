@@ -4,6 +4,7 @@
 
 #include "data/Mesh.h"
 #include "data/Shape2D.h"
+#include "data/HalfSpace.h"
 
 namespace meshproc
 {
@@ -17,8 +18,7 @@ namespace meshproc
 
 	private:
 		const std::shared_ptr<data::Mesh> m_mesh;
-		const glm::vec3 m_planeNormal;
-		const float m_planeDist;
+		data::HalfSpace m_halfSpace;
 		std::shared_ptr<data::Shape2D> m_loops;
 	};
 

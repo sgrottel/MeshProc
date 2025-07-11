@@ -29,6 +29,11 @@ namespace meshproc
 				return !(*this == rhs);
 			}
 
+			inline bool Has(uint32_t i) const noexcept
+			{
+				return i0 == i || i1 == i;
+			}
+
 			union {
 				uint32_t m_idx[2];
 				struct {
