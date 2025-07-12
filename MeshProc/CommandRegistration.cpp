@@ -14,6 +14,7 @@
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
 #include "generator/LinearExtrude2DMesh.h"
+#include "generator/RotateExtrude2DMesh.h"
 #include "generator/SphereIco.h"
 #include "io/CsvShape2DWriter.h"
 #include "io/ObjReader.h"
@@ -46,6 +47,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
 	succ &= factory.Register<generator::LinearExtrude2DMesh>("generator.LinearExtrude2DMesh");
+	succ &= factory.Register<generator::RotateExtrude2DMesh>("generator.RotateExtrude2DMesh");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
 	succ &= factory.Register<io::CsvShape2DWriter>("io.CsvShape2DWriter");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");

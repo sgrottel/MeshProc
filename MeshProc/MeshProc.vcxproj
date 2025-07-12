@@ -104,6 +104,7 @@
     <ClCompile Include="Extract2DLoops.cpp" />
     <ClCompile Include="ExtractSubMesh.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
+    <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
     <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Cube.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Extract2DLoops.h" />
     <ClInclude Include="ExtractSubMesh.h" />
     <ClInclude Include="FlatSkirt.h" />
+    <ClInclude Include="generator\RotateExtrude2DMesh.h" />
     <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Cube.h" />
