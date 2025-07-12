@@ -2,6 +2,8 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
+#include "data/HashableEdge.h"
+
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
@@ -44,7 +46,7 @@ bool Extract2DLoops::Invoke()
 	const glm::vec3 projX = glm::normalize(glm::cross(projY, m_halfSpace.Normal()));
 
 	std::unordered_map<glm::vec2, size_t> v2d;
-	std::vector<std::array<size_t, 2>> edges2d;
+	std::vector<data::HashableEdge> edges2d;
 
 	for (auto const& t : m_mesh->triangles)
 	{
@@ -103,14 +105,14 @@ bool Extract2DLoops::Invoke()
 			{
 				if (auto c = v2d.find(p); c != v2d.end())
 				{
-					return c->second;
+					return static_cast<uint32_t>(c->second);
 				}
 				const auto n = v2d.insert(std::make_pair(p, v2d.size()));
-				return n.first->second;
+				return static_cast<uint32_t>(n.first->second);
 			};
-		std::array<size_t, 2> idx;
-		std::transform(pts.begin(), pts.end(), idx.begin(), addV);
-		if (idx[0] == idx[1])
+		data::HashableEdge idx{ 0, 0 };
+		std::transform(pts.begin(), pts.end(), idx.m_idx, addV);
+		if (idx.i0 == idx.i1)
 		{
 			Log().Warning("Edge degenerated");
 			continue;
@@ -136,10 +138,10 @@ bool Extract2DLoops::Invoke()
 		};
 
 	std::vector<std::vector<size_t>> polys;
-	for (const std::array<size_t, 2>&e : edges2d)
+	for (data::HashableEdge const& e : edges2d)
 	{
-		auto i1 = std::find_if(polys.begin(), polys.end(), [i = e[0]](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
-		auto i2 = std::find_if(polys.begin(), polys.end(), [i = e[1]](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
+		auto i1 = std::find_if(polys.begin(), polys.end(), [i = e.i0](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
+		auto i2 = std::find_if(polys.begin(), polys.end(), [i = e.i1](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
 
 		if (i1 != polys.end())
 		{
@@ -153,12 +155,12 @@ bool Extract2DLoops::Invoke()
 			if (i2 != polys.end())
 			{
 				// merge both lines
-				if (i1->front() == e[0])
+				if (i1->front() == e.i0)
 				{
 					// need to connect i1 at the front (try if we can more easily connect to i2)
 
 					i2->reserve(i2->size() + i1->size());
-					if (i2->front() == e[1])
+					if (i2->front() == e.i1)
 					{
 						// need to connect i2 at the front
 						// => reverse i2; then append i1 to i2
@@ -183,7 +185,7 @@ bool Extract2DLoops::Invoke()
 				{
 					// need to connect i1 at the end
 					i1->reserve(i2->size() + i1->size());
-					if (i2->front() == e[1])
+					if (i2->front() == e.i1)
 					{
 						// need to connect i2 at the front => append i2 to i1
 
@@ -207,13 +209,13 @@ bool Extract2DLoops::Invoke()
 			}
 			else
 			{
-				if (i1->front() == e[0])
+				if (i1->front() == e.i0)
 				{
-					i1->insert(i1->begin(), e[1]);
+					i1->insert(i1->begin(), e.i1);
 				}
 				else
 				{
-					i1->push_back(e[1]);
+					i1->push_back(e.i1);
 				}
 			}
 		}
@@ -221,18 +223,18 @@ bool Extract2DLoops::Invoke()
 		{
 			if (i2 != polys.end())
 			{
-				if (i2->front() == e[1])
+				if (i2->front() == e.i1)
 				{
-					i2->insert(i2->begin(), e[0]);
+					i2->insert(i2->begin(), e.i0);
 				}
 				else
 				{
-					i2->push_back(e[0]);
+					i2->push_back(e.i0);
 				}
 			}
 			else
 			{
-				polys.push_back(std::vector<size_t>{e[0], e[1]});
+				polys.push_back(std::vector<size_t>{e.i0, e.i1});
 			}
 		}
 	}

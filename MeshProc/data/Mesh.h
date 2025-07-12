@@ -3,6 +3,8 @@
 #include "data/Triangle.h"
 
 #include <glm/glm.hpp>
+
+#include <unordered_set>
 #include <vector>
 
 namespace meshproc
@@ -29,6 +31,8 @@ namespace meshproc
 			// - non-manifolds (edges used by != 2 triangles)
 			// - congruent vertices and thus degenerated triangles
 			bool IsValid() const;
+
+			std::unordered_set<data::HashableEdge> CollectOpenEdges() const;
 		};
 
 	}

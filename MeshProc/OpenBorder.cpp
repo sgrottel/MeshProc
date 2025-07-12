@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 
 #include <unordered_map>
-#include <unordered_set>
 
 #include <iostream>
 
@@ -33,22 +32,7 @@ bool OpenBorder::Invoke()
 
 	Log().Detail("Detecting open border edges");
 
-	std::unordered_set<data::HashableEdge> openEdges;
-	for (data::Triangle const& t : m_mesh->triangles)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			data::HashableEdge e{ t.HashableEdge(i) };
-			if (openEdges.find(e) == openEdges.end())
-			{
-				openEdges.insert(e);
-			}
-			else
-			{
-				openEdges.erase(e);
-			}
-		}
-	}
+	std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
 
 	// TODO: should be merged with the code in Extract2DLoops and moved to a utility function
 	std::unordered_map<uint32_t, std::unordered_set<uint32_t>> halfEdges;

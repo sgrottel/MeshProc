@@ -23,3 +23,24 @@ bool Mesh::IsValid() const
 
 	return true;
 }
+
+std::unordered_set<data::HashableEdge> Mesh::CollectOpenEdges() const
+{
+	std::unordered_set<data::HashableEdge> openEdges;
+	for (data::Triangle const& t : triangles)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			data::HashableEdge e{ t.HashableEdge(i) };
+			if (openEdges.find(e) == openEdges.end())
+			{
+				openEdges.insert(e);
+			}
+			else
+			{
+				openEdges.erase(e);
+			}
+		}
+	}
+	return openEdges;
+}

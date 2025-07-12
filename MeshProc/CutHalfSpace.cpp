@@ -72,7 +72,6 @@ bool CutHalfSpace::Invoke()
 	m_mesh->triangles.erase(it, m_mesh->triangles.end());
 
 	// cut border (hashable)edges and generate new triangles and vertices
-	const size_t oldTriCount = m_mesh->triangles.size();
 	std::unordered_map<data::HashableEdge, uint32_t> newVert;
 	std::vector<uint32_t> triVerts;
 	triVerts.reserve(6);
@@ -116,26 +115,78 @@ bool CutHalfSpace::Invoke()
 
 		if (triVerts.size() == 3)
 		{
-			m_mesh->triangles.push_back(data::Triangle(triVerts[0], triVerts[1], triVerts[2]));
-			// memorize original triangle
+			data::Triangle nt{ triVerts[0], triVerts[1], triVerts[2] };
+
+			const glm::vec3 nn = nt.CalcNormal(m_mesh->vertices);
+			const glm::vec3 on = t.CalcNormal(m_mesh->vertices);
+			const float proj = glm::dot(nn, on);
+			if (proj < 0.0f)
+			{
+				nt.Flip();
+			}
+
+			m_mesh->triangles.push_back(nt);
 		}
 		else if (triVerts.size() == 4)
 		{
 			m_mesh->AddQuad(triVerts[0], triVerts[2], triVerts[1], triVerts[3]);
-			// memorize original triangle
+			auto back = --(m_mesh->triangles.end());
+			data::Triangle& nt2 = *back;
+			data::Triangle& nt = *(--back);
+
+			const glm::vec3 nn = nt.CalcNormal(m_mesh->vertices);
+			const glm::vec3 on = t.CalcNormal(m_mesh->vertices);
+			const float proj = glm::dot(nn, on);
+			if (proj < 0.0f)
+			{
+				nt.Flip();
+				nt2.Flip();
+			}
+
 		}
 		else
 		{
 			Log().Warning("Triangle unexpectedly cut into %d pieces", static_cast<int>(triVerts.size()));
 		}
 	}
-	// TODO: Implement triangle flip by comparing new normal with normal of original triangle
 
 	// remove all unused vertices
-	// TODO: Implement
+	std::vector<uint32_t> newIdx(m_mesh->vertices.size(), 0xffffffff);
+	for (auto const& t : m_mesh->triangles)
+	{
+		for (size_t i = 0; i < 3; ++i)
+		{
+			newIdx.at(t[i]) = 0;
+		}
+	}
+	uint32_t idx = 0;
+	for (uint32_t& i : newIdx)
+	{
+		if (i == 0)
+		{
+			i = idx++;
+		}
+	}
+	std::vector<glm::vec3> nv(idx);
+	for (size_t i = 0; i < m_mesh->vertices.size(); ++i)
+	{
+		if (newIdx.at(i) == 0xffffffff) continue;
+		nv.at(newIdx[i]) = m_mesh->vertices.at(i);
+	}
+	std::swap(m_mesh->vertices, nv);
+	for (auto& t : m_mesh->triangles)
+	{
+		for (size_t i = 0; i < 3; ++i)
+		{
+			t[i] = newIdx.at(t[i]);
+			assert(t[i] < 0xffffffff);
+		}
+	}
 
-	// finally collect open edges
-	// TODO: Implement - cf OpenBorder, but maybe synergies from vertex renumberation above
+	// finally collect open edges and build closed plane surface
+	std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
+	// TODO: Implement - cf OpenBorder
+	// TODO: close hole
 
 	return true;
 }
