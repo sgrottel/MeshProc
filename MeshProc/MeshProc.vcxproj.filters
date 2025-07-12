@@ -40,6 +40,9 @@
     <Filter Include="3rd-party\xyz_math">
       <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
     </Filter>
+    <Filter Include="algo">
+      <UniqueIdentifier>{3c2c12d7-f0ee-43fd-be36-c0649781453a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -383,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="data\HashableEdge.h">
       <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="algo\LoopsFromEdges.h">
+      <Filter>algo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

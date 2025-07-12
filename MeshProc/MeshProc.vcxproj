@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h" />
     <ClInclude Include="AbstractCommand.h" />
+    <ClInclude Include="algo\LoopsFromEdges.h" />
     <ClInclude Include="CloseLoopWithPin.h" />
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CommandFactory.h" />

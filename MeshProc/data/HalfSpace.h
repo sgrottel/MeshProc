@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+#include <tuple>
+
 namespace sgrottel
 {
 	class ISimpleLog;
@@ -61,6 +63,8 @@ namespace meshproc
 				const float a = adj / (adi + adj);
 				return vertexContainer.at(edge.start) * a + vertexContainer.at(edge.end) * b;
 			}
+
+			std::tuple<glm::vec3, glm::vec3> Make2DCoordSys() const;
 
 		private:
 			const glm::vec3 m_planeNormalParam{ 0.0f, 0.0f, 1.0f };

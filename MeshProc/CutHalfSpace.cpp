@@ -1,13 +1,13 @@
 #include "CutHalfSpace.h"
 
+#include "algo/LoopsFromEdges.h"
+
 #include <SimpleLog/SimpleLog.hpp>
 
 #include <glm/glm.hpp>
 
 #include <algorithm>
 #include <functional>
-//#include <array>
-//#include <unordered_set>
 #include <unordered_map>
 #include <vector>
 
@@ -185,7 +185,20 @@ bool CutHalfSpace::Invoke()
 
 	// finally collect open edges and build closed plane surface
 	std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
-	// TODO: Implement - cf OpenBorder
+	algo::LoopsFromEdges(openEdges, m_openLoops, Log());
+
+	auto [projX, projY] = m_halfSpace.Make2DCoordSys();
+	std::unordered_map<uint32_t, glm::vec2> pt2d;
+	for (auto loop : *m_openLoops)
+	{
+		for (uint32_t vi : *loop)
+		{
+			if (pt2d.contains(vi)) continue;
+			const glm::vec3 v = m_mesh->vertices.at(vi) - m_halfSpace.Plane();
+			pt2d.insert(std::make_pair(vi, glm::vec2(glm::dot(v, projX), glm::dot(v, projY))));
+		}
+	}
+
 	// TODO: close hole
 
 	return true;

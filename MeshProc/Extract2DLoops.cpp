@@ -2,6 +2,7 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
+#include "algo/LoopsFromEdges.h"
 #include "data/HashableEdge.h"
 
 #include <glm/glm.hpp>
@@ -39,11 +40,7 @@ bool Extract2DLoops::Invoke()
 		return false;
 	}
 
-	const glm::vec3 projXTemp = (std::abs(std::abs(m_halfSpace.Normal().x) - 1.0f) < 0.00001f)
-		? glm::vec3{ 0.0f, 1.0f, 0.0f }
-		: glm::vec3{ 1.0f, 0.0f, 0.0f };
-	const glm::vec3 projY = glm::normalize(glm::cross(m_halfSpace.Normal(), projXTemp));
-	const glm::vec3 projX = glm::normalize(glm::cross(projY, m_halfSpace.Normal()));
+	auto [projX, projY] = m_halfSpace.Make2DCoordSys();
 
 	std::unordered_map<glm::vec2, size_t> v2d;
 	std::vector<data::HashableEdge> edges2d;
@@ -128,124 +125,15 @@ bool Extract2DLoops::Invoke()
 		vec2d[p.second] = p.first;
 	}
 
-	// TODO: should be merged with the code in OpenBorder and moved to a utility function
-	auto addLoop = [&](const std::vector<size_t>& l)
-		{
-			std::vector<glm::vec2> pl;
-			pl.resize(l.size());
-			std::transform(l.begin(), l.end(), pl.begin(), [&](size_t idx) { return vec2d.at(idx); });
-			m_loops->loops.insert(std::make_pair(m_loops->loops.size(), std::move(pl)));
-		};
-
-	std::vector<std::vector<size_t>> polys;
-	for (data::HashableEdge const& e : edges2d)
+	ParamTypeInfo_t<ParamType::MultiVertexSelection> loops;
+	algo::LoopsFromEdges(edges2d, loops, Log());
+	m_loops->loops.clear();
+	for (auto const& l : *loops)
 	{
-		auto i1 = std::find_if(polys.begin(), polys.end(), [i = e.i0](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
-		auto i2 = std::find_if(polys.begin(), polys.end(), [i = e.i1](const std::vector<size_t>& l) { return l.front() == i || l.back() == i; });
-
-		if (i1 != polys.end())
-		{
-			if (i2 == i1)
-			{
-				// closing the loop
-				addLoop(*i1);
-				polys.erase(i1);
-			}
-			else
-			if (i2 != polys.end())
-			{
-				// merge both lines
-				if (i1->front() == e.i0)
-				{
-					// need to connect i1 at the front (try if we can more easily connect to i2)
-
-					i2->reserve(i2->size() + i1->size());
-					if (i2->front() == e.i1)
-					{
-						// need to connect i2 at the front
-						// => reverse i2; then append i1 to i2
-						std::reverse(i2->begin(), i2->end());
-						for (auto ii = i1->begin(); ii != i1->end(); ++ii)
-						{
-							i2->push_back(*ii);
-						}
-					}
-					else
-					{
-						// need to connect i2 at the end => append i1 to i2
-
-						for (auto ii = i1->begin(); ii != i1->end(); ++ii)
-						{
-							i2->push_back(*ii);
-						}
-					}
-					polys.erase(i1);
-				}
-				else
-				{
-					// need to connect i1 at the end
-					i1->reserve(i2->size() + i1->size());
-					if (i2->front() == e.i1)
-					{
-						// need to connect i2 at the front => append i2 to i1
-
-						for (auto ii = i2->begin(); ii != i2->end(); ++ii)
-						{
-							i1->push_back(*ii);
-						}
-					}
-					else
-					{
-						// need to connect i2 at the end => append reversed i2 to i1
-						for (auto ii = i2->rbegin(); ii != i2->rend(); ++ii)
-						{
-							i1->push_back(*ii);
-						}
-					}
-
-					polys.erase(i2);
-				}
-
-			}
-			else
-			{
-				if (i1->front() == e.i0)
-				{
-					i1->insert(i1->begin(), e.i1);
-				}
-				else
-				{
-					i1->push_back(e.i1);
-				}
-			}
-		}
-		else
-		{
-			if (i2 != polys.end())
-			{
-				if (i2->front() == e.i1)
-				{
-					i2->insert(i2->begin(), e.i0);
-				}
-				else
-				{
-					i2->push_back(e.i0);
-				}
-			}
-			else
-			{
-				polys.push_back(std::vector<size_t>{e.i0, e.i1});
-			}
-		}
-	}
-
-	if (polys.size() > 0)
-	{
-		Log().Warning("Open lines: %d", static_cast<int>(polys.size()));
-		for (const auto& l : polys)
-		{
-			addLoop(l);
-		}
+		std::vector<glm::vec2> pl;
+		pl.resize(l->size());
+		std::transform(l->begin(), l->end(), pl.begin(), [&](size_t idx) { return vec2d.at(idx); });
+		m_loops->loops.insert(std::make_pair(m_loops->loops.size(), std::move(pl)));
 	}
 
 	Log().Detail("Extracted %d loops", static_cast<int>(m_loops->loops.size()));
