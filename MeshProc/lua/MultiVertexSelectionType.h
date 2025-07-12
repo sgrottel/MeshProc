@@ -18,6 +18,9 @@ namespace meshproc
 				: AbstractMultiType<std::vector<uint32_t>, MultiVertexSelectionType>{ owner }
 			{};
 			bool Init();
+
+		protected:
+			static int CallbackGet(lua_State* lua);
 		};
 	}
 }

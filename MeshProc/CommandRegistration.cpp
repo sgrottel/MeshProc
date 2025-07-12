@@ -9,6 +9,7 @@
 #include "Extract2DLoops.h"
 #include "ExtractSubMesh.h"
 #include "FlatSkirt.h"
+#include "LinearExtrude.h"
 #include "generator/CrystalGrain.h"
 #include "generator/Cube.h"
 #include "generator/Icosahedron.h"
@@ -40,6 +41,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<Extract2DLoops>("Extract2DLoops");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
+	succ &= factory.Register<LinearExtrude>("LinearExtrude");
 	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");
 	succ &= factory.Register<generator::Cube>("generator.Cube");
 	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");

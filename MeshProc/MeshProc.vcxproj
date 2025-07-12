@@ -103,8 +103,8 @@
     <ClCompile Include="DevPlayground.cpp" />
     <ClCompile Include="Extract2DLoops.cpp" />
     <ClCompile Include="ExtractSubMesh.cpp" />
-    <ClCompile Include="FlatLoop.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
+    <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Cube.cpp" />
     <ClCompile Include="generator\Icosahedron.cpp" />
@@ -167,8 +167,8 @@
     <ClInclude Include="DevPlayground.h" />
     <ClInclude Include="Extract2DLoops.h" />
     <ClInclude Include="ExtractSubMesh.h" />
-    <ClInclude Include="FlatLoop.h" />
     <ClInclude Include="FlatSkirt.h" />
+    <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Cube.h" />
     <ClInclude Include="generator\Icosahedron.h" />

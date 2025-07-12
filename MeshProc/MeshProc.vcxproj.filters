@@ -54,10 +54,7 @@
     <ClCompile Include="OpenBorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FlatSkirt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlatLoop.cpp">
+    <ClCompile Include="LinearExtrude.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AbstractCommand.cpp">
@@ -207,6 +204,9 @@
     <ClCompile Include="data\HashableEdge.cpp">
       <Filter>data</Filter>
     </ClCompile>
+    <ClCompile Include="FlatSkirt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -228,10 +228,7 @@
     <ClInclude Include="OpenBorder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FlatSkirt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlatLoop.h">
+    <ClInclude Include="LinearExtrude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AbstractCommand.h">
@@ -389,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="algo\LoopsFromEdges.h">
       <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="FlatSkirt.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
