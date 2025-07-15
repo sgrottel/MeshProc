@@ -65,7 +65,7 @@ bool LinearExtrude::Invoke()
 
 	for (size_t i = 0; i < lsize; ++i)
 	{
-		m_loop->at(i) = voff + i;
+		m_loop->at(i) = static_cast<uint32_t>(voff + i);
 	}
 
 	return true;

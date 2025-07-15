@@ -10,3 +10,4 @@ MeshProc/out.ply
 *.csv
 extra/perf_looper/out
 extra/perf_looper/deps/google_benchmark/**
+MeshProc/vcpkg_installed

@@ -12,12 +12,12 @@ namespace
 		}
 
 		int size_needed = WideCharToMultiByte(
-			CP_UTF8, 0, wstr, wstrSize, nullptr, 0, nullptr, nullptr
+			CP_UTF8, 0, wstr, static_cast<int>(wstrSize), nullptr, 0, nullptr, nullptr
 		);
 
 		std::string result(size_needed - 1, 0); // exclude null terminator
 		WideCharToMultiByte(
-			CP_UTF8, 0, wstr, wstrSize, result.data(), size_needed, nullptr, nullptr
+			CP_UTF8, 0, wstr, static_cast<int>(wstrSize), result.data(), size_needed, nullptr, nullptr
 		);
 
 		return result;
