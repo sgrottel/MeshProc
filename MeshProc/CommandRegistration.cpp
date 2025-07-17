@@ -23,9 +23,9 @@
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
 #include "io/SvgShape2DWriter.h"
+#include "ManipulateVertices.h"
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
-#include "SelectVertexSelection.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -56,9 +56,9 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<io::StlReader>("io.StlReader");
 	succ &= factory.Register<io::StlWriter>("io.StlWriter");
 	succ &= factory.Register<io::SvgShape2DWriter>("io.SvgShape2DWriter");
+	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
-	succ &= factory.Register<SelectVertexSelection>("SelectVertexSelection");
 
 	// Add further Commands to this registration function
 

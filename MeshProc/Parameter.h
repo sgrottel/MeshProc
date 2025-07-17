@@ -15,6 +15,10 @@ namespace meshproc
 		class Scene;
 		class Shape2D;
 	}
+	namespace lua
+	{
+		class CallbackFunction;
+	}
 
 	enum class ParamType
 	{
@@ -29,6 +33,7 @@ namespace meshproc
 		Shape2D,
 		VertexSelection, // e.g. also edges/loops
 		MultiVertexSelection,
+		Callback,
 
 		LAST
 	};
@@ -113,6 +118,13 @@ namespace meshproc
 	{
 		static constexpr const char* name = "MultiVertexSelection";
 		typedef std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::Callback>
+	{
+		static constexpr const char* name = "Callback";
+		typedef std::shared_ptr<lua::CallbackFunction> type;
 	};
 
 	template<ParamType PT>

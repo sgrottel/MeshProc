@@ -84,9 +84,6 @@
     <ClCompile Include="ExtractSubMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SelectVertexSelection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Extract2DLoops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -210,6 +207,12 @@
     <ClCompile Include="generator\RotateExtrude2DMesh.cpp">
       <Filter>generator</Filter>
     </ClCompile>
+    <ClCompile Include="ManipulateVertices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\CallbackFunction.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -259,9 +262,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtractSubMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SelectVertexSelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VersionInfo.h">
@@ -395,6 +395,12 @@
     </ClInclude>
     <ClInclude Include="generator\RotateExtrude2DMesh.h">
       <Filter>generator</Filter>
+    </ClInclude>
+    <ClInclude Include="ManipulateVertices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\CallbackFunction.h">
+      <Filter>lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
