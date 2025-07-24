@@ -10,10 +10,10 @@ namespace meshproc
 	namespace generator
 	{
 
-		class Cube: public AbstractCommand
+		class Cuboid : public AbstractCommand
 		{
 		public:
-			Cube(const sgrottel::ISimpleLog& log);
+			Cuboid(const sgrottel::ISimpleLog& log);
 
 			bool Invoke() override;
 

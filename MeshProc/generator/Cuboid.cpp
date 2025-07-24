@@ -1,8 +1,8 @@
-#include "Cube.h"
+#include "Cuboid.h"
 
 using namespace meshproc;
 
-generator::Cube::Cube(const sgrottel::ISimpleLog& log)
+generator::Cuboid::Cuboid(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
 	AddParamBinding<ParamMode::In, ParamType::Float>("SizeX", m_sizeX);
@@ -11,7 +11,7 @@ generator::Cube::Cube(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
 }
 
-bool generator::Cube::Invoke()
+bool generator::Cuboid::Invoke()
 {
 	std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
 

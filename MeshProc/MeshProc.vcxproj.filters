@@ -174,9 +174,6 @@
     <ClCompile Include="generator\CrystalGrain.cpp">
       <Filter>generator</Filter>
     </ClCompile>
-    <ClCompile Include="generator\Cube.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
     <ClCompile Include="generator\Icosahedron.cpp">
       <Filter>generator</Filter>
     </ClCompile>
@@ -212,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="lua\CallbackFunction.cpp">
       <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="generator\Cuboid.cpp">
+      <Filter>generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,9 +357,6 @@
     <ClInclude Include="generator\CrystalGrain.h">
       <Filter>generator</Filter>
     </ClInclude>
-    <ClInclude Include="generator\Cube.h">
-      <Filter>generator</Filter>
-    </ClInclude>
     <ClInclude Include="generator\Icosahedron.h">
       <Filter>generator</Filter>
     </ClInclude>
@@ -401,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="lua\CallbackFunction.h">
       <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\Cuboid.h">
+      <Filter>generator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
