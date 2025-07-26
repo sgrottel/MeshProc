@@ -2,6 +2,7 @@
 
 #include "CommandCreator.h"
 #include "CommandType.h"
+#include "ListOfVec3Type.h"
 #include "LogFunctions.h"
 #include "LuaResources.h"
 #include "MeshType.h"
@@ -35,6 +36,7 @@ public:
 	Components(Runner& owner, const CommandFactory& factory)
 		: m_commandCreator{ owner, factory }
 		, m_commandType{ owner }
+		, m_listOfVec3Type{ owner }
 		, m_logFunctions{ owner }
 		, m_meshType{ owner }
 		, m_multiMeshType{ owner }
@@ -48,6 +50,7 @@ public:
 
 	CommandCreator m_commandCreator;
 	CommandType m_commandType;
+	ListOfVec3Type m_listOfVec3Type;
 	LogFunctions m_logFunctions;
 	MeshType m_meshType;
 	MultiMeshType m_multiMeshType;
@@ -60,6 +63,7 @@ public:
 bool Runner::Components::Init()
 {
 	if (!m_commandType.Init()) return false;
+	if (!m_listOfVec3Type.Init()) return false;
 	if (!m_logFunctions.Init()) return false;
 	if (!m_meshType.Init()) return false;
 	if (!m_multiMeshType.Init()) return false;
@@ -80,6 +84,7 @@ bool Runner::Components::Init()
 
 IMPL_RUNNER_GET_COMPONENT(CommandCreator, m_commandCreator)
 IMPL_RUNNER_GET_COMPONENT(CommandType, m_commandType)
+IMPL_RUNNER_GET_COMPONENT(ListOfVec3Type, m_listOfVec3Type)
 IMPL_RUNNER_GET_COMPONENT(LogFunctions, m_logFunctions)
 IMPL_RUNNER_GET_COMPONENT(MeshType, m_meshType)
 IMPL_RUNNER_GET_COMPONENT(MultiMeshType, m_multiMeshType)

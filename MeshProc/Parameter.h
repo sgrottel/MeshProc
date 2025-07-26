@@ -34,6 +34,7 @@ namespace meshproc
 		VertexSelection, // e.g. also edges/loops
 		MultiVertexSelection,
 		Callback,
+		ListOfVec3,
 
 		LAST
 	};
@@ -125,6 +126,13 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Callback";
 		typedef std::shared_ptr<lua::CallbackFunction> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::ListOfVec3>
+	{
+		static constexpr const char* name = "ListOfVec3";
+		typedef std::shared_ptr<std::vector<glm::vec3>> type;
 	};
 
 	template<ParamType PT>

@@ -3,6 +3,7 @@
 #include "CallbackFunction.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3Type.h"
+#include "ListOfVec3Type.h"
 #include "LuaUtilities.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
@@ -176,6 +177,9 @@ namespace
 			return true;
 		}
 	};
+
+	template<>
+	struct LuaParamMapping<ParamType::ListOfVec3> : LuaWrappedParamMapping<ListOfVec3Type, std::vector<glm::vec3>> {};
 
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)

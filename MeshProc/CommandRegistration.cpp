@@ -6,6 +6,7 @@
 #include "Convex2DHull.h"
 #include "CutHalfSpace.h"
 #include "DevPlayground.h"
+#include "DisplacementNoise.h"
 #include "Extract2DLoops.h"
 #include "ExtractSubMesh.h"
 #include "FlatSkirt.h"
@@ -16,6 +17,7 @@
 #include "generator/LinearExtrude2DMesh.h"
 #include "generator/RotateExtrude2DMesh.h"
 #include "generator/SphereIco.h"
+#include "generator/VertexNormals.h"
 #include "io/CsvShape2DWriter.h"
 #include "io/ObjReader.h"
 #include "io/PlyReader.h"
@@ -39,6 +41,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<CutHalfSpace>("CutHalfSpace");
 	succ &= factory.Register<DevPlayground>("DevPlayground");
 	factory.HideCommand("DevPlayground");
+	succ &= factory.Register<DisplacementNoise>("DisplacementNoise");
 	succ &= factory.Register<Extract2DLoops>("Extract2DLoops");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
@@ -49,6 +52,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<generator::LinearExtrude2DMesh>("generator.LinearExtrude2DMesh");
 	succ &= factory.Register<generator::RotateExtrude2DMesh>("generator.RotateExtrude2DMesh");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
+	succ &= factory.Register<generator::VertexNormals>("generator.VertexNormals");
 	succ &= factory.Register<io::CsvShape2DWriter>("io.CsvShape2DWriter");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");
 	succ &= factory.Register<io::PlyReader>("io.PlyReader");

@@ -104,11 +104,13 @@
     <ClCompile Include="data\Shape2D.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
     <ClCompile Include="DevPlayground.cpp" />
+    <ClCompile Include="DisplacementNoise.cpp" />
     <ClCompile Include="Extract2DLoops.cpp" />
     <ClCompile Include="ExtractSubMesh.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="generator\Cuboid.cpp" />
     <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
+    <ClCompile Include="generator\VertexNormals.cpp" />
     <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Icosahedron.cpp" />
@@ -129,6 +131,7 @@
     <ClCompile Include="lua\GlmMat4Type.cpp" />
     <ClCompile Include="lua\GlmVec2Type.cpp" />
     <ClCompile Include="lua\GlmVec3Type.cpp" />
+    <ClCompile Include="lua\ListOfVec3Type.cpp" />
     <ClCompile Include="lua\LogFunctions.cpp" />
     <ClCompile Include="lua\LuaUtilities.cpp" />
     <ClCompile Include="lua\MeshType.cpp" />
@@ -170,11 +173,13 @@
     <ClInclude Include="data\Shape2D.h" />
     <ClInclude Include="data\Triangle.h" />
     <ClInclude Include="DevPlayground.h" />
+    <ClInclude Include="DisplacementNoise.h" />
     <ClInclude Include="Extract2DLoops.h" />
     <ClInclude Include="ExtractSubMesh.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="generator\Cuboid.h" />
     <ClInclude Include="generator\RotateExtrude2DMesh.h" />
+    <ClInclude Include="generator\VertexNormals.h" />
     <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Icosahedron.h" />
@@ -195,6 +200,7 @@
     <ClInclude Include="lua\GlmMat4Type.h" />
     <ClInclude Include="lua\GlmVec2Type.h" />
     <ClInclude Include="lua\GlmVec3Type.h" />
+    <ClInclude Include="lua\ListOfVec3Type.h" />
     <ClInclude Include="lua\LogFunctions.h" />
     <ClInclude Include="lua\LuaResources.h" />
     <ClInclude Include="lua\LuaUtilities.h" />

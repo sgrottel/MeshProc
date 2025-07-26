@@ -213,6 +213,15 @@
     <ClCompile Include="generator\Cuboid.cpp">
       <Filter>generator</Filter>
     </ClCompile>
+    <ClCompile Include="lua\ListOfVec3Type.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="generator\VertexNormals.cpp">
+      <Filter>generator</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplacementNoise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -401,6 +410,15 @@
     </ClInclude>
     <ClInclude Include="generator\Cuboid.h">
       <Filter>generator</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\ListOfVec3Type.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\VertexNormals.h">
+      <Filter>generator</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplacementNoise.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
