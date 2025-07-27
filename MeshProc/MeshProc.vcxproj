@@ -140,6 +140,7 @@
     <ClCompile Include="lua\Runner.cpp" />
     <ClCompile Include="lua\SceneType.cpp" />
     <ClCompile Include="lua\Shape2DType.cpp" />
+    <ClCompile Include="lua\VersionCheck.cpp" />
     <ClCompile Include="lua\VertexSelectionType.cpp" />
     <ClCompile Include="ManipulateVertices.cpp" />
     <ClCompile Include="MeshProc.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="lua\Runner.h" />
     <ClInclude Include="lua\SceneType.h" />
     <ClInclude Include="lua\Shape2DType.h" />
+    <ClInclude Include="lua\VersionCheck.h" />
     <ClInclude Include="lua\VertexSelectionType.h" />
     <ClInclude Include="ManipulateVertices.h" />
     <ClInclude Include="OpenBorder.h" />

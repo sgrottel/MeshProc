@@ -225,6 +225,9 @@
     <ClCompile Include="Subdivision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\VersionCheck.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -425,6 +428,9 @@
     </ClInclude>
     <ClInclude Include="Subdivision.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\VersionCheck.h">
+      <Filter>lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

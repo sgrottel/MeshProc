@@ -10,6 +10,7 @@
 #include "MultiVertexSelectionType.h"
 #include "SceneType.h"
 #include "Shape2DType.h"
+#include "VersionCheck.h"
 #include "VertexSelectionType.h"
 
 #include "AbstractCommand.h"
@@ -43,6 +44,7 @@ public:
 		, m_multiVertexSelectionType{ owner }
 		, m_sceneType{ owner }
 		, m_shape2DType{ owner }
+		, m_versionCheck{ owner }
 		, m_vertexSelectionType{ owner }
 	{ }
 
@@ -57,6 +59,7 @@ public:
 	MultiVertexSelectionType m_multiVertexSelectionType;
 	SceneType m_sceneType;
 	Shape2DType m_shape2DType;
+	VersionCheck m_versionCheck;
 	VertexSelectionType m_vertexSelectionType;
 };
 
@@ -70,6 +73,7 @@ bool Runner::Components::Init()
 	if (!m_multiVertexSelectionType.Init()) return false;
 	if (!m_sceneType.Init()) return false;
 	if (!m_shape2DType.Init()) return false;
+	if (!m_versionCheck.Init()) return false;
 	if (!m_vertexSelectionType.Init()) return false;
 	return true;
 }
@@ -91,6 +95,7 @@ IMPL_RUNNER_GET_COMPONENT(MultiMeshType, m_multiMeshType)
 IMPL_RUNNER_GET_COMPONENT(MultiVertexSelectionType, m_multiVertexSelectionType)
 IMPL_RUNNER_GET_COMPONENT(SceneType, m_sceneType)
 IMPL_RUNNER_GET_COMPONENT(Shape2DType, m_shape2DType)
+IMPL_RUNNER_GET_COMPONENT(VersionCheck, m_versionCheck)
 IMPL_RUNNER_GET_COMPONENT(VertexSelectionType, m_vertexSelectionType)
 
 Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
