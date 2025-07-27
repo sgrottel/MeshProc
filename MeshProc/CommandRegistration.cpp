@@ -4,6 +4,7 @@
 
 #include "CloseLoopWithPin.h"
 #include "Convex2DHull.h"
+#include "CollapseTriangles.h"
 #include "CutHalfSpace.h"
 #include "DevPlayground.h"
 #include "DisplacementNoise.h"
@@ -28,6 +29,7 @@
 #include "ManipulateVertices.h"
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
+#include "SelectRandomTriangles.h"
 #include "Subdivision.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -39,6 +41,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	succ &= factory.Register<Convex2DHull>("Convex2DHull");
+	succ &= factory.Register<CollapseTriangles>("CollapseTriangles");
 	succ &= factory.Register<CutHalfSpace>("CutHalfSpace");
 	succ &= factory.Register<DevPlayground>("DevPlayground");
 	factory.HideCommand("DevPlayground");
@@ -64,6 +67,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
+	succ &= factory.Register<SelectRandomTriangles>("SelectRandomTriangles");
 	succ &= factory.Register<Subdivision>("Subdivision");
 
 	// Add further Commands to this registration function
