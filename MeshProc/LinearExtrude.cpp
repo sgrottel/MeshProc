@@ -11,7 +11,7 @@ LinearExtrude::LinearExtrude(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::InOut, ParamType::VertexSelection>("Loop", m_loop);
+	AddParamBinding<ParamMode::InOut, ParamType::Indices>("Loop", m_loop);
 	AddParamBinding<ParamMode::In, ParamType::Vec3>("Dir", m_dir);
 }
 

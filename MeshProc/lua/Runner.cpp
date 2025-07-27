@@ -2,16 +2,16 @@
 
 #include "CommandCreator.h"
 #include "CommandType.h"
+#include "IndicesType.h"
 #include "ListOfVec3Type.h"
 #include "LogFunctions.h"
 #include "LuaResources.h"
 #include "MeshType.h"
+#include "MultiIndicesType.h"
 #include "MultiMeshType.h"
-#include "MultiVertexSelectionType.h"
 #include "SceneType.h"
 #include "Shape2DType.h"
 #include "VersionCheck.h"
-#include "VertexSelectionType.h"
 
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
@@ -37,44 +37,44 @@ public:
 	Components(Runner& owner, const CommandFactory& factory)
 		: m_commandCreator{ owner, factory }
 		, m_commandType{ owner }
+		, m_IndicesType{ owner }
 		, m_listOfVec3Type{ owner }
 		, m_logFunctions{ owner }
 		, m_meshType{ owner }
+		, m_multiIndicesType{ owner }
 		, m_multiMeshType{ owner }
-		, m_multiVertexSelectionType{ owner }
 		, m_sceneType{ owner }
 		, m_shape2DType{ owner }
 		, m_versionCheck{ owner }
-		, m_vertexSelectionType{ owner }
 	{ }
 
 	bool Init();
 
 	CommandCreator m_commandCreator;
 	CommandType m_commandType;
+	IndicesType m_IndicesType;
 	ListOfVec3Type m_listOfVec3Type;
 	LogFunctions m_logFunctions;
 	MeshType m_meshType;
+	MultiIndicesType m_multiIndicesType;
 	MultiMeshType m_multiMeshType;
-	MultiVertexSelectionType m_multiVertexSelectionType;
 	SceneType m_sceneType;
 	Shape2DType m_shape2DType;
 	VersionCheck m_versionCheck;
-	VertexSelectionType m_vertexSelectionType;
 };
 
 bool Runner::Components::Init()
 {
 	if (!m_commandType.Init()) return false;
+	if (!m_IndicesType.Init()) return false;
 	if (!m_listOfVec3Type.Init()) return false;
 	if (!m_logFunctions.Init()) return false;
 	if (!m_meshType.Init()) return false;
+	if (!m_multiIndicesType.Init()) return false;
 	if (!m_multiMeshType.Init()) return false;
-	if (!m_multiVertexSelectionType.Init()) return false;
 	if (!m_sceneType.Init()) return false;
 	if (!m_shape2DType.Init()) return false;
 	if (!m_versionCheck.Init()) return false;
-	if (!m_vertexSelectionType.Init()) return false;
 	return true;
 }
 
@@ -88,15 +88,15 @@ bool Runner::Components::Init()
 
 IMPL_RUNNER_GET_COMPONENT(CommandCreator, m_commandCreator)
 IMPL_RUNNER_GET_COMPONENT(CommandType, m_commandType)
+IMPL_RUNNER_GET_COMPONENT(IndicesType, m_IndicesType)
 IMPL_RUNNER_GET_COMPONENT(ListOfVec3Type, m_listOfVec3Type)
 IMPL_RUNNER_GET_COMPONENT(LogFunctions, m_logFunctions)
 IMPL_RUNNER_GET_COMPONENT(MeshType, m_meshType)
+IMPL_RUNNER_GET_COMPONENT(MultiIndicesType, m_multiIndicesType)
 IMPL_RUNNER_GET_COMPONENT(MultiMeshType, m_multiMeshType)
-IMPL_RUNNER_GET_COMPONENT(MultiVertexSelectionType, m_multiVertexSelectionType)
 IMPL_RUNNER_GET_COMPONENT(SceneType, m_sceneType)
 IMPL_RUNNER_GET_COMPONENT(Shape2DType, m_shape2DType)
 IMPL_RUNNER_GET_COMPONENT(VersionCheck, m_versionCheck)
-IMPL_RUNNER_GET_COMPONENT(VertexSelectionType, m_vertexSelectionType)
 
 Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
 	: m_log{ log }

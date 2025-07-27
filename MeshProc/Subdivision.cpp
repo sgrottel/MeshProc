@@ -10,7 +10,7 @@ Subdivision::Subdivision(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("NewVertices", m_newVertices);
+	AddParamBinding<ParamMode::Out, ParamType::Indices>("NewVertices", m_newVertices);
 }
 
 bool Subdivision::Invoke()

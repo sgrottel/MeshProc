@@ -125,7 +125,7 @@ bool Extract2DLoops::Invoke()
 		vec2d[p.second] = p.first;
 	}
 
-	ParamTypeInfo_t<ParamType::MultiVertexSelection> loops;
+	ParamTypeInfo_t<ParamType::MultiIndices> loops;
 	algo::LoopsFromEdges(edges2d, loops, Log());
 	m_loops->loops.clear();
 	for (auto const& l : *loops)

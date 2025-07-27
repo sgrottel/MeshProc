@@ -31,8 +31,8 @@ namespace meshproc
 		MultiMesh,
 		Scene,
 		Shape2D,
-		VertexSelection, // e.g. also edges/loops
-		MultiVertexSelection,
+		Indices, // e.g. vertices, also edges/loops, or triangles
+		MultiIndices,
 		Callback,
 		ListOfVec3,
 
@@ -108,16 +108,16 @@ namespace meshproc
 	};
 
 	template<>
-	struct ParamTypeInfo<ParamType::VertexSelection>
+	struct ParamTypeInfo<ParamType::Indices>
 	{
-		static constexpr const char* name = "VertexSelection";
+		static constexpr const char* name = "Indices";
 		typedef std::shared_ptr<std::vector<uint32_t>> type;
 	};
 
 	template<>
-	struct ParamTypeInfo<ParamType::MultiVertexSelection>
+	struct ParamTypeInfo<ParamType::MultiIndices>
 	{
-		static constexpr const char* name = "MultiVertexSelection";
+		static constexpr const char* name = "MultiIndices";
 		typedef std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> type;
 	};
 

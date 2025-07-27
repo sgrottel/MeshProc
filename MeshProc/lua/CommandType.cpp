@@ -7,10 +7,10 @@
 #include "LuaUtilities.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
-#include "MultiVertexSelectionType.h"
+#include "MultiIndicesType.h"
 #include "SceneType.h"
 #include "Shape2DType.h"
-#include "VertexSelectionType.h"
+#include "IndicesType.h"
 
 #include "AbstractCommand.h"
 #include "utilities/StringUtilities.h"
@@ -118,10 +118,10 @@ namespace
 	struct LuaParamMapping<ParamType::Shape2D> : LuaWrappedParamMapping<Shape2DType, data::Shape2D> {};
 
 	template<>
-	struct LuaParamMapping<ParamType::VertexSelection> : LuaWrappedParamMapping<VertexSelectionType, std::vector<uint32_t>> {};
+	struct LuaParamMapping<ParamType::Indices> : LuaWrappedParamMapping<IndicesType, std::vector<uint32_t>> {};
 
 	template<>
-	struct LuaParamMapping<ParamType::MultiVertexSelection> : LuaWrappedParamMapping<MultiVertexSelectionType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
+	struct LuaParamMapping<ParamType::MultiIndices> : LuaWrappedParamMapping<MultiIndicesType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::Mat4>

@@ -20,8 +20,8 @@ RotateExtrude2DMesh::RotateExtrude2DMesh(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::In, ParamType::UInt32>("Steps", m_steps);
 	AddParamBinding<ParamMode::In, ParamType::Shape2D>("Shape2D", m_shape2D);
 	AddParamBinding<ParamMode::Out, ParamType::Mesh>("Mesh", m_mesh);
-	//AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("StartLoop", m_startLoop);
-	//AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("EndLoop", m_endLoop);
+	//AddParamBinding<ParamMode::Out, ParamType::Indices>("StartLoop", m_startLoop);
+	//AddParamBinding<ParamMode::Out, ParamType::Indices>("EndLoop", m_endLoop);
 }
 
 bool RotateExtrude2DMesh::Invoke()

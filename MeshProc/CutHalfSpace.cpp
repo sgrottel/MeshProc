@@ -66,7 +66,7 @@ CutHalfSpace::CutHalfSpace(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
 	AddParamBinding<ParamMode::In, ParamType::Vec3>("PlaneNormal", m_halfSpace.GetPlaneNormalParam());
 	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneDist", m_halfSpace.GetPlaneDistParam());
-	AddParamBinding<ParamMode::Out, ParamType::MultiVertexSelection>("OpenLoops", m_openLoops);
+	AddParamBinding<ParamMode::Out, ParamType::MultiIndices>("OpenLoops", m_openLoops);
 }
 
 bool CutHalfSpace::Invoke()

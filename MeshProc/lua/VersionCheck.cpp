@@ -73,7 +73,7 @@ int VersionCheck::CallbackToString(lua_State* lua)
 
 	auto tableLen = lua_rawlen(lua, 1);
 	std::string str = "";
-	for (int i = 0; i < std::min<int>(tableLen, 4); ++i)
+	for (int i = 0; i < std::min<int>(static_cast<int>(tableLen), 4); ++i)
 	{
 		lua_rawgeti(lua, 1, i + 1);
 

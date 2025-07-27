@@ -16,7 +16,7 @@ OpenBorder::OpenBorder(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::Out, ParamType::MultiVertexSelection>("EdgeLists", m_edgeLists);
+	AddParamBinding<ParamMode::Out, ParamType::MultiIndices>("EdgeLists", m_edgeLists);
 }
 
 bool OpenBorder::Invoke()

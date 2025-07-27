@@ -132,7 +132,7 @@
     <ClCompile Include="lua\MultiMeshType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\MultiVertexSelectionType.cpp">
+    <ClCompile Include="lua\MultiIndicesType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\Runner.cpp">
@@ -144,7 +144,7 @@
     <ClCompile Include="lua\Shape2DType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\VertexSelectionType.cpp">
+    <ClCompile Include="lua\IndicesType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="io\CsvShape2DWriter.cpp">
@@ -297,7 +297,7 @@
     <ClInclude Include="utilities\StringUtilities.h">
       <Filter>utilities</Filter>
     </ClInclude>
-    <ClInclude Include="lua\VertexSelectionType.h">
+    <ClInclude Include="lua\IndicesType.h">
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="lua\AbstractMultiType.h">
@@ -336,7 +336,7 @@
     <ClInclude Include="lua\MultiMeshType.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\MultiVertexSelectionType.h">
+    <ClInclude Include="lua\MultiIndicesType.h">
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="lua\Runner.h">
