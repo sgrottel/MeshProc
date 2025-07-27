@@ -147,6 +147,7 @@
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterBinding.cpp" />
     <ClCompile Include="SelectBottomTriangles.cpp" />
+    <ClCompile Include="Subdivision.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +217,7 @@
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterBinding.h" />
     <ClInclude Include="SelectBottomTriangles.h" />
+    <ClInclude Include="Subdivision.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>

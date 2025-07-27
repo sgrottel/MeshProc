@@ -28,6 +28,7 @@
 #include "ManipulateVertices.h"
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
+#include "Subdivision.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -63,6 +64,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
+	succ &= factory.Register<Subdivision>("Subdivision");
 
 	// Add further Commands to this registration function
 
