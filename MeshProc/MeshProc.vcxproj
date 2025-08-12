@@ -144,6 +144,7 @@
     <ClCompile Include="lua\VersionCheck.cpp" />
     <ClCompile Include="lua\IndicesType.cpp" />
     <ClCompile Include="ManipulateVertices.cpp" />
+    <ClCompile Include="MeasureBoundingBox.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
     <ClCompile Include="Parameter.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="lua\VersionCheck.h" />
     <ClInclude Include="lua\IndicesType.h" />
     <ClInclude Include="ManipulateVertices.h" />
+    <ClInclude Include="MeasureBoundingBox.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterBinding.h" />

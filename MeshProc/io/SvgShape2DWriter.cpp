@@ -63,7 +63,7 @@ bool SvgShape2DWriter::Invoke()
 
 	root->SetAttribute("width", maxX - minX);
 	root->SetAttribute("height", maxY - minY);
-	root->SetAttribute("viewBox", std::format("{} {} {} {}", minX, minY, maxX, maxY).c_str());
+	root->SetAttribute("viewBox", std::format("{} {} {} {}", minX, minY, maxX - minX, maxY - minY).c_str());
 
 	for (auto const& loop : m_shape->loops)
 	{

@@ -69,10 +69,10 @@ int Shape2DType::CallbackAdd(lua_State* lua)
 	size_t loopIdx = 0;
 	if (size == 3)
 	{
-		long long ll = luaL_checkinteger(lua, 3) - 1;
+		long long ll = luaL_checkinteger(lua, 3);
 		if (ll < 0)
 		{
-			return luaL_error(lua, "Second argument loop index must be positive");
+			return luaL_error(lua, "Second argument integer loop id must be positive");
 		}
 		loopIdx = static_cast<size_t>(ll);
 	}
