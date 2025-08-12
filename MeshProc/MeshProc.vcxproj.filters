@@ -237,6 +237,9 @@
     <ClCompile Include="MeasureBoundingBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\CsvShape2DReader.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -449,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="MeasureBoundingBox.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CsvShape2DReader.h">
+      <Filter>io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

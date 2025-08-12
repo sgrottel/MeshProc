@@ -19,6 +19,7 @@
 #include "generator/RotateExtrude2DMesh.h"
 #include "generator/SphereIco.h"
 #include "generator/VertexNormals.h"
+#include "io/CsvShape2DReader.h"
 #include "io/CsvShape2DWriter.h"
 #include "io/ObjReader.h"
 #include "io/PlyReader.h"
@@ -58,6 +59,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<generator::RotateExtrude2DMesh>("generator.RotateExtrude2DMesh");
 	succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
 	succ &= factory.Register<generator::VertexNormals>("generator.VertexNormals");
+	succ &= factory.Register<io::CsvShape2DReader>("io.CsvShape2DReader");
 	succ &= factory.Register<io::CsvShape2DWriter>("io.CsvShape2DWriter");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");
 	succ &= factory.Register<io::PlyReader>("io.PlyReader");

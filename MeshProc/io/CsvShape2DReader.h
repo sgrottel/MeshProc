@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "data/Mesh.h"
+#include "data/Shape2D.h"
 
 #include <filesystem>
 #include <memory>
@@ -11,16 +11,16 @@ namespace meshproc
 	namespace io
 	{
 
-		class ObjReader : public AbstractCommand
+		class CsvShape2DReader : public AbstractCommand
 		{
 		public:
-			ObjReader(const sgrottel::ISimpleLog& log);
+			CsvShape2DReader(const sgrottel::ISimpleLog& log);
 
 			bool Invoke() override;
 
 		private:
 			const std::wstring m_path{};
-			std::shared_ptr<data::Mesh> m_mesh{};
+			std::shared_ptr<data::Shape2D> m_shape{};
 		};
 
 	}

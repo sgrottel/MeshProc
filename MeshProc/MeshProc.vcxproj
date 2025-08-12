@@ -112,6 +112,7 @@
     <ClCompile Include="generator\Cuboid.cpp" />
     <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
     <ClCompile Include="generator\VertexNormals.cpp" />
+    <ClCompile Include="io\CsvShape2DReader.cpp" />
     <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Icosahedron.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="generator\Cuboid.h" />
     <ClInclude Include="generator\RotateExtrude2DMesh.h" />
     <ClInclude Include="generator\VertexNormals.h" />
+    <ClInclude Include="io\CsvShape2DReader.h" />
     <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Icosahedron.h" />

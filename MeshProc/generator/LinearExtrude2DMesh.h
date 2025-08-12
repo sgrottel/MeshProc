@@ -22,6 +22,8 @@ namespace meshproc
 			bool Invoke() override;
 
 		private:
+			bool SimpleImpl();
+
 			const float m_minZ{ 0.0f };
 			const float m_maxZ{ 1.0f };
 			const std::shared_ptr<data::Shape2D> m_shape2D;
