@@ -28,6 +28,7 @@
 #include "io/StlWriter.h"
 #include "io/SvgShape2DWriter.h"
 #include "ManipulateVertices.h"
+#include "MatchShape2D.h"
 #include "MeasureBoundingBox.h"
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
@@ -68,6 +69,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<io::StlWriter>("io.StlWriter");
 	succ &= factory.Register<io::SvgShape2DWriter>("io.SvgShape2DWriter");
 	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
+	succ &= factory.Register<MatchShape2D>("MatchShape2D");
 	succ &= factory.Register<MeasureBoundingBox>("MeasureBoundingBox");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");

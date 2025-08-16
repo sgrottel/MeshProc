@@ -240,6 +240,9 @@
     <ClCompile Include="io\CsvShape2DReader.cpp">
       <Filter>io</Filter>
     </ClCompile>
+    <ClCompile Include="MatchShape2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -253,6 +256,8 @@
     <None Include="3rd-party\xyz_math\README.md">
       <Filter>3rd-party\xyz_math</Filter>
     </None>
+    <None Include="vcpkg.json" />
+    <None Include="vcpkg-configuration.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
@@ -455,6 +460,9 @@
     </ClInclude>
     <ClInclude Include="io\CsvShape2DReader.h">
       <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="MatchShape2D.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

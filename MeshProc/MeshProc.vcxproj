@@ -145,6 +145,7 @@
     <ClCompile Include="lua\VersionCheck.cpp" />
     <ClCompile Include="lua\IndicesType.cpp" />
     <ClCompile Include="ManipulateVertices.cpp" />
+    <ClCompile Include="MatchShape2D.cpp" />
     <ClCompile Include="MeasureBoundingBox.cpp" />
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
@@ -161,6 +162,8 @@
     <None Include="3rd-party\xyz_math\xyz_math.lua" />
     <None Include="demo.lua" />
     <None Include="packages.config" />
+    <None Include="vcpkg-configuration.json" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="lua\VersionCheck.h" />
     <ClInclude Include="lua\IndicesType.h" />
     <ClInclude Include="ManipulateVertices.h" />
+    <ClInclude Include="MatchShape2D.h" />
     <ClInclude Include="MeasureBoundingBox.h" />
     <ClInclude Include="OpenBorder.h" />
     <ClInclude Include="Parameter.h" />
