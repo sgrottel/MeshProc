@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClCompile Include="3rd-party\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="AbstractCommand.cpp" />
+    <ClCompile Include="BakeTransform.cpp" />
     <ClCompile Include="CloseLoopWithPin.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
     <ClCompile Include="CollapseTriangles.cpp" />
@@ -153,6 +154,8 @@
     <ClCompile Include="ParameterBinding.cpp" />
     <ClCompile Include="SelectBottomTriangles.cpp" />
     <ClCompile Include="SelectRandomTriangles.cpp" />
+    <ClCompile Include="SelectTrianglesFromSelectedVertices.cpp" />
+    <ClCompile Include="SelectVertices.cpp" />
     <ClCompile Include="Subdivision.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
@@ -169,6 +172,7 @@
     <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h" />
     <ClInclude Include="AbstractCommand.h" />
     <ClInclude Include="algo\LoopsFromEdges.h" />
+    <ClInclude Include="BakeTransform.h" />
     <ClInclude Include="CloseLoopWithPin.h" />
     <ClInclude Include="CmdLineArgs.h" />
     <ClInclude Include="CollapseTriangles.h" />
@@ -231,6 +235,8 @@
     <ClInclude Include="ParameterBinding.h" />
     <ClInclude Include="SelectBottomTriangles.h" />
     <ClInclude Include="SelectRandomTriangles.h" />
+    <ClInclude Include="SelectTrianglesFromSelectedVertices.h" />
+    <ClInclude Include="SelectVertices.h" />
     <ClInclude Include="Subdivision.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />

@@ -2,6 +2,7 @@
 
 #include "CommandFactory.h"
 
+#include "BakeTransform.h"
 #include "CloseLoopWithPin.h"
 #include "Convex2DHull.h"
 #include "CollapseTriangles.h"
@@ -33,6 +34,8 @@
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
 #include "SelectRandomTriangles.h"
+#include "SelectTrianglesFromSelectedVertices.h"
+#include "SelectVertices.h"
 #include "Subdivision.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -42,6 +45,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	bool succ = true;
 	log.Detail("Populating CommandFactory");
 
+	succ &= factory.Register<BakeTransform>("BakeTransform");
 	succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	succ &= factory.Register<Convex2DHull>("Convex2DHull");
 	succ &= factory.Register<CollapseTriangles>("CollapseTriangles");
@@ -74,6 +78,8 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
 	succ &= factory.Register<SelectRandomTriangles>("SelectRandomTriangles");
+	succ &= factory.Register<SelectTrianglesFromSelectedVertices>("SelectTrianglesFromSelectedVertices");
+	succ &= factory.Register<SelectVertices>("SelectVertices");
 	succ &= factory.Register<Subdivision>("Subdivision");
 
 	// Add further Commands to this registration function

@@ -9,15 +9,16 @@
 namespace meshproc
 {
 
-	class ManipulateVertices : public AbstractCommand
+	class BakeTransform : public AbstractCommand
 	{
 	public:
-		ManipulateVertices(const sgrottel::ISimpleLog& log);
+		BakeTransform(const sgrottel::ISimpleLog& log);
 
 		bool Invoke() override;
 
 	private:
 		std::shared_ptr<data::Mesh> m_mesh;
-		const std::shared_ptr<lua::CallbackFunction> m_callback;
+		const glm::mat4 m_matrix{ 1.0 };
 	};
-}
+};
+

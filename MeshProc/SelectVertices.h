@@ -9,15 +9,16 @@
 namespace meshproc
 {
 
-	class ManipulateVertices : public AbstractCommand
+	class SelectVertices : public AbstractCommand
 	{
 	public:
-		ManipulateVertices(const sgrottel::ISimpleLog& log);
+		SelectVertices(const sgrottel::ISimpleLog& log);
 
 		bool Invoke() override;
 
 	private:
-		std::shared_ptr<data::Mesh> m_mesh;
+		const std::shared_ptr<data::Mesh> m_mesh;
 		const std::shared_ptr<lua::CallbackFunction> m_callback;
+		std::shared_ptr<std::vector<uint32_t>> m_selection;
 	};
 }
