@@ -11,6 +11,7 @@
 #include "DisplacementNoise.h"
 #include "Extract2DLoops.h"
 #include "ExtractSubMesh.h"
+#include "fitting/MorphRotateOutline.h"
 #include "FlatSkirt.h"
 #include "LinearExtrude.h"
 #include "generator/CrystalGrain.h"
@@ -55,6 +56,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<DisplacementNoise>("DisplacementNoise");
 	succ &= factory.Register<Extract2DLoops>("Extract2DLoops");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
+	succ &= factory.Register<fitting::MorphRotateOutline>("fitting.MorphRotateOutline");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
 	succ &= factory.Register<LinearExtrude>("LinearExtrude");
 	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");

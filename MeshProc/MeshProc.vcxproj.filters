@@ -43,6 +43,9 @@
     <Filter Include="algo">
       <UniqueIdentifier>{3c2c12d7-f0ee-43fd-be36-c0649781453a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="fitting">
+      <UniqueIdentifier>{9f166cb6-a00c-4b15-89da-67ee05e6acaa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -251,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="SelectTrianglesFromSelectedVertices.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fitting\MorphRotateOutline.cpp">
+      <Filter>fitting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -481,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="SelectTrianglesFromSelectedVertices.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fitting\MorphRotateOutline.h">
+      <Filter>fitting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -109,6 +109,7 @@
     <ClCompile Include="DisplacementNoise.cpp" />
     <ClCompile Include="Extract2DLoops.cpp" />
     <ClCompile Include="ExtractSubMesh.cpp" />
+    <ClCompile Include="fitting\MorphRotateOutline.cpp" />
     <ClCompile Include="FlatSkirt.cpp" />
     <ClCompile Include="generator\Cuboid.cpp" />
     <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="DisplacementNoise.h" />
     <ClInclude Include="Extract2DLoops.h" />
     <ClInclude Include="ExtractSubMesh.h" />
+    <ClInclude Include="fitting\MorphRotateOutline.h" />
     <ClInclude Include="FlatSkirt.h" />
     <ClInclude Include="generator\Cuboid.h" />
     <ClInclude Include="generator\RotateExtrude2DMesh.h" />
