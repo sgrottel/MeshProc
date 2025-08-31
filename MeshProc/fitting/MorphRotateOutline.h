@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <memory>
+#include <vector>
 
 namespace meshproc
 {
@@ -19,6 +20,8 @@ namespace meshproc
 			bool Invoke() override;
 
 		private:
+			std::vector<uint32_t> GetMeshBorderVertices() const;
+
 			std::shared_ptr<data::Mesh> m_mesh;
 			const std::shared_ptr<data::Mesh> m_targetMesh;
 			const glm::vec3 m_center{ 0.0f };
