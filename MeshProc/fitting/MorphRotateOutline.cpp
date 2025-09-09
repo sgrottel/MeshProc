@@ -72,10 +72,12 @@ namespace
 
 	// a - b wraparound at 180°|pi
 	// output range: ]-180°|-pi .. 180°|pi]
-	double AngleDiff(double a, double b)
+	template <typename T>
+	typename std::enable_if_t<std::is_floating_point_v<T>, T>
+	AngleDiff(T a, T b)
 	{
-		constexpr double pi = std::numbers::pi_v<double>;
-		const double v = std::fmod(a - b, 2 * pi);
+		constexpr T pi = std::numbers::pi_v<T>;
+		const T v = std::fmod(a - b, 2 * pi); // v is [-2pi..2pi]
 		if (v > pi)
 		{
 			return v - 2 * pi;
@@ -90,6 +92,15 @@ namespace
 	class RollCoord
 	{
 	public:
+		using ftype = double;
+		using Vec3Type = glm::dvec3;
+		using Vec2Type = glm::dvec2;
+		using DiffT = glm::dvec2;
+
+	private:
+		static constexpr double pi = std::numbers::pi_v<ftype>;
+
+	public:
 		RollCoord() = default;
 		RollCoord(const RollCoord& src) = default;
 		RollCoord(RollCoord&& src) = default;
@@ -98,25 +109,34 @@ namespace
 
 		explicit RollCoord(glm::vec3 const& v, CoordSys const& sys)
 		{
-			const glm::vec3 r = v - sys.Origin();
-			const float rl = glm::length(r);
-			const glm::vec3 c = glm::normalize(
-				glm::vec3{ glm::dot(sys.X(), r),
-				glm::dot(sys.Y(), r),
-				glm::dot(sys.Z(), r) });
-			const glm::vec2 c2 = glm::normalize(glm::vec2{ c.x, c.y });
+			const Vec3Type r = v - sys.Origin();
+			const ftype rl = glm::length(r);
+			const Vec3Type c = glm::normalize(
+				Vec3Type{
+					glm::dot(static_cast<Vec3Type>(sys.X()), r),
+					glm::dot(static_cast<Vec3Type>(sys.Y()), r),
+					glm::dot(static_cast<Vec3Type>(sys.Z()), r)
+				});
+			const Vec2Type c2 = glm::normalize(Vec2Type{ c.x, c.y });
 
-			m_coord.x = std::atan2(c2.y, c2.x);
-			m_coord.y = std::asin(c.z);
-			m_coord.z = rl;
+			m_roll = std::atan2(c2.y, c2.x);
+			m_pitch = std::asin(c.z);
+			m_dist = rl;
+
+			const glm::vec3 recon = RollCoord::ToVec3(sys);
+			const glm::vec3 diff = recon - v;
+			const float diffVal = glm::length(diff);
+			assert(diffVal < 0.0001f);
 		}
 
 		glm::vec3 ToVec3(CoordSys const& sys) const
 		{
-			const glm::dvec3 c{
-				std::cos(m_coord.x) * std::cos(m_coord.y) * m_coord.z,
-				std::sin(m_coord.x) * std::cos(m_coord.y) * m_coord.z,
-				std::sin(m_coord.y) * m_coord.z };
+			const Vec3Type c = glm::normalize(
+				Vec3Type{
+					std::cos(m_roll) * std::cos(m_pitch),
+					std::sin(m_roll) * std::cos(m_pitch),
+					std::sin(m_pitch)
+				}) * m_dist;
 
 			return sys.Origin()
 				+ sys.X() * static_cast<float>(c.x)
@@ -124,113 +144,182 @@ namespace
 				+ sys.Z() * static_cast<float>(c.z);
 		}
 
-		glm::vec2 CalcRollTo(RollCoord const& rhs) const
+		DiffT CalcRollTo(RollCoord const& rhs) const
 		{
 			return {
-				AngleDiff(rhs.m_coord.x, m_coord.x),
-				rhs.m_coord.y - m_coord.y
+				AngleDiff(rhs.m_roll, m_roll),
+				rhs.m_pitch - m_pitch
 			};
 		}
 
-		float PrimaryAngle() const
+		ftype PrimaryAngle() const
 		{
-			return m_coord.x;
+			return m_roll;
 		}
 
-		void ApplyRoll(glm::vec2 const & roll)
+		ftype Length() const
 		{
-			constexpr double pi = std::numbers::pi_v<double>;
+			return m_dist;
+		}
 
-			m_coord.x = AngleDiff(m_coord.x + roll.x, 0.0f);
-			m_coord.y = std::clamp(m_coord.y + roll.y, -pi, pi);
+		void ApplyRoll(DiffT const & roll)
+		{
+			m_roll = AngleDiff(m_roll + roll.x, 0.0);
+			m_pitch = std::clamp(m_pitch + roll.y, -pi, pi);
 		}
 
 	private:
-		glm::dvec3 m_coord{};
+		ftype m_roll;	// in XY plane ]-180°..180°]
+		ftype m_pitch;	// pitch towards z [-90°..90°]
+		ftype m_dist;
 	};
 
 	class SmoothRoll
 	{
+	private:
+		static constexpr double pi = std::numbers::pi_v<double>;
+
 	public:
-		void InitSampling(size_t num)
+		void Init(size_t num)
 		{
 			if (num < 2) throw std::logic_error("Sampling with too few points");
 			m_val.resize(num);
 		}
 
-		void Sample(std::vector<glm::vec2> const& roll, std::vector<RollCoord> const& from, float smoothWidth = 0.0)
+		void Build(std::vector<RollCoord::DiffT> const& roll, std::vector<RollCoord> const& from, double smooth = 1.0)
 		{
 			if (roll.size() != from.size()) throw std::logic_error("`roll` and `from` must be of same size");
 
-			// assume "m_val.size() == 4"
-
-			constexpr float pi = std::numbers::pi_v<float>;
-			const float minSmoothWidth = (2 * pi) / m_val.size();
-			// assume: minSmoothWidth = pi/2
-			// assume: minSmoothWidth = pi (smooth!)
-
-			if (smoothWidth <= minSmoothWidth)
-			{
-				smoothWidth = minSmoothWidth;
-			}
-
-			auto CalcWeight = [&smoothWidth](float angle)
+			double smoothWidth = smooth * BucketWidth();
+			auto CalcWeight = [smoothWidth](double angle)
 				{
-					// assume angle = pi/2
-					constexpr float pi = std::numbers::pi_v<float>;
-					const float a = angle / (smoothWidth / (pi / 2));
-					// then a = pi/2 / ((pi/2) / pi/2) = pi/2 / 1 = pi/2
-					// then a = pi/2 / (pi / pi/2) = pi/2 / 2 = pi/4
-					if (a < -pi / 2 || a > pi / 2) return 0.0f;
-					const float c = std::cos(a);
-					// then c = 0
-					// then c > 0
-					return c * c;
+					assert(angle >= 0.0);
+					if (angle > smoothWidth) return 0.0;
+					return 1 - (angle / smoothWidth);
 				};
+
+			std::vector<size_t> emptyBuckets;
 
 			for (size_t i = 0; i < m_val.size(); ++i)
 			{
-				const float samplingAngle = pi * static_cast<float>(2 * i) / static_cast<float>(m_val.size()); // angle sampling at
+				const double samplingAngle = IndexToAngle(i);
 
-				m_val.at(i) = glm::vec2{ 0.0f, 0.0f };
-				float w = 0.0f;
+				m_val.at(i) = RollCoord::DiffT{ 0, 0 };
+				double w = 0;
 
 				for (size_t j = 0; j < roll.size(); ++j)
 				{
-					const float jAngle = AngleDiff(samplingAngle, from.at(j).PrimaryAngle());
-					const float jWeight = 1; // CalcWeight(jAngle);
+					const double jAngle = std::abs(AngleDiff(samplingAngle, static_cast<double>(from.at(j).PrimaryAngle())));
+					const double jWeight = CalcWeight(jAngle);
 					if (jWeight <= 0.0f) continue;
 
 					m_val.at(i) += roll.at(j) * jWeight;
 					w += jWeight;
 				}
 
-				if (w > 0.0f)
+				if (w > 0)
 				{
 					m_val.at(i) /= w;
 				}
+				else
+				{
+					emptyBuckets.push_back(i);
+				}
+			}
+
+			if (!emptyBuckets.empty())
+			{
 			}
 		}
 
-		void Roll(RollCoord& c, float f)
+		RollCoord::DiffT Query(double angle) const
 		{
-			constexpr float pi = std::numbers::pi_v<float>;
-			float b = static_cast<float>(m_val.size()) * std::clamp(std::fmod(c.PrimaryAngle() + pi, 2 * pi), 0.0f, 2 * pi) / (2 * pi);
-			size_t i = std::clamp<size_t>(static_cast<int>(b), 0, m_val.size() - 1);
-			b = std::clamp(b - static_cast<float>(i), 0.0f, 1.0f);
-			const float a = 1.0f - b;
+			const size_t index1 = AngleToIndex(angle);
+			const double angleDiff = AngleDiff(angle, IndexToAngle(index1));
 
-			auto const& va = m_val.at(i);
-			auto const& vb = m_val.at((i + 1) % m_val.size());
+			const size_t index2 = (index1 + ((angleDiff >= 0) ? 1 : (m_val.size() - 1))) % m_val.size();
+			assert(index2 != index1);
 
-			c.ApplyRoll((va * a + vb * b) * f);
+			const double b = std::abs(angleDiff) / BucketWidth();
+			assert(0 <= b && b <= 1);
+			const double a = 1 - b;
+
+			auto const& va = m_val.at(index1);
+			auto const& vb = m_val.at(index2);
+
+			return (va * a + vb * b);
 		}
 
 	private:
-		std::vector<glm::vec2> m_val{}; // sampling points from [0°..360°[
+		std::vector<RollCoord::DiffT> m_val{}; // sampling points from [0°..360°[
+
+		const double BucketWidth() const
+		{
+			return 2 * pi / static_cast<double>(m_val.size());
+		}
+
+		const double IndexToAngle(size_t idx) const
+		{
+			const double relDiff = static_cast<double>(idx) / static_cast<double>(m_val.size());
+			const double angle = relDiff * 2 * pi;
+			return angle;
+		}
+
+		const size_t AngleToIndex(double angle) const
+		{
+			assert(-pi <= angle && angle <= 2 * pi);
+			const double a = std::fmod(angle + 2 * pi, 2 * pi); // [0..2pi[
+			const double frac = a / (2 * pi); // [0..1[
+			const double indexF = frac * m_val.size();
+			const size_t index = static_cast<size_t>(indexF); // int clamp
+			assert(0 <= index && index <= m_val.size());
+			return index;
+		}
+
 	};
 
 }
+
+struct fitting::MorphRotateOutline::Impl
+{
+	flann::Matrix<float> targetDataSet{};
+	flann::Index<flann::L2<float>> targetIndex{ flann::KDTreeIndexParams(1) };
+
+	void BuildTargetIndex(const std::shared_ptr<data::Mesh> targetMesh)
+	{
+		targetDataSet = std::move(flann::Matrix<float>(
+			glm::value_ptr(targetMesh->vertices.front()),
+			targetMesh->vertices.size(),
+			3));
+		targetIndex = std::move(flann::Index<flann::L2<float>>(targetDataSet, flann::KDTreeIndexParams(1)));
+		targetIndex.buildIndex();
+	}
+
+	CoordSys csys{ glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 1 } };
+
+	void BuildCoordinateSystem(const glm::vec3& center, const glm::vec3& primaryAxis)
+	{
+		const glm::vec3 axisRoll = glm::normalize(primaryAxis);
+		{
+			const float len = glm::length(axisRoll);
+			if (len < 0.999 || len > 1.001)
+			{
+				throw std::runtime_error("PrimaryAxis normalization failed");
+			}
+		}
+		csys = std::move(CoordSys{ center, axisRoll });
+	}
+
+	std::vector<uint32_t> border;
+	size_t borderSize{ 0 };
+
+	void SetBorder(std::vector<uint32_t>&& b)
+	{
+		border = std::move(b);
+		borderSize = border.size();
+	}
+
+};
 
 fitting::MorphRotateOutline::MorphRotateOutline(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
@@ -274,38 +363,37 @@ bool fitting::MorphRotateOutline::Invoke()
 		+ (3 * sizeof(float)) * (m_targetMesh->vertices.size() - 1)
 		== static_cast<void const*>(glm::value_ptr(m_targetMesh->vertices.back())));
 
-	flann::Matrix<float> targetDataSet(
-		glm::value_ptr(m_targetMesh->vertices.front()),
-		m_targetMesh->vertices.size(),
-		3);
-	flann::Index<flann::L2<float>> targetIndex(targetDataSet, flann::KDTreeIndexParams(1));
-	targetIndex.buildIndex();
+	m_impl = std::make_shared<Impl>();
+	m_impl->BuildTargetIndex(m_targetMesh);
+	m_impl->BuildCoordinateSystem(m_center, m_primaryAxis);
+	m_impl->SetBorder(GetMeshBorderVertices());
 
-	const glm::vec3 axisRoll = glm::normalize(m_primaryAxis);
-	{
-		const float len = glm::length(axisRoll);
-		if (len < 0.999 || len > 1.001)
-		{
-			Log().Error("PrimaryAxis normalization failed");
-			return false;
-		}
-	}
-	const CoordSys csys{ m_center, axisRoll };
+	SmoothRotateIterate(90, 6, 0.2); // 0.2
+	SmoothRotateIterate(90, 5, 0.25); // 0.2 + (0.8 * 0.25) = 0.4
+	SmoothRotateIterate(90, 4, 0.333); // 0.4 + (0.6 * 0.33) ~= 0.6
+	SmoothRotateIterate(90, 3, 0.5); // 0.6 + (0.4 * 0.5) = 0.8
+	SmoothRotateIterate(90, 2, 1);
 
-	std::vector<uint32_t> border = GetMeshBorderVertices();
-	const size_t borderSize = border.size();
+	m_impl.reset();
+	return false;
+}
 
-	std::vector<RollCoord> queryCoords(borderSize);
+void fitting::MorphRotateOutline::SmoothRotateIterate(size_t numBuckets, double smooth, double factor)
+{
+	assert(m_impl != nullptr);
+	Log().Detail("SmoothRotateIterate(%d, %f, %f)", numBuckets, smooth, factor);
+
+	std::vector<RollCoord> queryCoords(m_impl->borderSize);
 
 	// prepare query
-	std::vector<float> query_flat(borderSize * 3);
-	flann::Matrix<float> query(query_flat.data(), borderSize, 3);
-	for (size_t i = 0; i < borderSize; ++i)
+	std::vector<float> query_flat(m_impl->borderSize * 3);
+	flann::Matrix<float> query(query_flat.data(), m_impl->borderSize, 3);
+	for (size_t i = 0; i < m_impl->borderSize; ++i)
 	{
-		glm::vec3 const& v1 = m_mesh->vertices.at(border.at(i));
-		queryCoords.at(i) = RollCoord{ v1, csys };
+		glm::vec3 const& v1 = m_mesh->vertices.at(m_impl->border.at(i));
+		queryCoords.at(i) = RollCoord{ v1, m_impl->csys };
 
-		glm::vec3 v2 = queryCoords.at(i).ToVec3(csys);
+		glm::vec3 v2 = queryCoords.at(i).ToVec3(m_impl->csys);
 
 		query_flat.at(i * 3 + 0) = v2.x;
 		query_flat.at(i * 3 + 1) = v2.y;
@@ -313,42 +401,38 @@ bool fitting::MorphRotateOutline::Invoke()
 	}
 
 	// Allocate result buffers
-	std::vector<int> indices_vec(borderSize);
-	std::vector<float> dists_vec(borderSize);
-	flann::Matrix<int> indices(indices_vec.data(), borderSize, 1);
-	flann::Matrix<float> dists(dists_vec.data(), borderSize, 1);
+	std::vector<int> indices_vec(m_impl->borderSize);
+	std::vector<float> dists_vec(m_impl->borderSize);
+	flann::Matrix<int> indices(indices_vec.data(), m_impl->borderSize, 1);
+	flann::Matrix<float> dists(dists_vec.data(), m_impl->borderSize, 1);
 
-	std::vector<glm::vec2> rollVal(borderSize);
+	std::vector<RollCoord::DiffT> rollVal(m_impl->borderSize);
 
-	targetIndex.knnSearch(query, indices, dists, 1, flann::SearchParams(128));
+	m_impl->targetIndex.knnSearch(query, indices, dists, 1, flann::SearchParams(128));
 
-	for (size_t i = 0; i < borderSize; ++i)
+	for (size_t i = 0; i < m_impl->borderSize; ++i)
 	{
-		RollCoord target{ m_targetMesh->vertices.at(indices_vec.at(i)), csys };
+		RollCoord target{ m_targetMesh->vertices.at(indices_vec.at(i)), m_impl->csys };
 		rollVal.at(i) = queryCoords.at(i).CalcRollTo(target);
 	}
-	
-	SmoothRoll smoothRoll;
-	smoothRoll.InitSampling(72); // ok
-	smoothRoll.Sample(rollVal, queryCoords, 0 * std::numbers::pi_v<float> / 32);
 
-	for (size_t i = 0; i < borderSize; ++i)
+	SmoothRoll smoothRoll;
+	smoothRoll.Init(numBuckets);
+	smoothRoll.Build(rollVal, queryCoords, smooth);
+
+	for (size_t i = 0; i < m_impl->borderSize; ++i)
 	{
-		//smoothRoll.Roll(queryCoords.at(i), 1);
-		queryCoords.at(i).ApplyRoll(rollVal.at(i));
+		auto roll = smoothRoll.Query(queryCoords.at(i).PrimaryAngle());
+		queryCoords.at(i).ApplyRoll(roll * factor);
 	}
 
 	// TODO: Implement
 
-	for (size_t i = 0; i < borderSize; ++i)
+	for (size_t i = 0; i < m_impl->borderSize; ++i)
 	{
-		// TODO: this is quite imprecise. Why?
-		m_mesh->vertices.at(border.at(i)) = queryCoords.at(i).ToVec3(csys);
-
+		m_mesh->vertices.at(m_impl->border.at(i)) = queryCoords.at(i).ToVec3(m_impl->csys);
 		//m_mesh->vertices.at(border.at(i)) = m_targetMesh->vertices.at(indices_vec.at(i));
 	}
-
-	return false;
 }
 
 std::vector<uint32_t> fitting::MorphRotateOutline::GetMeshBorderVertices() const

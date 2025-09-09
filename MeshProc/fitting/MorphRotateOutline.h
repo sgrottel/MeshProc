@@ -20,8 +20,12 @@ namespace meshproc
 			bool Invoke() override;
 
 		private:
+			struct Impl;
+
+			void SmoothRotateIterate(size_t numBuckets, double smooth, double factor);
 			std::vector<uint32_t> GetMeshBorderVertices() const;
 
+			std::shared_ptr<Impl> m_impl;
 			std::shared_ptr<data::Mesh> m_mesh;
 			const std::shared_ptr<data::Mesh> m_targetMesh;
 			const glm::vec3 m_center{ 0.0f };
