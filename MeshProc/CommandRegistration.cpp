@@ -7,6 +7,7 @@
 #include "Convex2DHull.h"
 #include "CollapseTriangles.h"
 #include "CutHalfSpace.h"
+#include "DeleteTriangles.h"
 #include "DevPlayground.h"
 #include "DisplacementNoise.h"
 #include "Extract2DLoops.h"
@@ -32,6 +33,8 @@
 #include "ManipulateVertices.h"
 #include "MatchShape2D.h"
 #include "MeasureBoundingBox.h"
+#include "MixLoops.h"
+#include "MorphMeshLoop.h"
 #include "OpenBorder.h"
 #include "SelectBottomTriangles.h"
 #include "SelectRandomTriangles.h"
@@ -51,6 +54,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<Convex2DHull>("Convex2DHull");
 	succ &= factory.Register<CollapseTriangles>("CollapseTriangles");
 	succ &= factory.Register<CutHalfSpace>("CutHalfSpace");
+	succ &= factory.Register<DeleteTriangles>("DeleteTriangles");
 	succ &= factory.Register<DevPlayground>("DevPlayground");
 	factory.HideCommand("DevPlayground");
 	succ &= factory.Register<DisplacementNoise>("DisplacementNoise");
@@ -77,6 +81,8 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
 	succ &= factory.Register<MatchShape2D>("MatchShape2D");
 	succ &= factory.Register<MeasureBoundingBox>("MeasureBoundingBox");
+	succ &= factory.Register<MixLoops>("MixLoops");
+	succ &= factory.Register<MorphMeshLoop>("MorphMeshLoop");
 	succ &= factory.Register<OpenBorder>("OpenBorder");
 	succ &= factory.Register<SelectBottomTriangles>("SelectBottomTriangles");
 	succ &= factory.Register<SelectRandomTriangles>("SelectRandomTriangles");

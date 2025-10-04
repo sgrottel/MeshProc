@@ -258,6 +258,15 @@
     <ClCompile Include="fitting\MorphRotateOutline.cpp">
       <Filter>fitting</Filter>
     </ClCompile>
+    <ClCompile Include="DeleteTriangles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MixLoops.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MorphMeshLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -490,6 +499,15 @@
     </ClInclude>
     <ClInclude Include="fitting\MorphRotateOutline.h">
       <Filter>fitting</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteTriangles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MixLoops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MorphMeshLoop.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
