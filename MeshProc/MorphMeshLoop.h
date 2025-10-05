@@ -17,11 +17,17 @@ namespace meshproc
 		bool Invoke() override;
 
 	private:
+		bool StitchMeshEdgeToTarget();
+		bool MorphMeshToTarget();
+		void RemoveIsolatedVertices();
+
 		std::shared_ptr<data::Mesh> m_mesh;
 		const std::shared_ptr<std::vector<uint32_t>> m_edgeList;
 		const float m_blendArea{ 1.0f };
 		const std::shared_ptr<data::Mesh> m_targetMesh;
 		const std::shared_ptr<std::vector<uint32_t>> m_targetEdgeList;
+
+		std::unordered_map<uint32_t, uint32_t> m_srcToTar;
 	};
 
 }
