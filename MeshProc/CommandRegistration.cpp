@@ -34,6 +34,7 @@
 #include "ManipulateVertices.h"
 #include "MatchShape2D.h"
 #include "MeasureBoundingBox.h"
+#include "MeshSmooth.h"
 #include "MixLoops.h"
 #include "MorphMeshLoop.h"
 #include "OpenBorder.h"
@@ -84,6 +85,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<ManipulateVertices>("ManipulateVertices");
 	succ &= factory.Register<MatchShape2D>("MatchShape2D");
 	succ &= factory.Register<MeasureBoundingBox>("MeasureBoundingBox");
+	succ &= factory.Register<MeshSmooth>("MeshSmooth");
 	succ &= factory.Register<MixLoops>("MixLoops");
 	succ &= factory.Register<MorphMeshLoop>("MorphMeshLoop");
 	succ &= factory.Register<OpenBorder>("OpenBorder");

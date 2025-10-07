@@ -152,6 +152,7 @@
     <ClCompile Include="MatchShape2D.cpp" />
     <ClCompile Include="MeasureBoundingBox.cpp" />
     <ClCompile Include="MeshProc.cpp" />
+    <ClCompile Include="MeshSmooth.cpp" />
     <ClCompile Include="MixLoops.cpp" />
     <ClCompile Include="MorphMeshLoop.cpp" />
     <ClCompile Include="OpenBorder.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="ManipulateVertices.h" />
     <ClInclude Include="MatchShape2D.h" />
     <ClInclude Include="MeasureBoundingBox.h" />
+    <ClInclude Include="MeshSmooth.h" />
     <ClInclude Include="MixLoops.h" />
     <ClInclude Include="MorphMeshLoop.h" />
     <ClInclude Include="OpenBorder.h" />
