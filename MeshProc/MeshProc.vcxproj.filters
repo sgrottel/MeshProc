@@ -267,6 +267,12 @@
     <ClCompile Include="MorphMeshLoop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SelectVerticesFromSelectedTriangles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndicesBoolean.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -507,6 +513,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MorphMeshLoop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectVerticesFromSelectedTriangles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndicesBoolean.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -72,7 +72,7 @@ bool DeleteTriangles::Invoke()
 			}
 
 			std::erase_if(m_mesh->vertices, [&idx, i = 0](const auto&) mutable {
-				return idx.contains(i);
+				return idx.contains(i++);
 				});
 
 			for (auto& t : m_mesh->triangles)

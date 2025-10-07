@@ -115,6 +115,7 @@
     <ClCompile Include="generator\Cuboid.cpp" />
     <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
     <ClCompile Include="generator\VertexNormals.cpp" />
+    <ClCompile Include="IndicesBoolean.cpp" />
     <ClCompile Include="io\CsvShape2DReader.cpp" />
     <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="SelectRandomTriangles.cpp" />
     <ClCompile Include="SelectTrianglesFromSelectedVertices.cpp" />
     <ClCompile Include="SelectVertices.cpp" />
+    <ClCompile Include="SelectVerticesFromSelectedTriangles.cpp" />
     <ClCompile Include="Subdivision.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
@@ -200,6 +202,7 @@
     <ClInclude Include="generator\Cuboid.h" />
     <ClInclude Include="generator\RotateExtrude2DMesh.h" />
     <ClInclude Include="generator\VertexNormals.h" />
+    <ClInclude Include="IndicesBoolean.h" />
     <ClInclude Include="io\CsvShape2DReader.h" />
     <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
@@ -245,6 +248,7 @@
     <ClInclude Include="SelectRandomTriangles.h" />
     <ClInclude Include="SelectTrianglesFromSelectedVertices.h" />
     <ClInclude Include="SelectVertices.h" />
+    <ClInclude Include="SelectVerticesFromSelectedTriangles.h" />
     <ClInclude Include="Subdivision.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />

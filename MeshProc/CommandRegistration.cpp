@@ -14,6 +14,7 @@
 #include "ExtractSubMesh.h"
 #include "fitting/MorphRotateOutline.h"
 #include "FlatSkirt.h"
+#include "IndicesBoolean.h"
 #include "LinearExtrude.h"
 #include "generator/CrystalGrain.h"
 #include "generator/Cuboid.h"
@@ -40,6 +41,7 @@
 #include "SelectRandomTriangles.h"
 #include "SelectTrianglesFromSelectedVertices.h"
 #include "SelectVertices.h"
+#include "SelectVerticesFromSelectedTriangles.h"
 #include "Subdivision.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -61,6 +63,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<Extract2DLoops>("Extract2DLoops");
 	succ &= factory.Register<ExtractSubMesh>("ExtractSubMesh");
 	succ &= factory.Register<fitting::MorphRotateOutline>("fitting.MorphRotateOutline");
+	succ &= factory.Register<IndicesBoolean>("IndicesBoolean");
 	succ &= factory.Register<FlatSkirt>("FlatSkirt");
 	succ &= factory.Register<LinearExtrude>("LinearExtrude");
 	succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");
@@ -88,6 +91,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<SelectRandomTriangles>("SelectRandomTriangles");
 	succ &= factory.Register<SelectTrianglesFromSelectedVertices>("SelectTrianglesFromSelectedVertices");
 	succ &= factory.Register<SelectVertices>("SelectVertices");
+	succ &= factory.Register<SelectVerticesFromSelectedTriangles>("SelectVerticesFromSelectedTriangles");
 	succ &= factory.Register<Subdivision>("Subdivision");
 
 	// Add further Commands to this registration function
