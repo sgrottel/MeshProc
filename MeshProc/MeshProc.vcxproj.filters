@@ -276,6 +276,9 @@
     <ClCompile Include="MeshSmooth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\ObjMeshWriter.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -526,6 +529,9 @@
     </ClInclude>
     <ClInclude Include="MeshSmooth.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="io\ObjMeshWriter.h">
+      <Filter>io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

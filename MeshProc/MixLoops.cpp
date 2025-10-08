@@ -200,7 +200,11 @@ bool MixLoops::Invoke()
 	for (size_t i = 0; i < s; ++i)
 	{
 		size_t i2 = (i + 1) % s;
-		m_outMesh->AddQuad(i, i2, i + s, i2 + s);
+		m_outMesh->AddQuad(
+			static_cast<uint32_t>(i),
+			static_cast<uint32_t>(i2),
+			static_cast<uint32_t>(i + s),
+			static_cast<uint32_t>(i2 + s));
 	}
 #endif
 
