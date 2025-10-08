@@ -167,6 +167,7 @@
     <ClCompile Include="SelectVerticesFromSelectedTriangles.cpp" />
     <ClCompile Include="Subdivision.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
+    <ClCompile Include="VertexSurfaceDistanceToCut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3rd-party\tinyxml2\README.md" />
@@ -258,6 +259,7 @@
     <ClInclude Include="Subdivision.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />
+    <ClInclude Include="VertexSurfaceDistanceToCut.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="lua\LuaResources.rc" />

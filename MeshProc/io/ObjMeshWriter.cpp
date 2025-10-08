@@ -24,7 +24,7 @@ bool ObjMeshWriter::Invoke()
 		Log().Error("Mesh is empty");
 		return false;
 	}
-	if (!m_vertColors && m_mesh->vertices.size() != m_vertColors->size())
+	if (m_vertColors && (m_mesh->vertices.size() != m_vertColors->size()))
 	{
 		Log().Error("VertexColors is set, but size not equal to number of vertices in Mesh");
 		return false;
@@ -51,7 +51,7 @@ bool ObjMeshWriter::Invoke()
 	auto vci = m_vertColors ? m_vertColors->begin() : ve;
 	auto vce = m_vertColors ? m_vertColors->end() : ve;
 
-	for (; vi != ve; ++vi, ++vci)
+	for (; vi != ve; ++vi)
 	{
 		fprintf(file, "\nv %f %f %f", vi->x, vi->y, vi->z);
 		if (vci != vce)
@@ -61,6 +61,7 @@ bool ObjMeshWriter::Invoke()
 				std::clamp(vci->g, 0.0f, 1.0f),
 				std::clamp(vci->b, 0.0f, 1.0f));
 		}
+		if (vci != vce) ++vci;
 	}
 
 	fprintf(file, "\n");

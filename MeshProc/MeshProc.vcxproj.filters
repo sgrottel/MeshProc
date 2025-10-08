@@ -282,6 +282,9 @@
     <ClCompile Include="io\ObjMeshWriter.cpp">
       <Filter>io</Filter>
     </ClCompile>
+    <ClCompile Include="VertexSurfaceDistanceToCut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -538,6 +541,9 @@
     </ClInclude>
     <ClInclude Include="io\ObjMeshWriter.h">
       <Filter>io</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexSurfaceDistanceToCut.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -188,6 +188,27 @@ namespace
 		return 1;
 	}
 
+	template<bool, ParamType PT>
+	struct NilValSetter;
+
+	template<ParamType PT>
+	struct NilValSetter<true, PT>
+	{
+		static inline void SetNil(ParamTypeInfo_t<PT>& tar)
+		{
+			tar = ParamTypeInfo<PT>::NilVal();
+		}
+	};
+
+	template<ParamType PT>
+	struct NilValSetter<false, PT>
+	{
+		static inline void SetNil(ParamTypeInfo_t<PT>& tar)
+		{
+			// intentionally empty
+		}
+	};
+
 	template<ParamType PT>
 	static bool LuaTryLoadVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
 	{
@@ -197,6 +218,21 @@ namespace
 			log.Error("Parameter value type mismatch");
 			return false;
 		}
+
+		if (lua_isnil(lua, 3))
+		{
+			if (ParamTypeInfo<PT>::canSetNil)
+			{
+				NilValSetter<ParamTypeInfo<PT>::canSetNil, PT>::SetNil(*v);
+				return true;
+			}
+			else
+			{
+				log.Error("Failed to set parameter value to nil; type does not support nil value");
+				return false;
+			}
+		}
+
 		if (!LuaParamMapping<PT>::GetVal(lua, *v))
 		{
 			log.Error("Failed to set parameter value; likely type mismatch");

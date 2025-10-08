@@ -122,6 +122,7 @@ namespace meshproc
 
 			inline HashableEdge HashableEdge(uint32_t idx) const
 			{
+				assert(idx < 3);
 				return { m_idx[idx], m_idx[(idx + 1) % 3] };
 			}
 

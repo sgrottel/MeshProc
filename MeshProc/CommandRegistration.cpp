@@ -45,6 +45,7 @@
 #include "SelectVertices.h"
 #include "SelectVerticesFromSelectedTriangles.h"
 #include "Subdivision.h"
+#include "VertexSurfaceDistanceToCut.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -97,7 +98,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<SelectVertices>("SelectVertices");
 	succ &= factory.Register<SelectVerticesFromSelectedTriangles>("SelectVerticesFromSelectedTriangles");
 	succ &= factory.Register<Subdivision>("Subdivision");
-
+	succ &= factory.Register<VertexSurfaceDistanceToCut>("VertexSurfaceDistanceToCut");
 	// Add further Commands to this registration function
 
 	log.Detail("Populated CommandFactory: %s", succ ? "success" : "failed");

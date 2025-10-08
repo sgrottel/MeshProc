@@ -18,6 +18,10 @@ namespace meshproc
 				: AbstractType<std::vector<uint32_t>, IndicesType>{ owner }
 			{};
 			bool Init();
+
+		protected:
+			static int CallbackSize(lua_State* lua);
+			static int CallbackGet(lua_State* lua);
 		};
 	}
 }

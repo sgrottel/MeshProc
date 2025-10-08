@@ -283,11 +283,11 @@ bool LinearExtrude2DMesh::SimpleImpl()
 		// side orientation
 		if (ti1 < ti2 && ti2 < ti3)
 		{
-			data::Triangle& const sideProbe = m_mesh->triangles.at(ti1);
+			data::Triangle const& sideProbe = m_mesh->triangles.at(ti1);
 			bool flip = false;
 			for (size_t ti = ti2; ti < ti3; ++ti)
 			{
-				data::Triangle& const capProbe = m_mesh->triangles.at(ti);
+				data::Triangle const& capProbe = m_mesh->triangles.at(ti);
 				auto const ce = capProbe.CommonEdge(sideProbe);
 				if (ce.x == ce.y) continue;
 
