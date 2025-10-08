@@ -1,24 +1,23 @@
-#include "ListOfVec3Type.h"
+#include "ListOfFloatType.h"
 
-#include "GlmVec3Type.h"
 #include "LuaUtilities.h"
 
 using namespace meshproc;
 using namespace meshproc::lua;
 
-bool ListOfVec3Type::Init()
+bool ListOfFloatType::Init()
 {
 	static const struct luaL_Reg staticFuncs[] = {
-		{"new", &ListOfVec3Type::CallbackCtor},
+		{"new", &ListOfFloatType::CallbackCtor},
 		{NULL, NULL}
 	};
 
 	static const struct luaL_Reg memberFuncs[] = {
-		{"__tostring", &ListOfVec3Type::CallbackToString},
-		{"__gc", &ListOfVec3Type::CallbackDelete},
-		{"size", &ListOfVec3Type::CallbackSize},
-		{"get", &ListOfVec3Type::CallbackGet},
-		{"set", &ListOfVec3Type::CallbackSet},
+		{"__tostring", &ListOfFloatType::CallbackToString},
+		{"__gc", &ListOfFloatType::CallbackDelete},
+		{"size", &ListOfFloatType::CallbackSize},
+		{"get", &ListOfFloatType::CallbackGet},
+		{"set", &ListOfFloatType::CallbackSet},
 		{nullptr, nullptr}
 	};
 	if (!InitImpl(memberFuncs))
@@ -29,13 +28,13 @@ bool ListOfVec3Type::Init()
 	lua_getglobal(lua(), "meshproc");		// load global "meshproc"
 	lua_newtable(lua());					// push new table on stack, which will become "meshproc.ListOfVec3"
 	luaL_setfuncs(lua(), staticFuncs, 0);	// Add static functions to new table
-	lua_setfield(lua(), -2, "ListOfVec3");	// store new table as "ListOfVec3" in "meshproc"; also pops that table
+	lua_setfield(lua(), -2, "ListOfFloat");	// store new table as "ListOfVec3" in "meshproc"; also pops that table
 	lua_pop(lua(), 1);						// remove "meshproc" from stack
 
 	return true;
 }
 
-int ListOfVec3Type::CallbackCtor(lua_State* lua)
+int ListOfFloatType::CallbackCtor(lua_State* lua)
 {
 	int size = lua_gettop(lua);
 	if (size != 1)
@@ -48,13 +47,13 @@ int ListOfVec3Type::CallbackCtor(lua_State* lua)
 		return luaL_error(lua, "First argument expected to be an integer");
 	}
 
-	auto data = std::make_shared<std::vector<glm::vec3>>();
-	data->resize(len, glm::vec3{ 0.0f, 0.0f, 0.0f });
-	ListOfVec3Type::LuaPush(lua, data);
+	auto data = std::make_shared<std::vector<float>>();
+	data->resize(len, 0.0f);
+	ListOfFloatType::LuaPush(lua, data);
 	return 1;
 }
 
-int ListOfVec3Type::CallbackSize(lua_State* lua)
+int ListOfFloatType::CallbackSize(lua_State* lua)
 {
 	int size = lua_gettop(lua);
 	if (size != 1)
@@ -71,7 +70,7 @@ int ListOfVec3Type::CallbackSize(lua_State* lua)
 	return 1;
 }
 
-int ListOfVec3Type::CallbackGet(lua_State* lua)
+int ListOfFloatType::CallbackGet(lua_State* lua)
 {
 	int size = lua_gettop(lua);
 	if (size != 2)
@@ -93,11 +92,12 @@ int ListOfVec3Type::CallbackGet(lua_State* lua)
 		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(val->size()), static_cast<int>(idx));
 	}
 
-	GlmVec3Type::Push(lua, val->at(idx - 1));
+	lua_pushnumber(lua, val->at(idx - 1));
+
 	return 1;
 }
 
-int ListOfVec3Type::CallbackSet(lua_State* lua)
+int ListOfFloatType::CallbackSet(lua_State* lua)
 {
 	int size = lua_gettop(lua);
 	if (size != 3)
@@ -119,10 +119,10 @@ int ListOfVec3Type::CallbackSet(lua_State* lua)
 		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(val->size()), static_cast<int>(idx));
 	}
 
-	glm::vec3 v;
-	if (!GlmVec3Type::TryGet(lua, 3, v))
+	float v;
+	if (GetResult::Ok != GetLuaFloat(lua, 3, v))
 	{
-		return luaL_error(lua, "Second argument expected to be a vec3");
+		return luaL_error(lua, "Second argument expected to be a number");
 	}
 
 	val->at(idx - 1) = v;

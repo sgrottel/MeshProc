@@ -3,6 +3,7 @@
 #include "CallbackFunction.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3Type.h"
+#include "ListOfFloatType.h"
 #include "ListOfVec3Type.h"
 #include "LuaUtilities.h"
 #include "MeshType.h"
@@ -53,17 +54,7 @@ namespace
 		}
 		static bool GetVal(lua_State* lua, float& tar)
 		{
-			if (lua_isnumber(lua, 3))
-			{
-				tar = static_cast<float>(lua_tonumber(lua, 3));
-				return true;
-			}
-			if (lua_isinteger(lua, 3))
-			{
-				tar = static_cast<float>(lua_tointeger(lua, 3));
-				return true;
-			}
-			return false;
+			return GetLuaFloat(lua, 3, tar) == GetResult::Ok;
 		}
 	};
 
@@ -180,6 +171,9 @@ namespace
 
 	template<>
 	struct LuaParamMapping<ParamType::ListOfVec3> : LuaWrappedParamMapping<ListOfVec3Type, std::vector<glm::vec3>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};
 
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)

@@ -35,6 +35,7 @@ namespace meshproc
 		MultiIndices,
 		Callback,
 		ListOfVec3,
+		ListOfFloat,
 
 		LAST
 	};
@@ -133,6 +134,13 @@ namespace meshproc
 	{
 		static constexpr const char* name = "ListOfVec3";
 		typedef std::shared_ptr<std::vector<glm::vec3>> type;
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::ListOfFloat>
+	{
+		static constexpr const char* name = "ListOfFloat";
+		typedef std::shared_ptr<std::vector<float>> type;
 	};
 
 	template<ParamType PT>

@@ -102,3 +102,32 @@ meshproc::lua::GetResult meshproc::lua::GetLuaUint32(lua_State* lua, int i, uint
 
 	return GetResult::ErrorType;
 }
+
+meshproc::lua::GetResult meshproc::lua::GetLuaFloat(lua_State* lua, int i, float& tar)
+{
+	if (lua == nullptr)
+	{
+		return GetResult::ErrorState;
+	}
+
+	if (lua_isnumber(lua, i))
+	{
+		tar = static_cast<float>(lua_tonumber(lua, i));
+		return GetResult::Ok;
+	}
+	if (lua_isinteger(lua, i))
+	{
+		tar = static_cast<float>(lua_tointeger(lua, i));
+		return GetResult::Ok;
+	}
+
+	const int size = lua_gettop(lua);
+	if (i == 0
+		|| (i > 0 && size < i)
+		|| (i < 0 && size < -i))
+	{
+		return GetResult::ErrorIndex;
+	}
+
+	return GetResult::ErrorType;
+}

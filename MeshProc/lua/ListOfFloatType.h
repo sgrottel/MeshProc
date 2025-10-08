@@ -3,19 +3,19 @@
 #include "AbstractType.h"
 
 #include <cstdint>
-#include <glm/glm.hpp>
+#include <vector>
 
 namespace meshproc
 {
 	namespace lua
 	{
-		class ListOfVec3Type : public AbstractType<std::vector<glm::vec3>, ListOfVec3Type>
+		class ListOfFloatType : public AbstractType<std::vector<float>, ListOfFloatType>
 		{
 		public:
-			static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.ListOfVec3";
+			static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.ListOfFloatType";
 
-			ListOfVec3Type(Runner& owner)
-				: AbstractType<std::vector<glm::vec3>, ListOfVec3Type>{ owner }
+			ListOfFloatType(Runner& owner)
+				: AbstractType<std::vector<float>, ListOfFloatType>{ owner }
 			{};
 			bool Init();
 

@@ -138,6 +138,7 @@
     <ClCompile Include="lua\GlmMat4Type.cpp" />
     <ClCompile Include="lua\GlmVec2Type.cpp" />
     <ClCompile Include="lua\GlmVec3Type.cpp" />
+    <ClCompile Include="lua\ListOfFloatType.cpp" />
     <ClCompile Include="lua\ListOfVec3Type.cpp" />
     <ClCompile Include="lua\LogFunctions.cpp" />
     <ClCompile Include="lua\LuaUtilities.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="lua\GlmMat4Type.h" />
     <ClInclude Include="lua\GlmVec2Type.h" />
     <ClInclude Include="lua\GlmVec3Type.h" />
+    <ClInclude Include="lua\ListOfFloatType.h" />
     <ClInclude Include="lua\ListOfVec3Type.h" />
     <ClInclude Include="lua\LogFunctions.h" />
     <ClInclude Include="lua\LuaResources.h" />

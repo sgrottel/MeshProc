@@ -276,6 +276,9 @@
     <ClCompile Include="MeshSmooth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lua\ListOfFloatType.cpp">
+      <Filter>lua</Filter>
+    </ClCompile>
     <ClCompile Include="io\ObjMeshWriter.cpp">
       <Filter>io</Filter>
     </ClCompile>
@@ -529,6 +532,9 @@
     </ClInclude>
     <ClInclude Include="MeshSmooth.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\ListOfFloatType.h">
+      <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="io\ObjMeshWriter.h">
       <Filter>io</Filter>
