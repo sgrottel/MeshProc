@@ -28,17 +28,24 @@ bool ManipulateVertices::Invoke()
 		return false;
 	}
 
-	for (glm::vec3& v : m_mesh->vertices)
+	for (size_t i = 0; i < m_mesh->vertices.size(); ++i)
 	{
+		glm::vec3& v = m_mesh->vertices.at(i);
+	
 		m_callback->Push();
+
 		lua::GlmVec3Type::Push(m_callback->Lua(), v);
-		m_callback->Call(1, 1);
+		lua_pushinteger(m_callback->Lua(), i + 1);
+
+		m_callback->Call(2, 1);
+
 		if (lua_isnil(m_callback->Lua(), -1))
 		{
 			// keep v as is
 			lua_pop(m_callback->Lua(), 1);
 			continue;
 		}
+
 		glm::vec3 r;
 		if (lua::GlmVec3Type::TryGet(m_callback->Lua(), -1, r))
 		{
