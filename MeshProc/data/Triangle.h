@@ -31,6 +31,9 @@ namespace meshproc
 			template<typename C>
 			glm::vec3 CalcNormal(C const& vertices) const;
 
+			template<typename C>
+			float CalcSurface(C const& vertices) const;
+
 			inline void Flip()
 			{
 				std::swap(m_idx[1], m_idx[2]);
@@ -119,6 +122,7 @@ namespace meshproc
 
 			inline HashableEdge HashableEdge(uint32_t idx) const
 			{
+				assert(idx < 3);
 				return { m_idx[idx], m_idx[(idx + 1) % 3] };
 			}
 
@@ -134,6 +138,15 @@ namespace meshproc
 			const glm::vec3 v1 = vertices[m_idx[1]];
 			const glm::vec3 v2 = vertices[m_idx[2]];
 			return glm::normalize(glm::cross(v0 - v1, v1 - v2));
+		}
+
+		template<typename C>
+		float Triangle::CalcSurface(C const& vertices) const
+		{
+			const glm::vec3 v0 = vertices[m_idx[0]];
+			const glm::vec3 v1 = vertices[m_idx[1]];
+			const glm::vec3 v2 = vertices[m_idx[2]];
+			return 0.5f * glm::length(glm::cross(v1 - v0, v2 - v0));
 		}
 
 		template<typename C>

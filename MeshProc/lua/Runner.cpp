@@ -1,14 +1,32 @@
 #include "Runner.h"
 
 #include "CommandCreator.h"
-#include "CommandType.h"
-#include "LogFunctions.h"
 #include "LuaResources.h"
+
+#include "CommandType.h"
+#include "IndicesType.h"
+#include "ListOfFloatType.h"
+#include "ListOfVec3Type.h"
+#include "LogFunctions.h"
 #include "MeshType.h"
+#include "MultiIndicesType.h"
 #include "MultiMeshType.h"
-#include "MultiVertexSelectionType.h"
 #include "SceneType.h"
-#include "VertexSelectionType.h"
+#include "Shape2DType.h"
+#include "VersionCheck.h"
+
+#define IMPL_COMPONENTS(FUNC) \
+	FUNC(CommandType) \
+	FUNC(IndicesType) \
+	FUNC(ListOfFloatType) \
+	FUNC(ListOfVec3Type) \
+	FUNC(LogFunctions) \
+	FUNC(MeshType) \
+	FUNC(MultiIndicesType) \
+	FUNC(MultiMeshType) \
+	FUNC(SceneType) \
+	FUNC(Shape2DType) \
+	FUNC(VersionCheck)
 
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
@@ -29,59 +47,40 @@ namespace
 	constexpr intptr_t LuaThisKey = 0x16A7;
 }
 
+#define RUNNER_CTORCALL(T) , m_##T{ owner }
+#define RUNNER_MEMBERDEFINITION(T) T m_##T;
+#define RUNNER_INITIMPL(T) if(!m_##T.Init()) { return false; }
+
 class Runner::Components {
 public:
 	Components(Runner& owner, const CommandFactory& factory)
-		: m_commandCreator{ owner, factory }
-		, m_commandType{ owner }
-		, m_logFunctions{ owner }
-		, m_meshType{ owner }
-		, m_multiMeshType{ owner }
-		, m_multiVertexSelectionType{ owner }
-		, m_sceneType{ owner }
-		, m_vertexSelectionType{ owner }
+		: m_CommandCreator{ owner, factory }
+		IMPL_COMPONENTS(RUNNER_CTORCALL)
 	{ }
 
 	bool Init();
 
-	CommandCreator m_commandCreator;
-	CommandType m_commandType;
-	LogFunctions m_logFunctions;
-	MeshType m_meshType;
-	MultiMeshType m_multiMeshType;
-	MultiVertexSelectionType m_multiVertexSelectionType;
-	SceneType m_sceneType;
-	VertexSelectionType m_vertexSelectionType;
+	CommandCreator m_CommandCreator;
+	IMPL_COMPONENTS(RUNNER_MEMBERDEFINITION)
 };
 
 bool Runner::Components::Init()
 {
-	if (!m_logFunctions.Init()) return false;
-	if (!m_commandType.Init()) return false;
-	if (!m_meshType.Init()) return false;
-	if (!m_multiMeshType.Init()) return false;
-	if (!m_multiVertexSelectionType.Init()) return false;
-	if (!m_sceneType.Init()) return false;
-	if (!m_vertexSelectionType.Init()) return false;
+	if (!m_CommandType.Init()) return false;
+	IMPL_COMPONENTS(RUNNER_INITIMPL)
 	return true;
 }
 
-#define IMPL_RUNNER_GET_COMPONENT(TYPE, NAME)	\
+#define IMPL_RUNNER_GET_COMPONENT(T)	\
 	template<>									\
-	TYPE* Runner::GetComponent<TYPE>() const	\
+	T* Runner::GetComponent<T>() const	\
 	{											\
 		if (!m_components) return nullptr;		\
-		return &m_components->NAME;				\
+		return &m_components->m_##T;			\
 	}
 
-IMPL_RUNNER_GET_COMPONENT(CommandCreator, m_commandCreator)
-IMPL_RUNNER_GET_COMPONENT(CommandType, m_commandType)
-IMPL_RUNNER_GET_COMPONENT(LogFunctions, m_logFunctions)
-IMPL_RUNNER_GET_COMPONENT(MeshType, m_meshType)
-IMPL_RUNNER_GET_COMPONENT(MultiMeshType, m_multiMeshType)
-IMPL_RUNNER_GET_COMPONENT(MultiVertexSelectionType, m_multiVertexSelectionType)
-IMPL_RUNNER_GET_COMPONENT(SceneType, m_sceneType)
-IMPL_RUNNER_GET_COMPONENT(VertexSelectionType, m_vertexSelectionType)
+IMPL_RUNNER_GET_COMPONENT(CommandCreator)
+IMPL_COMPONENTS(IMPL_RUNNER_GET_COMPONENT)
 
 Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
 	: m_log{ log }
@@ -130,7 +129,7 @@ bool Runner::RegisterCommands()
 {
 	if (!AssertStateReady()) return false;
 	if (!m_components) return false;
-	return m_components->m_commandCreator.RegisterCommands();
+	return m_components->m_CommandCreator.RegisterCommands();
 }
 
 bool Runner::LoadScript(const std::filesystem::path& script)
@@ -166,6 +165,8 @@ bool Runner::LoadScript(const std::filesystem::path& script)
 
 	fclose(file);
 
+	m_workingDirectory = script.parent_path();
+
 	if (luaL_loadbuffer(m_state.get(), data.data(), data.size(), ""))
 	{
 		m_log.Critical("Failed to load lua script: %s", lua_tostring(m_state.get(), -1));
@@ -192,6 +193,15 @@ bool Runner::SetArgs(const std::unordered_map<std::wstring_view, std::wstring_vi
 bool Runner::RunScript()
 {
 	if (!AssertStateReady()) return false;
+
+	std::filesystem::path oldCurrentPath = std::filesystem::current_path();
+	bool retval = false;
+
+	if (!m_workingDirectory.empty())
+	{
+		std::filesystem::current_path(m_workingDirectory);
+	}
+
 	try
 	{
 		if (lua_pcall(m_state.get(),
@@ -201,20 +211,26 @@ bool Runner::RunScript()
 		))
 		{
 			m_log.Critical("Failed to run lua script: %s", lua_tostring(m_state.get(), -1));
-			return false;
+		}
+		else
+		{
+			retval = true;
 		}
 	}
 	catch (const std::exception& ex)
 	{
 		m_log.Critical("Exception while running lua script: %s", ex.what());
-		return false;
 	}
 	catch (...)
 	{
 		m_log.Critical("Unknown exception while running lua script");
-		return false;
 	}
-	return true;
+
+	if (!m_workingDirectory.empty())
+	{
+		std::filesystem::current_path(oldCurrentPath);
+	}
+	return retval;
 }
 
 Runner* Runner::GetThis(lua_State* lua)

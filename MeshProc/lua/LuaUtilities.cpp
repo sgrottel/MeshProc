@@ -66,3 +66,68 @@ void meshproc::lua::DumpLuaStack(lua_State* L) {
 		std::cout << "\n";
 	}
 }
+
+meshproc::lua::GetResult meshproc::lua::GetLuaUint32(lua_State* lua, int i, uint32_t& tar)
+{
+	if (lua == nullptr)
+	{
+		return GetResult::ErrorState;
+	}
+
+	if (lua_isnumber(lua, i))
+	{
+		const auto number = lua_tonumber(lua, i);
+		if (number < 0.0) return GetResult::ErrorValue;
+
+		tar = static_cast<uint32_t>(number);
+		return GetResult::Ok;
+	}
+
+	if (lua_isinteger(lua, i))
+	{
+		const auto integer = lua_tointeger(lua, i);
+		if (integer < 0) return GetResult::ErrorValue;
+
+		tar = static_cast<uint32_t>(integer);
+		return GetResult::Ok;
+	}
+
+	const int size = lua_gettop(lua);
+	if (i == 0
+		|| (i > 0 && size < i)
+		|| (i < 0 && size < -i))
+	{
+		return GetResult::ErrorIndex;
+	}
+
+	return GetResult::ErrorType;
+}
+
+meshproc::lua::GetResult meshproc::lua::GetLuaFloat(lua_State* lua, int i, float& tar)
+{
+	if (lua == nullptr)
+	{
+		return GetResult::ErrorState;
+	}
+
+	if (lua_isnumber(lua, i))
+	{
+		tar = static_cast<float>(lua_tonumber(lua, i));
+		return GetResult::Ok;
+	}
+	if (lua_isinteger(lua, i))
+	{
+		tar = static_cast<float>(lua_tointeger(lua, i));
+		return GetResult::Ok;
+	}
+
+	const int size = lua_gettop(lua);
+	if (i == 0
+		|| (i > 0 && size < i)
+		|| (i < 0 && size < -i))
+	{
+		return GetResult::ErrorIndex;
+	}
+
+	return GetResult::ErrorType;
+}

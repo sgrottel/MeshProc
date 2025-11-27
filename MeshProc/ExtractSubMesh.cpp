@@ -10,7 +10,7 @@ ExtractSubMesh::ExtractSubMesh(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("InputMesh", m_inputMesh);
-	AddParamBinding<ParamMode::In, ParamType::VertexSelection>("TrianglesList", m_triList);
+	AddParamBinding<ParamMode::In, ParamType::Indices>("TrianglesList", m_triList);
 	AddParamBinding<ParamMode::Out, ParamType::Mesh>("OutputMesh", m_outputMesh);
 }
 

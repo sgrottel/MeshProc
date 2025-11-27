@@ -8,7 +8,7 @@ SelectBottomTriangles::SelectBottomTriangles(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("TrianglesList", m_triList);
+	AddParamBinding<ParamMode::Out, ParamType::Indices>("TrianglesList", m_triList);
 }
 
 bool SelectBottomTriangles::Invoke()

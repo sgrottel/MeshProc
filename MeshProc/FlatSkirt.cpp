@@ -14,8 +14,8 @@ FlatSkirt::FlatSkirt(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::In, ParamType::VertexSelection>("Loop", m_loop);
-	AddParamBinding<ParamMode::Out, ParamType::VertexSelection>("NewLoop", m_newLoop);
+	AddParamBinding<ParamMode::In, ParamType::Indices>("Loop", m_loop);
+	AddParamBinding<ParamMode::Out, ParamType::Indices>("NewLoop", m_newLoop);
 	AddParamBinding<ParamMode::Out, ParamType::Vec3>("Center", m_center);
 	AddParamBinding<ParamMode::Out, ParamType::Vec3>("X2D", m_x2D);
 	AddParamBinding<ParamMode::Out, ParamType::Vec3>("Y2D", m_y2D);
@@ -141,7 +141,7 @@ bool FlatSkirt::Invoke()
 		}
 	}
 
-	std::shared_ptr<std::vector<uint32_t>> newLoop = std::make_shared<ParamTypeInfo_t<ParamType::VertexSelection>::element_type>();
+	std::shared_ptr<std::vector<uint32_t>> newLoop = std::make_shared<ParamTypeInfo_t<ParamType::Indices>::element_type>();
 	newLoop->reserve(m_mesh->vertices.size() - oldSize);
 	for (size_t i = oldSize; i < m_mesh->vertices.size(); ++i)
 	{

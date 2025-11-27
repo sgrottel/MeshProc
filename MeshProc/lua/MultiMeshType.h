@@ -20,6 +20,8 @@ namespace meshproc
 				: AbstractMultiType<data::Mesh, MultiMeshType>{ owner }
 			{};
 			bool Init();
+		protected:
+			static int CallbackGet(lua_State* lua);
 		};
 	}
 }

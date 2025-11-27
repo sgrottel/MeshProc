@@ -1,8 +1,5 @@
 #pragma once
 
-#include "data/Mesh.h"
-#include "data/Scene.h"
-
 #include <glm/glm.hpp>
 
 #include <cstdint>
@@ -12,6 +9,16 @@
 
 namespace meshproc
 {
+	namespace data
+	{
+		class Mesh;
+		class Scene;
+		class Shape2D;
+	}
+	namespace lua
+	{
+		class CallbackFunction;
+	}
 
 	enum class ParamType
 	{
@@ -23,8 +30,12 @@ namespace meshproc
 		Mesh,
 		MultiMesh,
 		Scene,
-		VertexSelection, // e.g. also edges/loops
-		MultiVertexSelection,
+		Shape2D,
+		Indices, // e.g. vertices, also edges/loops, or triangles
+		MultiIndices,
+		Callback,
+		ListOfVec3,
+		ListOfFloat,
 
 		LAST
 	};
@@ -39,6 +50,7 @@ namespace meshproc
 	{
 		static constexpr const char* name = "UInt";
 		typedef uint32_t type;
+		static constexpr bool canSetNil = false;
 	};
 
 	template<>
@@ -46,6 +58,7 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Float";
 		typedef float type;
+		static constexpr bool canSetNil = false;
 	};
 
 	template<>
@@ -53,6 +66,8 @@ namespace meshproc
 	{
 		static constexpr const char* name = "String";
 		typedef std::wstring type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return L""; }
 	};
 
 	template<>
@@ -60,6 +75,7 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Vec3";
 		typedef glm::vec3 type;
+		static constexpr bool canSetNil = false;
 	};
 
 	template<>
@@ -67,6 +83,7 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Mat4";
 		typedef glm::mat4 type;
+		static constexpr bool canSetNil = false;
 	};
 
 	template<>
@@ -74,6 +91,8 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Mesh";
 		typedef std::shared_ptr<data::Mesh> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
 	};
 
 	template<>
@@ -81,6 +100,8 @@ namespace meshproc
 	{
 		static constexpr const char* name = "MultiMesh";
 		typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
 	};
 
 	template<>
@@ -88,20 +109,62 @@ namespace meshproc
 	{
 		static constexpr const char* name = "Scene";
 		typedef std::shared_ptr<data::Scene> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
 	};
 
 	template<>
-	struct ParamTypeInfo<ParamType::VertexSelection>
+	struct ParamTypeInfo<ParamType::Shape2D>
 	{
-		static constexpr const char* name = "VertexSelection";
+		static constexpr const char* name = "Shape2D";
+		typedef std::shared_ptr<data::Shape2D> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::Indices>
+	{
+		static constexpr const char* name = "Indices";
 		typedef std::shared_ptr<std::vector<uint32_t>> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
 	};
 
 	template<>
-	struct ParamTypeInfo<ParamType::MultiVertexSelection>
+	struct ParamTypeInfo<ParamType::MultiIndices>
 	{
-		static constexpr const char* name = "MultiVertexSelection";
+		static constexpr const char* name = "MultiIndices";
 		typedef std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::Callback>
+	{
+		static constexpr const char* name = "Callback";
+		typedef std::shared_ptr<lua::CallbackFunction> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::ListOfVec3>
+	{
+		static constexpr const char* name = "ListOfVec3";
+		typedef std::shared_ptr<std::vector<glm::vec3>> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
+	};
+
+	template<>
+	struct ParamTypeInfo<ParamType::ListOfFloat>
+	{
+		static constexpr const char* name = "ListOfFloat";
+		typedef std::shared_ptr<std::vector<float>> type;
+		static constexpr bool canSetNil = true;
+		static type NilVal() { return nullptr; }
 	};
 
 	template<ParamType PT>

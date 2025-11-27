@@ -1,13 +1,17 @@
 #include "CommandType.h"
 
+#include "CallbackFunction.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3Type.h"
+#include "ListOfFloatType.h"
+#include "ListOfVec3Type.h"
 #include "LuaUtilities.h"
 #include "MeshType.h"
 #include "MultiMeshType.h"
-#include "MultiVertexSelectionType.h"
+#include "MultiIndicesType.h"
 #include "SceneType.h"
-#include "VertexSelectionType.h"
+#include "Shape2DType.h"
+#include "IndicesType.h"
 
 #include "AbstractCommand.h"
 #include "utilities/StringUtilities.h"
@@ -17,6 +21,8 @@
 #include <lua.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
+
+#include <array>
 
 using namespace meshproc;
 using namespace meshproc::lua;
@@ -33,19 +39,9 @@ namespace
 		{
 			lua_pushinteger(lua, v);
 		}
-		static bool SetVal(lua_State* lua, uint32_t& tar)
+		static bool GetVal(lua_State* lua, uint32_t& tar)
 		{
-			if (lua_isnumber(lua, 3))
-			{
-				tar = static_cast<uint32_t>(lua_tonumber(lua, 3));
-				return true;
-			}
-			if (lua_isinteger(lua, 3))
-			{
-				tar = static_cast<uint32_t>(lua_tointeger(lua, 3));
-				return true;
-			}
-			return false;
+			return GetLuaUint32(lua, 3, tar) == GetResult::Ok;
 		}
 	};
 
@@ -56,19 +52,9 @@ namespace
 		{
 			lua_pushnumber(lua, v);
 		}
-		static bool SetVal(lua_State* lua, float& tar)
+		static bool GetVal(lua_State* lua, float& tar)
 		{
-			if (lua_isnumber(lua, 3))
-			{
-				tar = static_cast<float>(lua_tonumber(lua, 3));
-				return true;
-			}
-			if (lua_isinteger(lua, 3))
-			{
-				tar = static_cast<float>(lua_tointeger(lua, 3));
-				return true;
-			}
-			return false;
+			return GetLuaFloat(lua, 3, tar) == GetResult::Ok;
 		}
 	};
 
@@ -79,7 +65,7 @@ namespace
 		{
 			lua_pushstring(lua, ToUtf8(v).c_str());
 		}
-		static bool SetVal(lua_State* lua, std::wstring& tar)
+		static bool GetVal(lua_State* lua, std::wstring& tar)
 		{
 			if (lua_isstring(lua, 3))
 			{
@@ -98,7 +84,7 @@ namespace
 		{
 			WRAPPEDTYPE::LuaPush(lua, v);
 		}
-		static bool SetVal(lua_State* lua, std::shared_ptr<NATIVETYPE>& tar)
+		static bool GetVal(lua_State* lua, std::shared_ptr<NATIVETYPE>& tar)
 		{
 			auto m = WRAPPEDTYPE::LuaGet(lua, 3);
 			if (m)
@@ -120,10 +106,13 @@ namespace
 	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene> {};
 
 	template<>
-	struct LuaParamMapping<ParamType::VertexSelection> : LuaWrappedParamMapping<VertexSelectionType, std::vector<uint32_t>> {};
+	struct LuaParamMapping<ParamType::Shape2D> : LuaWrappedParamMapping<Shape2DType, data::Shape2D> {};
 
 	template<>
-	struct LuaParamMapping<ParamType::MultiVertexSelection> : LuaWrappedParamMapping<MultiVertexSelectionType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
+	struct LuaParamMapping<ParamType::Indices> : LuaWrappedParamMapping<IndicesType, std::vector<uint32_t>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::MultiIndices> : LuaWrappedParamMapping<MultiIndicesType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::Mat4>
@@ -133,7 +122,7 @@ namespace
 			GlmMat4Type::Push(lua, v);
 		}
 
-		static bool SetVal(lua_State* lua, glm::mat4& tar)
+		static bool GetVal(lua_State* lua, glm::mat4& tar)
 		{
 			return GlmMat4Type::TryGet(lua, 3, tar);
 		}
@@ -147,11 +136,44 @@ namespace
 			GlmVec3Type::Push(lua, v);
 		}
 
-		static bool SetVal(lua_State* lua, glm::vec3& tar)
+		static bool GetVal(lua_State* lua, glm::vec3& tar)
 		{
 			return GlmVec3Type::TryGet(lua, 3, tar);
 		}
 	};
+
+	template<>
+	struct LuaParamMapping<ParamType::Callback>
+	{
+		static void PushVal(lua_State* lua, const std::shared_ptr<lua::CallbackFunction>& v)
+		{
+			if (v)
+			{
+				v->Push();
+			}
+			else
+			{
+				lua_pushnil(lua);
+			}
+		}
+
+		static bool GetVal(lua_State* lua, std::shared_ptr<lua::CallbackFunction>& tar)
+		{
+			if (!lua_isfunction(lua, 3))
+			{
+				tar.reset();
+				return false;
+			}
+			tar = std::make_shared<lua::CallbackFunction>(lua, 3);
+			return true;
+		}
+	};
+
+	template<>
+	struct LuaParamMapping<ParamType::ListOfVec3> : LuaWrappedParamMapping<ListOfVec3Type, std::vector<glm::vec3>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};
 
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
@@ -166,8 +188,29 @@ namespace
 		return 1;
 	}
 
+	template<bool, ParamType PT>
+	struct NilValSetter;
+
 	template<ParamType PT>
-	static bool LuaTrySetVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
+	struct NilValSetter<true, PT>
+	{
+		static inline void SetNil(ParamTypeInfo_t<PT>& tar)
+		{
+			tar = ParamTypeInfo<PT>::NilVal();
+		}
+	};
+
+	template<ParamType PT>
+	struct NilValSetter<false, PT>
+	{
+		static inline void SetNil(ParamTypeInfo_t<PT>& tar)
+		{
+			// intentionally empty
+		}
+	};
+
+	template<ParamType PT>
+	static bool LuaTryLoadVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)
 	{
 		ParamTypeInfo_t<PT>* v = ParameterBinding::GetValueTarget<PT>(param.get());
 		if (v == nullptr)
@@ -175,12 +218,55 @@ namespace
 			log.Error("Parameter value type mismatch");
 			return false;
 		}
-		if (!LuaParamMapping<PT>::SetVal(lua, *v))
+
+		if (lua_isnil(lua, 3))
+		{
+			if (ParamTypeInfo<PT>::canSetNil)
+			{
+				NilValSetter<ParamTypeInfo<PT>::canSetNil, PT>::SetNil(*v);
+				return true;
+			}
+			else
+			{
+				log.Error("Failed to set parameter value to nil; type does not support nil value");
+				return false;
+			}
+		}
+
+		if (!LuaParamMapping<PT>::GetVal(lua, *v))
 		{
 			log.Error("Failed to set parameter value; likely type mismatch");
 			return false;
 		}
 		return true;
+	}
+
+	template <size_t... Es>
+	consteval auto MakeLuaTryPushValTableValues(std::integer_sequence<size_t, Es...>) {
+		return std::array<int(*)(lua_State*, std::shared_ptr<ParameterBinding::ParamBindingBase>, sgrottel::ISimpleLog&), sizeof...(Es)>{
+			&LuaTryPushVal<static_cast<ParamType>(Es)>...
+		};
+	}
+
+	consteval auto MakeLuaTryPushValTable() {
+		auto seq = []<size_t... I>(std::index_sequence<I...>) {
+			return std::integer_sequence<size_t, static_cast<size_t>(I)...>{};
+		}(std::make_index_sequence<static_cast<size_t>(ParamType::LAST)>{});
+		return MakeLuaTryPushValTableValues(seq);
+	}
+
+	template <size_t... Es>
+	consteval auto MakeLuaTryLoadValTableValues(std::integer_sequence<size_t, Es...>) {
+		return std::array<bool(*)(lua_State *, std::shared_ptr<ParameterBinding::ParamBindingBase>, sgrottel::ISimpleLog&), sizeof...(Es)>{
+			&LuaTryLoadVal<static_cast<ParamType>(Es)>...
+		};
+	}
+
+	consteval auto MakeLuaTryLoadValTable() {
+		auto seq = []<size_t... I>(std::index_sequence<I...>) {
+			return std::integer_sequence<size_t, static_cast<size_t>(I)...>{};
+		}(std::make_index_sequence<static_cast<size_t>(ParamType::LAST)>{});
+		return MakeLuaTryLoadValTableValues(seq);
 	}
 
 }
@@ -258,6 +344,8 @@ int CommandType::InvokeImpl(lua_State* lua)
 
 int CommandType::GetImpl(lua_State* lua)
 {
+	static constexpr auto functable = MakeLuaTryPushValTable();
+
 	auto cmd = CommandType::LuaGet(lua, 1);
 	if (!cmd)
 	{
@@ -286,38 +374,20 @@ int CommandType::GetImpl(lua_State* lua)
 		return 0;
 	}
 
-	switch (param->m_type)
+	size_t functableIndex = static_cast<size_t>(param->m_type);
+	if (functableIndex < functable.size())
 	{
-	case ParamType::UInt32:
-		return LuaTryPushVal<ParamType::UInt32>(lua, param, Log());
-	case ParamType::Float:
-		return LuaTryPushVal<ParamType::Float>(lua, param, Log());
-	case ParamType::String:
-		return LuaTryPushVal<ParamType::String>(lua, param, Log());
-	case ParamType::Vec3:
-		return LuaTryPushVal<ParamType::Vec3>(lua, param, Log());
-	case ParamType::Mat4:
-		return LuaTryPushVal<ParamType::Mat4>(lua, param, Log());
-	case ParamType::Mesh:
-		return LuaTryPushVal<ParamType::Mesh>(lua, param, Log());
-	case ParamType::MultiMesh:
-		return LuaTryPushVal<ParamType::MultiMesh>(lua, param, Log());
-	case ParamType::Scene:
-		return LuaTryPushVal<ParamType::Scene>(lua, param, Log());
-	case ParamType::VertexSelection:
-		return LuaTryPushVal<ParamType::VertexSelection>(lua, param, Log());
-	case ParamType::MultiVertexSelection:
-		return LuaTryPushVal<ParamType::MultiVertexSelection>(lua, param, Log());
-	default:
-		Log().Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
-		return 0;
+		return functable[functableIndex](lua, param, Log());
 	}
 
-	return 1;
+	Log().Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
+	return 0;
 }
 
 int CommandType::SetImpl(lua_State* lua)
 {
+	static constexpr auto functable = MakeLuaTryLoadValTable();
+
 	auto cmd = CommandType::LuaGet(lua, 1);
 	if (!cmd)
 	{
@@ -351,42 +421,13 @@ int CommandType::SetImpl(lua_State* lua)
 		return 0;
 	}
 
-	switch (param->m_type)
+	size_t functableIndex = static_cast<size_t>(param->m_type);
+	if (functableIndex >= functable.size())
 	{
-	case ParamType::UInt32:
-		LuaTrySetVal<ParamType::UInt32>(lua, param, Log());
-		break;
-	case ParamType::Float:
-		LuaTrySetVal<ParamType::Float>(lua, param, Log());
-		break;
-	case ParamType::String:
-		LuaTrySetVal<ParamType::String>(lua, param, Log());
-		break;
-	case ParamType::Vec3:
-		LuaTrySetVal<ParamType::Vec3>(lua, param, Log());
-		break;
-	case ParamType::Mat4:
-		LuaTrySetVal<ParamType::Mat4>(lua, param, Log());
-		break;
-	case ParamType::Mesh:
-		LuaTrySetVal<ParamType::Mesh>(lua, param, Log());
-		break;
-	case ParamType::MultiMesh:
-		LuaTrySetVal<ParamType::MultiMesh>(lua, param, Log());
-		break;
-	case ParamType::Scene:
-		LuaTrySetVal<ParamType::Scene>(lua, param, Log());
-		break;
-	case ParamType::VertexSelection:
-		LuaTrySetVal<ParamType::VertexSelection>(lua, param, Log());
-		break;
-	case ParamType::MultiVertexSelection:
-		LuaTrySetVal<ParamType::MultiVertexSelection>(lua, param, Log());
-		break;
-	default:
 		Log().Error("Setting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
 		return 0;
 	}
 
+	functable[functableIndex](lua, param, Log());
 	return 0;
 }

@@ -4,89 +4,47 @@
 --
 -- run demo.lua -v -arg sizex=3 -arg hello
 --
-
 local xyz_math = require("xyz_math")
-
 log.write("Test script")
 
-local argsStr = 'args:'
-for k, v in pairs(args) do
-	argsStr = argsStr .. '\n  "' .. k .. '" = "' .. v .. '"';
-end
-log.detail(argsStr)
-if args.sizex then
-	log.detail("args.sizex is set")
-end
-if not args.nope then
-	log.detail("args.not is not set")
-end
+local make = meshproc.generator.Cube.new()
+make:invoke()
+local cube = make:get("Mesh") -- cube [0..1]
 
-local dev = meshproc._createCommand("DevPlayground");
-dev:invoke();
+-- 2D Shapes
+local shape = meshproc.Shape2D.new()
+shape:add(XVec2(-1,0))
+shape:add(XVec2(1,0))
+shape:add(XVec2(0,2))
 
-log.warn("破滅");
+shape:add(XVec2(2, 0), 2)
+shape:add(XVec2(2, 2), 2)
+shape:add(XVec2(4, 2), 2)
+shape:add(XVec2(4, 0), 2)
 
-cube = meshproc.generator.Cube.new()
+shape:add(XVec2(3, 0.5), 3)
+shape:add(XVec2(2.5, 1), 3)
+-- strange order of verties on purpose to have an intersection in the loops
+shape:add(XVec2(3.5, 1), 3)
+shape:add(XVec2(3, 1.5), 3)
 
-log.write("cube.x = " .. tostring(cube:get("SizeX")))
-log.write("cube.y = " .. tostring(cube:get("SizeY")))
-log.write("cube.z = " .. tostring(cube:get("SizeZ")))
-log.write("mesh = " .. tostring(cube:get("Mesh")))
+csv = meshproc.io.CsvShape2DWriter.new()
+csv:set("Shape", shape)
+csv:set("Path", "shape2d.csv")
+csv:invoke()
 
--- Accessing a field that does not exist with stop the script with a critical error
--- log.write("cube.invalid = " .. tostring(cube:get("invalid")))
+make = meshproc.generator.LinearExtrude2DMesh.new()
+make:set("Shape2D", shape)
+make:invoke()
+local poly = make:get("Mesh")
 
-cube:set("SizeX", tonumber(args.sizex or 4))
-log.write("cube.x = " .. tostring(cube:get("SizeX")))
-
-if cube:invoke() then
-	log.write("Cube generated")
-else
-	log.error("Cube failed")
-end
-
-log.write("mesh = " .. tostring(cube:get("Mesh")))
-
-local mesh = cube:get("Mesh");
+-- TODO: Subtract
 
 local scene = meshproc.Scene.new()
-scene:place(mesh);
+scene:place(cube)
+scene:place(poly, XMat4.translate(0, 0, 2))
 
-local mat = XMat4.translate(0, 0, 2) * XMat4.rotation_z(math.pi/4) * XMat4.scale(1, 2, 1)
-scene:place(mesh, mat);
-
-scene:place(mesh, mat * XMat4.translate(5, 0, 0));
-
-ply = meshproc.io.PlyWriter.new()
-ply:set("Path", "out.ply")
-ply:set("Scene", scene)
-log.write("ply.path = " .. tostring(ply:get("Path")))
-ply:invoke()
-
-local close = meshproc.CloseLoopWithPin.new()
-
-local vec = XVec3(2, 2, 4)
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-close:set("PinOffset", XVec3(1, 2, 3))
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-close:set("PinOffset", XVec2(4, 5))
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-close:set("PinOffset", XVec4(7, 8, 9, 0))
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-close:set("PinOffset", XVec4(10, 11, 12, 1))
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
-
-close:set("PinOffset", XVec4(8, 4, 6, 2))
-vec = close:get("PinOffset")
-log.write("vec = " .. tostring(vec.x or 0) .. ", " .. tostring(vec.y or 0) .. ", " .. tostring(vec.z or 0))
+local stl = meshproc.io.StlWriter.new()
+stl:set("Scene", scene)
+stl:set("Path", "out.stl")
+stl:invoke()

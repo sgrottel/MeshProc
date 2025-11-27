@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbstractCommand.h"
-#include "data/Scene.h"
+#include "data/Mesh.h"
 
 #include <filesystem>
 #include <memory>

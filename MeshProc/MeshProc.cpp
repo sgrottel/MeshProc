@@ -1,16 +1,9 @@
 ﻿#include "CmdLineArgs.h"
 #include "CommandFactory.h"
 #include "CommandRegistration.h"
-#include "DevPlayground.h"
 #include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/transform.hpp>
-
-#include <memory>
-#include <cwctype>
 
 int wmain(int argc, wchar_t **argv)
 {
