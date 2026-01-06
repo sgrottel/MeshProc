@@ -49,7 +49,7 @@ bool FlatSkirt::Invoke()
 	}
 
 	m_center = std::reduce(v.begin(), v.end());
-	m_center /= v.size();
+	m_center /= static_cast<float>(v.size());
 
 	{
 		glm::mat3 covarMat = glm::computeCovarianceMatrix(v.data(), v.size(), m_center);
