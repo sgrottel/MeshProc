@@ -83,6 +83,7 @@ jobs:
         $vcpkg_manifest = (Get-FileHash -Algorithm MD5 .\MeshProc\vcpkg.json).Hash
 
         $toolchain = & "$env:CL_PATH" 2>&1 | Select-String "Version" | ForEach-Object { $_.ToString().Trim() }
+        Write-Host "Toolchain: $toolchain"
         $toolchain_hash = ([System.Security.Cryptography.MD5]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($toolchain)) | ForEach-Object { $_.ToString("x2") }) -join ""
 
         $vcpkg_cache_key = "$($vcpkg_gh)-$($vcpkg_manifest)-$($toolchain_hash)"
@@ -101,31 +102,22 @@ jobs:
       shell: pwsh
       run: |
         cd vcpkg
-
-        # Write-Host "::group::Bootstrap vcpkg"
         .\bootstrap-vcpkg.bat
-        # Write-Host "::endgroup::"
-
-        # Write-Host "::group::vcpkg integrate install"
-        # .\vcpkg.exe integrate install
-        # Write-Host "::endgroup::"
-
         cd ..
+
+    - name: Cache vcpkg packages
+      id: cache_vcpkg_packages
+      uses: actions/cache@v4
+      with:
+        path: MeshProc/vcpkg_installed
+        key: meshproc_vcpkg_installed_${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
 
     - name: Install vcpkg packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
         cd MeshProc
-
-        # Write-Host "::group::vcpkg install"
         ..\vcpkg\vcpkg.exe install --vcpkg-root ..\vcpkg\ --triplet x64-windows --clean-after-build
-        # Write-Host "::endgroup::"
-
-        # Write-Host "::group::debug vcpkg artifacts listing"
-        # ls -rec -dir .\vcpkg_installed | % { $_.FullName }
-        # Write-Host "::endgroup::"
-
         cd ..
 
     - name: Restore NuGet packages
