@@ -52,7 +52,7 @@ Inspired by
 ## License
 This project is freely available as open source under the terms of the [Apache License, Version 2.0](LICENSE)
 
-> Copyright 2025 SGrottel (www.sgrottel.de)
+> Copyright 2025-2026 SGrottel (www.sgrottel.de)
 >
 > Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
