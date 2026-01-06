@@ -1,4 +1,5 @@
 <Project>
+	<!-- Ensures 'vcpkg.exe' is available, aka vcpkg submodule is fully initialized -->
 	<Target Name="EnsureVcpkgBootstrapped" BeforeTargets="PrepareForBuild">
 		<PropertyGroup>
 			<VcpkgExe>$(VcpkgRoot)vcpkg.exe</VcpkgExe>
