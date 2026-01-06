@@ -1,0 +1,13 @@
+<Project>
+	<!-- Ensures 'vcpkg.exe' is available, aka vcpkg submodule is fully initialized -->
+	<Target Name="EnsureVcpkgBootstrapped" BeforeTargets="PrepareForBuild">
+		<PropertyGroup>
+			<VcpkgExe>$(VcpkgRoot)vcpkg.exe</VcpkgExe>
+			<VcpkgBootstrap>$(VcpkgRoot)bootstrap-vcpkg.bat</VcpkgBootstrap>
+		</PropertyGroup>
+
+		<Exec Command="&quot;$(VcpkgBootstrap)&quot;" Condition="!Exists('$(VcpkgExe)')" />
+	</Target>
+
+	<Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets" />
+</Project>
