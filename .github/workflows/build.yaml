@@ -50,6 +50,10 @@ jobs:
         msbuild ${{env.SOLUTION_FILE_PATH}}
         /m
         /p:Configuration=${{matrix.configuration}}
+        /p:VcpkgEnableManifest=false
+      # Note:
+      # "/p:VcpkgEnableManifest=false" is needed because otherwise msbuild is building the depencenies _again_
+      # even if the previous step just installed them.
 
     # Debug: list artifacts
     - name: List Artifacts
