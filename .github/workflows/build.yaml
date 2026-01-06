@@ -1,0 +1,71 @@
+#
+# Workflow to build MeshProc via MSBuild
+#
+
+name: Build MeshProc
+
+on:
+  push:
+    branches: [ "main", "github-actions" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  SOLUTION_FILE_PATH: .
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Optional: show vcpkg info for debugging
+    - name: Verify vcpkg installation
+      shell: pwsh
+      run: |
+        echo "VCPKG_INSTALLATION_ROOT=$env:VCPKG_INSTALLATION_ROOT"
+        & $env:VCPKG_INSTALLATION_ROOT\vcpkg.exe version
+
+    # Restore vcpkg binary cache if available to speed up build
+    - name: Restore vcpkg cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.VCPKG_INSTALLATION_ROOT }}\installed
+          ${{ env.VCPKG_INSTALLATION_ROOT }}\buildtrees
+          ${{ env.VCPKG_INSTALLATION_ROOT }}\packages
+        key: vcpkg-${{ hashFiles('**/vcpkg.json') }}
+        restore-keys: |
+          vcpkg-
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Enable vcpkg MSBuild integration
+      shell: pwsh
+      run: |
+        & $env:VCPKG_INSTALLATION_ROOT\vcpkg.exe integrate install
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{matrix.configuration}} ${{env.SOLUTION_FILE_PATH}}
+
+    # Optional: debug-listing of artifacts built
+    - name: List Artifacts
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: pwsh
+      run: |
+        ls -rec bin
