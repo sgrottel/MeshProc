@@ -97,7 +97,7 @@ bool Runner::Init()
 		return false;
 	}
 
-	m_state = std::shared_ptr<lua_State>(luaL_newstate(), &luaL_openlibs);
+	m_state = std::shared_ptr<lua_State>(luaL_newstate(), &lua_close);
 
 	// store the 'this' back reference in the lua state object
 	lua_pushlightuserdata(m_state.get(), reinterpret_cast<void*>(LuaThisKey));
