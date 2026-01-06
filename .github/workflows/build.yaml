@@ -96,7 +96,7 @@ jobs:
 
     - name: Cache vcpkg packages
       id: cache_vcpkg_packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: MeshProc/vcpkg_installed
         key: meshproc_vcpkg_installed_${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
