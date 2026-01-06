@@ -1,6 +1,9 @@
 #
 # Workflow to build MeshProc via MSBuild
 #
+# vcpkg is initialized and build explicitly, if no cached binaries are available
+# Cache key is based on vcpkg-submodule, manifest file content, and compiler toolchain version
+#
 
 name: Build MeshProc
 
@@ -33,9 +36,15 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Locate cl.exe
+    - name: Build vcpkg_cache_key
+      id: build-vcpkg_cache_key
+      working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
+        $vcpkg_gh = &{ cd vcpkg; git rev-parse HEAD; cd .. }
+
+        $vcpkg_manifest = (Get-FileHash -Algorithm MD5 .\MeshProc\vcpkg.json).Hash
+
         $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 
         # Find latest VS with C++ tools installed
@@ -68,21 +77,7 @@ jobs:
           throw "cl.exe not found at expected path: $clPath"
         }
 
-        Write-Host "cl.exe path: $clPath"
-
-        # Optional: expose for later steps
-        "CL_PATH=$clPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: Build vcpkg_cache_key
-      id: build-vcpkg_cache_key
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      shell: pwsh
-      run: |
-        $vcpkg_gh = &{ cd vcpkg; git rev-parse HEAD; cd .. }
-
-        $vcpkg_manifest = (Get-FileHash -Algorithm MD5 .\MeshProc\vcpkg.json).Hash
-
-        $toolchain = & "$env:CL_PATH" 2>&1 | Select-String "Version" | ForEach-Object { $_.ToString().Trim() }
+        $toolchain = & "$clPath" 2>&1 | Select-String "Version" | ForEach-Object { $_.ToString().Trim() }
         Write-Host "Toolchain: $toolchain"
         $toolchain_hash = ([System.Security.Cryptography.MD5]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($toolchain)) | ForEach-Object { $_.ToString("x2") }) -join ""
 
@@ -90,12 +85,6 @@ jobs:
 
         Write-Host "vcpkg_cache_key = $vcpkg_cache_key"
         "vcpkg_cache_key=$vcpkg_cache_key" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-
-    - name: Validate vcpkg_cache_key
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      shell: pwsh
-      run: |
-        Write-Host "Still vcpkg_cache_key =" ${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
 
     - name: Setup vcpkg
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -125,6 +114,8 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
+    # TODO: Inject build number and collect full version number for artifact
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       env:
@@ -137,9 +128,11 @@ jobs:
         /p:VcpkgInstalledDir=${{ github.workspace }}\MeshProc\vcpkg_installed
       # Note:
       # "/p:VcpkgEnableManifest=false" is needed because otherwise msbuild is building the depencenies _again_
-      # even if the previous step just installed them.
+      # even if the previous step just installed them. The respective warning note during build can be ignored.
 
-    # Debug: list artifacts
+    # Show result:
+    #  list artifacts & example execution for now
+    # TODO: tests
     - name: List Artifacts
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
@@ -152,3 +145,14 @@ jobs:
         } else {
           Write-Host "::error::Not found: MeshProc.exe"
         }
+
+    # TODO: update name with version number
+    - name: Upload Artifacts
+      if: ${{ matrix.configuration == 'Release' }}
+      uses: actions/upload-artifact@v6
+      with:
+        name: MeshProc-vPreRel
+        path: |
+          bin/x64/${{matrix.configuration}}
+          !**/*.pdb
+        if-no-files-found: error
