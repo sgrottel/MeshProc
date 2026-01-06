@@ -1,18 +1,18 @@
 <Project>
-  <PropertyGroup>
-    <!-- Point MSBuild at the vcpkg submodule -->
-    <VcpkgRoot>$(MSBuildThisFileDirectory)vcpkg\</VcpkgRoot>
+	<PropertyGroup>
+		<!-- Point MSBuild at the vcpkg submodule -->
+		<VcpkgRoot>$(MSBuildThisFileDirectory)vcpkg\</VcpkgRoot>
 
-    <!-- Enable manifest mode for all projects below this directory -->
-    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+		<!-- Enable manifest mode for all projects below this directory -->
+		<VcpkgEnableManifest>true</VcpkgEnableManifest>
 
-    <!-- Tell MSBuild where the manifest lives -->
-    <VcpkgManifestRoot>$(MSBuildThisFileDirectory)MeshProc\</VcpkgManifestRoot>
+		<!-- Tell MSBuild where the manifest lives -->
+		<VcpkgManifestRoot>$(MSBuildThisFileDirectory)MeshProc\</VcpkgManifestRoot>
 
-    <!-- Optional: default triplet -->
-    <VcpkgTriplet>x64-windows</VcpkgTriplet>
-  </PropertyGroup>
+		<!-- Optional: default triplet -->
+		<VcpkgTriplet>x64-windows</VcpkgTriplet>
+	</PropertyGroup>
 
-  <!-- Import vcpkg MSBuild integration -->
-  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props')" />
+	<!-- Import vcpkg MSBuild integration -->
+	<Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props" Condition="Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props')" />
 </Project>

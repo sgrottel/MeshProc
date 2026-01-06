@@ -56,3 +56,11 @@ jobs:
       shell: pwsh
       run: |
         ls -rec bin
+        $exe = "bin\x64\${{matrix.configuration}}\MeshProc.exe"
+        if (Test-Path $exe) {
+          Write-Host "Running MeshProc.exe"
+          & $exe
+        } else {
+          Write-Host "Not found: MeshProc.exe"
+          Write-Error "Not found: MeshProc.exe"
+        }
