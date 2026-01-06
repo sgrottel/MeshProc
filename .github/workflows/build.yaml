@@ -9,7 +9,7 @@ name: Build MeshProc
 
 on:
   push:
-    branches: [ "main", "github-actions" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
