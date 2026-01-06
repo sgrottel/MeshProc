@@ -113,6 +113,7 @@ jobs:
         key: meshproc_vcpkg_installed_${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
 
     - name: Install vcpkg packages
+      if: steps.cache_vcpkg_packages.outputs.cache-hit != 'true'
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
