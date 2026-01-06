@@ -33,7 +33,7 @@ bool CloseLoopWithPin::Invoke()
 	{
 		center += m_mesh->vertices[i];
 	}
-	center /= m_loop->size();
+	center /= static_cast<float>(m_loop->size());
 
 	center += m_offset;
 
