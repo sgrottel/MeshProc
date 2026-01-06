@@ -27,33 +27,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    # Optional: show vcpkg info for debugging
-    - name: Verify vcpkg installation
-      shell: pwsh
-      run: |
-        echo "VCPKG_INSTALLATION_ROOT=$env:VCPKG_INSTALLATION_ROOT"
-        & $env:VCPKG_INSTALLATION_ROOT\vcpkg.exe version
-
-    # Restore vcpkg binary cache if available to speed up build
-    - name: Restore vcpkg cache
-      uses: actions/cache@v4
       with:
-        path: |
-          ${{ env.VCPKG_INSTALLATION_ROOT }}\installed
-          ${{ env.VCPKG_INSTALLATION_ROOT }}\buildtrees
-          ${{ env.VCPKG_INSTALLATION_ROOT }}\packages
-        key: vcpkg-${{ hashFiles('**/vcpkg.json') }}
-        restore-keys: |
-          vcpkg-
+        submodules: recursive
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Enable vcpkg MSBuild integration
-      shell: pwsh
-      run: |
-        & $env:VCPKG_INSTALLATION_ROOT\vcpkg.exe integrate install
+    - name: Setup vcpkg and install dependencies
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgJsonGlob: '**/vcpkg.json'
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -61,9 +45,11 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
+      env:
+        VCPKG_ROOT: ${{ github.workspace }}\vcpkg
       run: msbuild /m /p:Configuration=${{matrix.configuration}} ${{env.SOLUTION_FILE_PATH}}
 
-    # Optional: debug-listing of artifacts built
+    # Debug: list artifacts
     - name: List Artifacts
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
