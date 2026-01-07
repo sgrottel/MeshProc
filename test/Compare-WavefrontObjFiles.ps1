@@ -236,8 +236,152 @@ function CompareAndRemoveQuads
 	)
 	# Removes all triangle-pairs froming quads from A and B which are present in both
 
-	Write-Verbose "Fancy quad matching required"
+	# Assumption: Quads are defined by exactly two triangles, that share exactly two vertices, and have the exact same face normal vector
 
+	# Assumption: all remaining triangles are part of such quads
+
+	function Build-QuadList {
+		param(
+			[pscustomobject]$mesh
+		)
+
+		# normales are fix-point quantized to 100th, i.e.
+		#     -1 .. 0 .. 1
+		#  =>  0 .. 100 .. 200
+		# x y z => (x * 200 + y) * 200 + z
+		$normalKey = [Collections.Generic.List[int]]::new()
+		for ($i = 0; $i -lt $mesh.tris.Count; $i++)
+		{
+			$v1 = $mesh.verts[$mesh.tris[$i].Item1]
+			$v2 = $mesh.verts[$mesh.tris[$i].Item2]
+			$v3 = $mesh.verts[$mesh.tris[$i].Item3]
+
+			# Edge vectors
+			$e1 = [ValueTuple[float,float,float]]::new(
+				$v2.Item1 - $v1.Item1,
+				$v2.Item2 - $v1.Item2,
+				$v2.Item3 - $v1.Item3
+			)
+
+			$e2 = [ValueTuple[float,float,float]]::new(
+				$v3.Item1 - $v1.Item1,
+				$v3.Item2 - $v1.Item2,
+				$v3.Item3 - $v1.Item3
+			)
+
+			# Cross product
+			$nx = $e1.Item2 * $e2.Item3 - $e1.Item3 * $e2.Item2
+			$ny = $e1.Item3 * $e2.Item1 - $e1.Item1 * $e2.Item3
+			$nz = $e1.Item1 * $e2.Item2 - $e1.Item2 * $e2.Item1
+
+			# Normalize
+			$len = [math]::Sqrt($nx*$nx + $ny*$ny + $nz*$nz)
+
+			if ($len -gt 0) {
+				$normal = [ValueTuple[float,float,float]]::new(
+					[float]([math]::Round($nx / $len, 2)),
+					[float]([math]::Round($ny / $len, 2)),
+					[float]([math]::Round($nz / $len, 2))
+				)
+			}
+			else {
+				# Degenerate triangle: zero normal
+				$normal = [ValueTuple[float,float,float]]::new(0.0, 0.0, 0.0)
+			}
+
+			$normalKeyX = [math]::Clamp(100 + $normal.Item1 * 100, 0, 200)
+			$normalKeyY = [math]::Clamp(100 + $normal.Item2 * 100, 0, 200)
+			$normalKeyZ = [math]::Clamp(100 + $normal.Item3 * 100, 0, 200)
+
+			[void]$normalKey.Add(($normalKeyX * 200 + $normalKeyY) * 200 + $normalKeyZ)
+		}
+
+		function Get-MatchingComponentCount {
+			param(
+				[ValueTuple[int,int,int]]$a,
+				[ValueTuple[int,int,int]]$b
+			)
+
+			$count = 0
+			if ($a.Item1 -eq $b.Item1 -or $a.Item1 -eq $b.Item2 -or $a.Item1 -eq $b.Item3) { $count++ }
+			if ($a.Item2 -eq $b.Item1 -or $a.Item2 -eq $b.Item2 -or $a.Item2 -eq $b.Item3) { $count++ }
+			if ($a.Item3 -eq $b.Item1 -or $a.Item3 -eq $b.Item2 -or $a.Item3 -eq $b.Item3) { $count++ }
+
+			return $count
+		}
+
+		$pairs = [System.Collections.Generic.List[ValueTuple[int,int]]]::new()
+
+		for ($i = 0; $i -lt $mesh.tris.Count; $i++) {
+			for ($j = $i + 1; $j -lt $mesh.tris.Count; $j++) {
+
+				# Must have same normal key
+				if ($normalKey[$i] -ne $normalKey[$j]) { continue }
+
+				# Must share exactly two vertex indices
+				if ((Get-MatchingComponentCount $mesh.tris[$i] $mesh.tris[$j]) -eq 2) {
+					[void]$pairs.Add([ValueTuple[int,int]]::new($i, $j))
+				}
+			}
+		}
+
+		$used = [System.Collections.Generic.HashSet[int]]::new()
+		$filtered = [System.Collections.Generic.List[ValueTuple[int,int]]]::new()
+
+		foreach ($p in $pairs) {
+			$a = $p.Item1
+			$b = $p.Item2
+
+			if (-not $used.Contains($a) -and -not $used.Contains($b)) {
+				[void]$filtered.Add($p)
+				[void]$used.Add($a)
+				[void]$used.Add($b)
+			}
+		}
+
+		$quads = @{}
+
+		# note: we build not geometrically valid quads, only collect the four indices in arbitrary order
+		foreach ($p in $filtered) {
+			$t1 = $mesh.tris[$p.Item1]
+			$t2 = $mesh.tris[$p.Item2]
+
+			$q = @(
+				$t1.Item1, $t1.Item2, $t1.Item3,
+				$t2.Item1, $t2.Item2, $t2.Item3
+			) | Sort-Object -Unique
+			if ($q.Count -ne 4) { throw "Quad collection returned wrong number of vertex indices $quad" }
+
+			$quad = [ValueTuple[int,int,int,int]]::new($q[0], $q[1], $q[2], $q[3])
+			$quads[$quad] = $p
+		}
+
+		return $quads
+	}
+
+	$quadsA = Build-QuadList $meshA
+	$meshB.verts = $meshA.verts
+	$quadsB = Build-QuadList $meshB
+	$meshB.verts = $null
+
+	$delInA = @()
+	$delInB = @()
+
+	foreach ($quadKey in $quadsA.Keys) {
+		if ($quadsB.Contains($quadKey)) {
+			$trisA = $quadsA[$quadKey]
+			$trisB = $quadsB[$quadKey]
+
+			$delInA += $trisA.Item1
+			$delInA += $trisA.Item2
+
+			$delInB += $trisB.Item1
+			$delInB += $trisB.Item2
+		}
+	}
+
+	$delInA | Sort-Object -Unique -Descending | % { $meshA.tris.RemoveAt($_) }
+	$delInB | Sort-Object -Unique -Descending | % { $meshB.tris.RemoveAt($_) }
 }
 
 try {
