@@ -1,8 +1,14 @@
 #
 # Workflow to build MeshProc via MSBuild
 #
+# Github run number is injected as build number value into the version number
+#
 # vcpkg is initialized and build explicitly, if no cached binaries are available
 # Cache key is based on vcpkg-submodule, manifest file content, and compiler toolchain version
+#
+# After build, a small smoke test is run, testing generation and saving of a simple cube geometry (cf. test subdirectory)
+#
+# The build artifacts of "Release" are stored as pipeline artifacts
 #
 
 name: Build MeshProc
@@ -32,6 +38,28 @@ jobs:
     - uses: actions/checkout@v6
       with:
         submodules: recursive
+
+    - name: Inject build number
+      shell: pwsh
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        $vf = get-content "MeshProc\VersionInfo.h" -Raw
+
+        $vf -match '\n#define\s+MESHPROC_VER_MAJOR\s+(\d+)\s*\n' | Out-Null
+        $major = $Matches[1]
+        $vf -match '\n#define\s+MESHPROC_VER_MINOR\s+(\d+)\s*\n' | Out-Null
+        $minor = $Matches[1]
+        $vf -match '\n#define\s+MESHPROC_VER_PATCH\s+(\d+)\s*\n' | Out-Null
+        $patch = $Matches[1]
+
+        $nvf = $vf -replace '(\n#define\s+MESHPROC_VER_BUILD\s+)(\d+)(\s*\n)',"`${1}$env:GITHUB_RUN_NUMBER`$3"
+
+        set-content "MeshProc\VersionInfo.h" $nvf -force -nonewline
+
+        $version = New-Object System.Version @( $major, $minor, $patch, $env:GITHUB_RUN_NUMBER )
+        Write-Host "Version number: $version"
+
+        Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -114,8 +142,6 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    # TODO: Inject build number and collect full version number for artifact
-
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       env:
@@ -140,21 +166,20 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw }
 
         cd test
-        
+
         .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-1.obj -Verbose
         if ($LASTEXITCODE -ne 0) { throw }
 
         .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-2.obj -Verbose
         if ($LASTEXITCODE -ne 0) { throw }
-        
+
         cd ..
 
-    # TODO: update name with version number
     - name: Upload Artifacts
       if: ${{ matrix.configuration == 'Release' }}
       uses: actions/upload-artifact@v6
       with:
-        name: MeshProc-vPreRel
+        name: MeshProc-${{env.FULL_VERSION_NUMBER}}
         path: |
           bin/x64/${{matrix.configuration}}
           !**/*.pdb
