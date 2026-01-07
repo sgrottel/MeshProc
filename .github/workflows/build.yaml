@@ -130,21 +130,24 @@ jobs:
       # "/p:VcpkgEnableManifest=false" is needed because otherwise msbuild is building the depencenies _again_
       # even if the previous step just installed them. The respective warning note during build can be ignored.
 
-    # Show result:
-    #  list artifacts & example execution for now
-    # TODO: tests
-    - name: List Artifacts
+    - name: 🧪 Smoke Test
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
-        ls -rec bin
         $exe = "bin\x64\${{matrix.configuration}}\MeshProc.exe"
-        if (Test-Path $exe) {
-          Write-Host "Running MeshProc.exe"
-          & $exe || true
-        } else {
-          Write-Host "::error::Not found: MeshProc.exe"
-        }
+
+        & $exe run ".\test\gen-test-obj.lua" -v
+        if ($LASTEXITCODE -ne 0) { throw }
+
+        cd test
+        
+        .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-1.obj -Verbose
+        if ($LASTEXITCODE -ne 0) { throw }
+
+        .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-2.obj -Verbose
+        if ($LASTEXITCODE -ne 0) { throw }
+        
+        cd ..
 
     # TODO: update name with version number
     - name: Upload Artifacts
