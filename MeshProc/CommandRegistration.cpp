@@ -27,6 +27,7 @@
 #include "io/CsvShape2DWriter.h"
 #include "io/ObjMeshWriter.h"
 #include "io/ObjReader.h"
+#include "io/ObjWriter.h"
 #include "io/PlyReader.h"
 #include "io/PlyWriter.h"
 #include "io/StlReader.h"
@@ -80,6 +81,7 @@ bool meshproc::CommandRegistration(class CommandFactory& factory, const sgrottel
 	succ &= factory.Register<io::CsvShape2DWriter>("io.CsvShape2DWriter");
 	succ &= factory.Register<io::ObjMeshWriter>("io.ObjMeshWriter");
 	succ &= factory.Register<io::ObjReader>("io.ObjReader");
+	succ &= factory.Register<io::ObjWriter>("io.ObjWriter");
 	succ &= factory.Register<io::PlyReader>("io.PlyReader");
 	succ &= factory.Register<io::PlyWriter>("io.PlyWriter");
 	succ &= factory.Register<io::StlReader>("io.StlReader");

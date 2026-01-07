@@ -118,6 +118,7 @@
     <ClCompile Include="IndicesBoolean.cpp" />
     <ClCompile Include="io\CsvShape2DReader.cpp" />
     <ClCompile Include="io\ObjMeshWriter.cpp" />
+    <ClCompile Include="io\ObjWriter.cpp" />
     <ClCompile Include="LinearExtrude.cpp" />
     <ClCompile Include="generator\CrystalGrain.cpp" />
     <ClCompile Include="generator\Icosahedron.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="IndicesBoolean.h" />
     <ClInclude Include="io\CsvShape2DReader.h" />
     <ClInclude Include="io\ObjMeshWriter.h" />
+    <ClInclude Include="io\ObjWriter.h" />
     <ClInclude Include="LinearExtrude.h" />
     <ClInclude Include="generator\CrystalGrain.h" />
     <ClInclude Include="generator\Icosahedron.h" />
