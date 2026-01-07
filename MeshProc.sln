@@ -19,6 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{10B8AF
 		.github\workflows\build.yaml = .github\workflows\build.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0916BBF9-CAE9-4A22-B22C-F8641CECD2A6}"
+	ProjectSection(SolutionItems) = preProject
+		test\gen-test-obj.lua = test\gen-test-obj.lua
+		test\test-obj-1.obj = test\test-obj-1.obj
+		test\test-obj-2.obj = test\test-obj-2.obj
+		test\test-obj.obj = test\test-obj.obj
+		test\test-obj.scad = test\test-obj.scad
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

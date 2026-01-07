@@ -285,6 +285,9 @@
     <ClCompile Include="VertexSurfaceDistanceToCut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="io\ObjWriter.cpp">
+      <Filter>io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -544,6 +547,9 @@
     </ClInclude>
     <ClInclude Include="VertexSurfaceDistanceToCut.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="io\ObjWriter.h">
+      <Filter>io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
