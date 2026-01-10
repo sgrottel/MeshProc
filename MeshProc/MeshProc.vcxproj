@@ -175,7 +175,19 @@
     <None Include="3rd-party\xyz_math\README.md" />
     <None Include="3rd-party\xyz_math\xyz_math.lua" />
     <None Include="demo.lua" />
-    <None Include="packages.config" />
+    <CustomBuild Include="packages.config">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)extra\nuget_proxy\n2m.ps1;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)extra\nuget_proxy\n2m.ps1;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Updating nuget-proxy project file</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)extra\nuget_proxy\MeshProc.csproj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Updating nuget-proxy project file</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)extra\nuget_proxy\MeshProc.csproj</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n2m.ps1"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n2m.ps1"</Command>
+    </CustomBuild>
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
   </ItemGroup>

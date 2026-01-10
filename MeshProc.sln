@@ -30,6 +30,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0916BBF9-C
 		test\test-obj.scad = test\test-obj.scad
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extra_nuget_proxy", "extra_nuget_proxy", "{51C71250-0D15-4A19-8D0B-4DB521BF4200}"
+	ProjectSection(SolutionItems) = preProject
+		extra\nuget_proxy\MeshProc.csproj = extra\nuget_proxy\MeshProc.csproj
+		extra\nuget_proxy\n2m.ps1 = extra\nuget_proxy\n2m.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
