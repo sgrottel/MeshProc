@@ -39,6 +39,12 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Check nuget package references
+      shell: pwsh
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        ./extra/nuget_proxy/m_eq_n.ps1      
+
     - name: Inject build number
       shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}

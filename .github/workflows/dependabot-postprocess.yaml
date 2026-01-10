@@ -9,26 +9,76 @@ on:
     types: [opened, synchronize]
     branches: ["**"]
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
 jobs:
   postprocess:
     if: github.actor == 'dependabot[bot]'
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
+    - uses: actions/checkout@v6
+      with:
+        ref: ${{ github.head_ref }}
+        submodules: recursive
 
-      - name: Update native nuget packages from proxy project
-        shell: pwsh
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
-          ./extra/nuget_proxy/m2n.ps1
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
 
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Post-process updates" || echo "No changes to commit"
-          git push
+    - name: Setup vcpkg
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: pwsh
+      run: |
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+        cd ..
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Update native nuget packages from proxy project
+      shell: pwsh
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        ./extra/nuget_proxy/m2n.ps1
+
+    - name: Commit changes
+      id: commit
+      shell: pwsh
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add .
+
+        # Try to commit and capture success/failure
+        $commitResult = git commit -m "Migrating dependabot changes to native code project" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            echo "committed=true" >> $env:GITHUB_OUTPUT
+            git push
+        } else {
+            echo "committed=false" >> $env:GITHUB_OUTPUT
+            echo "No changes to commit"
+        }
+
+    - name: Trigger Build MeshProc workflow
+      if: steps.commit.outputs.committed == 'true'
+      shell: pwsh
+      run: |
+        $headers = @{
+          Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          Accept        = "application/vnd.github+json"
+        }
+
+        $body = @{
+          ref = "${{ github.head_ref }}"
+        } | ConvertTo-Json
+
+        Invoke-RestMethod `
+          -Method Post `
+          -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/build.yaml/dispatches" `
+          -Headers $headers `
+          -Body $body

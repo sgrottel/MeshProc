@@ -15,13 +15,8 @@ if (Test-Path $proxyProj)
         | Select-Object -ExpandProperty Node `
         | Foreach-Object { @{id=$_.Include;version=$_.Version} }
 
-    $norm = {
-        param($h)
-        "$($h.id)|$($h.version)"
-    }
-
-    $setA = $packages      | ForEach-Object $norm | Sort-Object
-    $setB = $proxyPackages | ForEach-Object $norm | Sort-Object
+    $setA = $packages | ForEach-Object { "$($_.id)|$($_.version)" } | Sort-Object
+    $setB = $proxyPackages  | ForEach-Object { "$($_.id)|$($_.version)" } | Sort-Object
 
     $equal = ($setA -join "`n") -eq ($setB -join "`n")
 
