@@ -13,8 +13,8 @@ updates:
   # projects nugets
   # Does not work with native projects
   # Requires a proxy solution
-  # - package-ecosystem: "nuget"
-  #   directory: "/MeshProc"
-  #   schedule:
-  #     interval: "weekly"
-  #   open-pull-requests-limit: 10
+  - package-ecosystem: "nuget"
+    directory: "/extra/nuget_proxy"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
