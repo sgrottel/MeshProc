@@ -271,8 +271,8 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets" Condition="Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" />
     <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets')" />
-    <Import Project="..\packages\glm.1.0.3\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.3\build\native\glm.targets')" />
     <Import Project="..\packages\lua.5.5.0\build\native\Lua.targets" Condition="Exists('..\packages\lua.5.5.0\build\native\Lua.targets')" />
+    <Import Project="..\packages\glm.1.0.0\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.0\build\native\glm.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -280,7 +280,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets'))" />
     <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
-    <Error Condition="!Exists('..\packages\glm.1.0.3\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.3\build\native\glm.targets'))" />
     <Error Condition="!Exists('..\packages\lua.5.5.0\build\native\Lua.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\lua.5.5.0\build\native\Lua.targets'))" />
+    <Error Condition="!Exists('..\packages\glm.1.0.0\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.0\build\native\glm.targets'))" />
   </Target>
 </Project>
