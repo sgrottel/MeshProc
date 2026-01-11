@@ -1,17 +1,18 @@
 #pragma once
 
 #include "data/HashableEdge.h"
-#include "Parameter.h"
+#include "commands/Parameter.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
 namespace meshproc
 {
-	namespace algo
+	namespace utilities
 	{
 
+/*
 		template<typename EdgesT>
-		void LoopsFromEdges(EdgesT const& edges, ParamTypeInfo_t<ParamType::MultiIndices>& outLoops, sgrottel::ISimpleLog const& log)
+		void LoopsFromEdges(EdgesT const& edges, commands::ParamTypeInfo_t<commands::ParamType::MultiIndices>& outLoops, sgrottel::ISimpleLog const& log)
 		{
 			std::unordered_map<uint32_t, std::unordered_set<uint32_t>> halfEdges;
 			halfEdges.reserve(edges.size());
@@ -79,6 +80,6 @@ namespace meshproc
 				}
 			}
 		}
-
+*/
 	}
 }

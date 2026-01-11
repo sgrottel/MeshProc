@@ -63,9 +63,6 @@
     <ClCompile Include="utilities\StringUtilities.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
-    <ClCompile Include="lua\AbstractMultiType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\CommandCreator.cpp">
       <Filter>lua</Filter>
     </ClCompile>
@@ -75,19 +72,7 @@
     <ClCompile Include="lua\LuaUtilities.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\MultiMeshType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\MultiIndicesType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\Runner.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\Shape2DType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\IndicesType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="data\Triangle.cpp">
@@ -108,16 +93,7 @@
     <ClCompile Include="data\HashableEdge.cpp">
       <Filter>data</Filter>
     </ClCompile>
-    <ClCompile Include="lua\CallbackFunction.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\ListOfVec3Type.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\VersionCheck.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\ListOfFloatType.cpp">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="commands\AbstractCommand.cpp">
@@ -217,12 +193,6 @@
     <ClInclude Include="utilities\StringUtilities.h">
       <Filter>utilities</Filter>
     </ClInclude>
-    <ClInclude Include="lua\IndicesType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\AbstractMultiType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\CommandCreator.h">
       <Filter>lua</Filter>
     </ClInclude>
@@ -235,16 +205,7 @@
     <ClInclude Include="lua\LuaUtilities.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\MultiMeshType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\MultiIndicesType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\Runner.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\Shape2DType.h">
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="data\Mesh.h">
@@ -265,16 +226,7 @@
     <ClInclude Include="data\HashableEdge.h">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="lua\CallbackFunction.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\ListOfVec3Type.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\VersionCheck.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\ListOfFloatType.h">
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="commands\AbstractCommand.h">
@@ -345,6 +297,9 @@
     </ClInclude>
     <ClInclude Include="lua\types\GlmUVec3Type.h">
       <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\LoopsFromEdges.h">
+      <Filter>utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

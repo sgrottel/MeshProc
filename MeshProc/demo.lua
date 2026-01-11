@@ -52,7 +52,7 @@ do
 
 	for vI = 1, vCnt do
 		local v = oct:vertexGet(vI)
-		log.write("v["..tostring(vI).."] = { "..tostring(v.x)..", "..tostring(v.y)..", "..tostring(v.z).." }")
+		log.detail("v["..tostring(vI).."] = { "..tostring(v.x)..", "..tostring(v.y)..", "..tostring(v.z).." }")
 
 		if (v.x == 0 and v.y == 0) or (v.x == 0 and v.z == 0) or (v.y == 0 and v.z == 0) then
 			oct:vertexSet(vI, v * 3)
@@ -61,7 +61,7 @@ do
 
 	for tI = 1, tCnt do
 		local t = oct:triangleGet(tI)
-		log.write("t["..tostring(tI).."] = { "..tostring(t.x)..", "..tostring(t.y)..", "..tostring(t.z).." }")
+		log.detail("t["..tostring(tI).."] = { "..tostring(t.x)..", "..tostring(t.y)..", "..tostring(t.z).." }")
 		-- for debugging, the next lines change winding of triangle
 		--t.y, t.z = t.z, t.y
 		--oct:triangleSet(tI, t)

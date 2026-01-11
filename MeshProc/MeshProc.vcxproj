@@ -112,38 +112,10 @@
     <ClCompile Include="data\Scene.cpp" />
     <ClCompile Include="data\Shape2D.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
-    <ClCompile Include="lua\AbstractMultiType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="lua\CallbackFunction.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="lua\CommandCreator.cpp" />
-    <ClCompile Include="lua\ListOfFloatType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="lua\ListOfVec3Type.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="lua\LogFunctions.cpp" />
     <ClCompile Include="lua\LuaUtilities.cpp" />
-    <ClCompile Include="lua\MultiMeshType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="lua\MultiIndicesType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="lua\Runner.cpp" />
-    <ClCompile Include="lua\Shape2DType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="lua\types\AbstractType.cpp" />
     <ClCompile Include="lua\types\CommandType.cpp" />
     <ClCompile Include="lua\types\GlmMat4Type.cpp" />
@@ -153,10 +125,6 @@
     <ClCompile Include="lua\types\MeshType.cpp" />
     <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
-    <ClCompile Include="lua\IndicesType.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
@@ -205,39 +173,11 @@
     <ClInclude Include="data\Scene.h" />
     <ClInclude Include="data\Shape2D.h" />
     <ClInclude Include="data\Triangle.h" />
-    <ClInclude Include="lua\AbstractMultiType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="lua\CallbackFunction.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="lua\CommandCreator.h" />
-    <ClInclude Include="lua\ListOfFloatType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="lua\ListOfVec3Type.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="lua\LogFunctions.h" />
     <ClInclude Include="lua\LuaResources.h" />
     <ClInclude Include="lua\LuaUtilities.h" />
-    <ClInclude Include="lua\MultiMeshType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="lua\MultiIndicesType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="lua\Runner.h" />
-    <ClInclude Include="lua\Shape2DType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="lua\types\AbstractType.h" />
     <ClInclude Include="lua\types\CommandType.h" />
     <ClInclude Include="lua\types\GlmMat4Type.h" />
@@ -247,10 +187,7 @@
     <ClInclude Include="lua\types\MeshType.h" />
     <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />
-    <ClInclude Include="lua\IndicesType.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="utilities\LoopsFromEdges.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>
