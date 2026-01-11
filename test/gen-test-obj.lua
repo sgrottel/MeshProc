@@ -3,10 +3,10 @@
 -- when run, generates "test-obj.obj" with two cubes at defined positions
 --
 -- Run with:
---   MeshRroc.exe run $(SolutionDir)test\gen-test-obj.lua -v
+--   MeshProc.exe run $(SolutionDir)test\gen-test-obj.lua -v
 --
-meshprocVersion.assertOrNewer(0, 4, 1)
-meshprocVersion.assertOlderThan(0, 5, 0)
+meshprocVersion.assertOrNewer(0, 5, 0)
+meshprocVersion.assertOlderThan(0, 6, 0)
 
 local xyz_math = require("xyz_math")
 
