@@ -36,6 +36,8 @@ namespace meshproc
 				static int CallbackTriangleGet(lua_State* lua);
 				static int CallbackTriangleSet(lua_State* lua);
 
+				static int CallbackApplyTransform(lua_State* lua);
+
 			};
 		}
 	}

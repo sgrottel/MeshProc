@@ -2,10 +2,13 @@
 
 #include "data/Mesh.h"
 
+#include "GlmMat4Type.h"
 #include "GlmUVec3Type.h"
 #include "GlmVec3Type.h"
 
 #include "lua/LuaUtilities.h"
+
+#include <SimpleLog/SimpleLog.hpp>
 
 using namespace meshproc;
 using namespace meshproc::lua;
@@ -31,6 +34,8 @@ bool MeshType::Init()
 		{"triangleResize", &MeshType::CallbackTriangleResize},
 		{"triangleGet", &MeshType::CallbackTriangleGet},
 		{"triangleSet", &MeshType::CallbackTriangleSet},
+
+		{"applyTransform", &MeshType::CallbackApplyTransform},
 
 		{nullptr, nullptr}
 	};
@@ -259,5 +264,36 @@ int MeshType::CallbackTriangleSet(lua_State* lua)
 	t[0] = tr.x;
 	t[1] = tr.y;
 	t[2] = tr.z;
+	return 0;
+}
+
+int MeshType::CallbackApplyTransform(lua_State* lua)
+{
+	const int argcnt = lua_gettop(lua);
+	if (argcnt != 2)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
+	}
+
+	const auto mesh = MeshType::LuaGet(lua, 1);
+	if (!mesh)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
+	}
+
+	glm::mat4 mat{ 1.0f };
+	if (!GlmMat4Type::TryGet(lua, 2, mat))
+	{
+		return luaL_error(lua, "Second argument expected to be a XMat4");
+	}
+
+	for (auto& v : mesh->vertices)
+	{
+		glm::vec4 hv = mat * glm::vec4{ v, 1 };
+		v.x = hv.x / hv.w;
+		v.y = hv.y / hv.w;
+		v.z = hv.z / hv.w;
+	}
+
 	return 0;
 }
