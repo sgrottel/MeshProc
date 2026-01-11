@@ -165,6 +165,9 @@
     <ClCompile Include="lua\types\GlmUVec3Type.cpp">
       <Filter>lua\types</Filter>
     </ClCompile>
+    <ClCompile Include="commands\generator\SphereIco.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -179,6 +182,9 @@
     </None>
     <None Include="vcpkg.json" />
     <None Include="vcpkg-configuration.json" />
+    <None Include="commands\CommandRegistration.inc">
+      <Filter>commands</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
@@ -300,6 +306,9 @@
     </ClInclude>
     <ClInclude Include="utilities\LoopsFromEdges.h">
       <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\SphereIco.h">
+      <Filter>commands\generator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

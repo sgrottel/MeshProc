@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 using namespace meshproc;
+using namespace meshproc::commands;
 
 generator::SphereIco::SphereIco(const sgrottel::ISimpleLog& log)
 	: Icosahedron(log)

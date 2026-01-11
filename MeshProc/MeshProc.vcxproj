@@ -98,6 +98,7 @@
     <ClCompile Include="commands\generator\Cuboid.cpp" />
     <ClCompile Include="commands\generator\Icosahedron.cpp" />
     <ClCompile Include="commands\generator\Octahedron.cpp" />
+    <ClCompile Include="commands\generator\SphereIco.cpp" />
     <ClCompile Include="commands\io\ObjReader.cpp" />
     <ClCompile Include="commands\io\ObjWriter.cpp" />
     <ClCompile Include="commands\io\PlyReader.cpp" />
@@ -132,6 +133,7 @@
     <None Include="3rd-party\tinyxml2\README.md" />
     <None Include="3rd-party\xyz_math\README.md" />
     <None Include="3rd-party\xyz_math\xyz_math.lua" />
+    <None Include="commands\CommandRegistration.inc" />
     <None Include="demo.lua" />
     <CustomBuild Include="packages.config">
       <FileType>Document</FileType>
@@ -159,6 +161,7 @@
     <ClInclude Include="commands\generator\Cuboid.h" />
     <ClInclude Include="commands\generator\Icosahedron.h" />
     <ClInclude Include="commands\generator\Octahedron.h" />
+    <ClInclude Include="commands\generator\SphereIco.h" />
     <ClInclude Include="commands\io\ObjReader.h" />
     <ClInclude Include="commands\io\ObjWriter.h" />
     <ClInclude Include="commands\io\PlyReader.h" />
