@@ -26,6 +26,27 @@ do
 	cube = make:get("Mesh")
 end
 
+-- create an icosahedron mesh
+local ico = nil
+do
+	local make = meshproc.generator.Icosahedron.new()
+	make:invoke()
+	ico = make:get("Mesh")
+end
+
+-- create an octahedron-based star mesh
+local oct = nil
+do
+	local make = meshproc.generator.Octahedron.new()
+	make:invoke()
+	oct = make:get("Mesh")
+
+	-- in-place edit `oct`
+	local subdiv = meshproc.edit.Subdivision.new()
+	subdiv:set("Mesh", oct)
+	subdiv:invoke()
+end
+
 -- -- 2D Shapes
 -- local shape = meshproc.Shape2D.new()
 -- shape:add(XVec2(-1,0))
@@ -57,8 +78,13 @@ end
 
 -- compose scene from meshes
 local scene = meshproc.Scene.new()
+
 scene:place(cube)
 scene:place(cube, XMat4.translate(0, 2, 0)) -- second instance of 'cube' translated to +y
+
+scene:place(ico, XMat4.translate(0.5, 1, 3))
+
+scene:place(oct, XMat4.translate(2.5, 4, 3))
 
 -- scene:place(poly, XMat4.translate(0, 0, 2))
 

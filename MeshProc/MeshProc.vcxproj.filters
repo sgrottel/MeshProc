@@ -46,6 +46,9 @@
     <Filter Include="commands\io">
       <UniqueIdentifier>{96b0a160-896d-4ce8-b6d1-9e172919ecff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="commands\edit">
+      <UniqueIdentifier>{34bad5c1-9afb-45db-9f22-e5f5d2f5c29b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -173,6 +176,15 @@
     </ClCompile>
     <ClCompile Include="commands\io\ObjWriter.cpp">
       <Filter>commands\io</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\generator\Icosahedron.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\generator\Octahedron.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\Subdivision.cpp">
+      <Filter>commands\edit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +330,15 @@
     </ClInclude>
     <ClInclude Include="commands\io\ObjWriter.h">
       <Filter>commands\io</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\Icosahedron.h">
+      <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\Octahedron.h">
+      <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\Subdivision.h">
+      <Filter>commands\edit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

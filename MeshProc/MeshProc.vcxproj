@@ -94,7 +94,10 @@
     <ClCompile Include="commands\AbstractCommand.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
     <ClCompile Include="commands\CommandRegistration.cpp" />
+    <ClCompile Include="commands\edit\Subdivision.cpp" />
     <ClCompile Include="commands\generator\Cuboid.cpp" />
+    <ClCompile Include="commands\generator\Icosahedron.cpp" />
+    <ClCompile Include="commands\generator\Octahedron.cpp" />
     <ClCompile Include="commands\io\ObjReader.cpp" />
     <ClCompile Include="commands\io\ObjWriter.cpp" />
     <ClCompile Include="commands\io\PlyReader.cpp" />
@@ -183,7 +186,10 @@
     <ClInclude Include="commands\AbstractCommand.h" />
     <ClInclude Include="commands\CommandFactory.h" />
     <ClInclude Include="commands\CommandRegistration.h" />
+    <ClInclude Include="commands\edit\Subdivision.h" />
     <ClInclude Include="commands\generator\Cuboid.h" />
+    <ClInclude Include="commands\generator\Icosahedron.h" />
+    <ClInclude Include="commands\generator\Octahedron.h" />
     <ClInclude Include="commands\io\ObjReader.h" />
     <ClInclude Include="commands\io\ObjWriter.h" />
     <ClInclude Include="commands\io\PlyReader.h" />

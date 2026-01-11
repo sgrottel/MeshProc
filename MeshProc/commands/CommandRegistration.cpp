@@ -2,6 +2,7 @@
 
 #include "CommandFactory.h"
 
+#include "edit/Subdivision.h"
 //#include "BakeTransform.h"
 //#include "CloseLoopWithPin.h"
 //#include "Convex2DHull.h"
@@ -18,7 +19,8 @@
 //#include "LinearExtrude.h"
 //#include "generator/CrystalGrain.h"
 #include "generator/Cuboid.h"
-//#include "generator/Icosahedron.h"
+#include "generator/Icosahedron.h"
+#include "generator/Octahedron.h"
 //#include "generator/LinearExtrude2DMesh.h"
 //#include "generator/RotateExtrude2DMesh.h"
 //#include "generator/SphereIco.h"
@@ -45,7 +47,6 @@
 //#include "SelectTrianglesFromSelectedVertices.h"
 //#include "SelectVertices.h"
 //#include "SelectVerticesFromSelectedTriangles.h"
-//#include "Subdivision.h"
 //#include "VertexSurfaceDistanceToCut.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -55,6 +56,7 @@ bool meshproc::commands::CommandRegistration(class CommandFactory& factory, cons
 	bool succ = true;
 	log.Detail("Populating CommandFactory");
 
+	succ &= factory.Register<edit::Subdivision>("edit.Subdivision");
 	//succ &= factory.Register<BakeTransform>("BakeTransform");
 	//succ &= factory.Register<CloseLoopWithPin>("CloseLoopWithPin");
 	//succ &= factory.Register<Convex2DHull>("Convex2DHull");
@@ -72,7 +74,8 @@ bool meshproc::commands::CommandRegistration(class CommandFactory& factory, cons
 	//succ &= factory.Register<LinearExtrude>("LinearExtrude");
 	//succ &= factory.Register<generator::CrystalGrain>("generator.CrystalGrain");
 	succ &= factory.Register<generator::Cuboid>("generator.Cuboid");
-	//succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
+	succ &= factory.Register<generator::Icosahedron>("generator.Icosahedron");
+	succ &= factory.Register<generator::Octahedron>("generator.Octahedron");
 	//succ &= factory.Register<generator::LinearExtrude2DMesh>("generator.LinearExtrude2DMesh");
 	//succ &= factory.Register<generator::RotateExtrude2DMesh>("generator.RotateExtrude2DMesh");
 	//succ &= factory.Register<generator::SphereIco>("generator.SphereIco");
@@ -99,7 +102,6 @@ bool meshproc::commands::CommandRegistration(class CommandFactory& factory, cons
 	//succ &= factory.Register<SelectTrianglesFromSelectedVertices>("SelectTrianglesFromSelectedVertices");
 	//succ &= factory.Register<SelectVertices>("SelectVertices");
 	//succ &= factory.Register<SelectVerticesFromSelectedTriangles>("SelectVerticesFromSelectedTriangles");
-	//succ &= factory.Register<Subdivision>("Subdivision");
 	//succ &= factory.Register<VertexSurfaceDistanceToCut>("VertexSurfaceDistanceToCut");
 	// Add further Commands to this registration function
 

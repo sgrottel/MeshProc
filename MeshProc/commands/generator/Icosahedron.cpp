@@ -3,6 +3,7 @@
 #include <cmath>
 
 using namespace meshproc;
+using namespace meshproc::commands;
 
 generator::Icosahedron::Icosahedron(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
