@@ -36,6 +36,7 @@ bool MeshType::Init()
 		{"triangleSet", &MeshType::CallbackTriangleSet},
 
 		{"applyTransform", &MeshType::CallbackApplyTransform},
+		{"calcBoundingBox", &MeshType::CallbackCalcBoundingBox},
 
 		{nullptr, nullptr}
 	};
@@ -296,4 +297,41 @@ int MeshType::CallbackApplyTransform(lua_State* lua)
 	}
 
 	return 0;
+}
+
+int MeshType::CallbackCalcBoundingBox(lua_State* lua)
+{
+	const int argcnt = lua_gettop(lua);
+	if (argcnt != 1)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", argcnt);
+	}
+	const auto mesh = MeshType::LuaGet(lua, 1);
+	if (!mesh)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
+	}
+
+	if (mesh->vertices.size() <= 0)
+	{
+		return luaL_error(lua, "Mesh is empty");
+	}
+
+	glm::vec3 minBBox, maxBBox;
+	minBBox = maxBBox = mesh->vertices.front();
+
+	for (glm::vec3 const& v : mesh->vertices)
+	{
+		if (minBBox.x > v.x) minBBox.x = v.x;
+		if (minBBox.y > v.y) minBBox.y = v.y;
+		if (minBBox.z > v.z) minBBox.z = v.z;
+		if (maxBBox.x < v.x) maxBBox.x = v.x;
+		if (maxBBox.y < v.y) maxBBox.y = v.y;
+		if (maxBBox.z < v.z) maxBBox.z = v.z;
+	}
+
+	GlmVec3Type::Push(lua, minBBox);
+	GlmVec3Type::Push(lua, maxBBox);
+
+	return 2;
 }

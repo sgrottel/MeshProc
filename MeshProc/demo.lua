@@ -34,6 +34,12 @@ do
 	ico = make:get("Mesh")
 
 	ico:applyTransform(XMat4.translate(0.5, 1, 3))
+
+	local minBB, maxBB = ico:calcBoundingBox()
+	log.write("Ico bbox: { "..tostring(minBB.x)..", "..tostring(minBB.y)..", "..tostring(minBB.z).." } - { "..tostring(maxBB.x)..", "..tostring(maxBB.y)..", "..tostring(maxBB.z).." }")
+
+	minBB.x = minBB.x + 0.01
+
 end
 
 -- create an octahedron-based star mesh
