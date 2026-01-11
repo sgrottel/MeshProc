@@ -227,7 +227,16 @@ int MeshType::CallbackTriangleGet(lua_State* lua)
 	}
 
 	const auto& t = mesh->triangles.at(idx - 1);
-	GlmUVec3Type::Push(lua, glm::uvec3{ t[0], t[1], t[2] });
+
+	// triangle [0, 0, 0] is special as invalid -- keep
+	// in all other cases increase vertex indices to be 1-based
+	if (t[0] == 0 && t[1] == 0 && t[2] == 0)
+	{
+		GlmUVec3Type::Push(lua, glm::uvec3{ 0, 0, 0 });
+		return 1;
+	}
+
+	GlmUVec3Type::Push(lua, glm::uvec3{ t[0] + 1, t[1] + 1, t[2] + 1 });
 	return 1;
 }
 
@@ -259,6 +268,24 @@ int MeshType::CallbackTriangleSet(lua_State* lua)
 	if (!GlmUVec3Type::TryGet(lua, 3, tr))
 	{
 		return luaL_error(lua, "Second argument expected to be a vec3");
+	}
+
+	// tr vertex indices are 1-based, unless all are zero
+	if (tr.x != 0 && tr.y != 0 && tr.z != 0)
+	{
+		tr.x--;
+		tr.y--;
+		tr.z--;
+	}
+	else
+	{
+		// at least one is zero
+		if (tr.x != 0 || tr.y != 0 || tr.z != 0)
+		{
+			// at least one is non-zero
+			// => triangle does not use consistent 1-based indices
+			return luaL_error(lua, "Vertex indices in triangle do not seem 1-based (%d, %d, &d)", tr.x, tr.y, tr.z);
+		}
 	}
 
 	auto& t = mesh->triangles.at(idx - 1);
