@@ -90,85 +90,71 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="3rd-party\tinyxml2\tinyxml2.cpp" />
-    <ClCompile Include="AbstractCommand.cpp" />
-    <ClCompile Include="BakeTransform.cpp" />
-    <ClCompile Include="CloseLoopWithPin.cpp" />
     <ClCompile Include="CmdLineArgs.cpp" />
-    <ClCompile Include="CollapseTriangles.cpp" />
-    <ClCompile Include="CommandFactory.cpp" />
-    <ClCompile Include="CommandRegistration.cpp" />
-    <ClCompile Include="Convex2DHull.cpp" />
-    <ClCompile Include="CutHalfSpace.cpp" />
+    <ClCompile Include="commands\AbstractCommand.cpp" />
+    <ClCompile Include="commands\CommandFactory.cpp" />
+    <ClCompile Include="commands\CommandRegistration.cpp" />
+    <ClCompile Include="commands\generator\Cuboid.cpp" />
+    <ClCompile Include="commands\io\ObjReader.cpp" />
+    <ClCompile Include="commands\io\ObjWriter.cpp" />
+    <ClCompile Include="commands\io\PlyReader.cpp" />
+    <ClCompile Include="commands\io\PlyWriter.cpp" />
+    <ClCompile Include="commands\io\StlReader.cpp" />
+    <ClCompile Include="commands\io\StlWriter.cpp" />
+    <ClCompile Include="commands\Parameter.cpp" />
+    <ClCompile Include="commands\ParameterBinding.cpp" />
     <ClCompile Include="data\HalfSpace.cpp" />
     <ClCompile Include="data\HashableEdge.cpp" />
     <ClCompile Include="data\Mesh.cpp" />
     <ClCompile Include="data\Scene.cpp" />
     <ClCompile Include="data\Shape2D.cpp" />
     <ClCompile Include="data\Triangle.cpp" />
-    <ClCompile Include="DeleteTriangles.cpp" />
-    <ClCompile Include="DevPlayground.cpp" />
-    <ClCompile Include="DisplacementNoise.cpp" />
-    <ClCompile Include="Extract2DLoops.cpp" />
-    <ClCompile Include="ExtractSubMesh.cpp" />
-    <ClCompile Include="fitting\MorphRotateOutline.cpp" />
-    <ClCompile Include="FlatSkirt.cpp" />
-    <ClCompile Include="generator\Cuboid.cpp" />
-    <ClCompile Include="generator\RotateExtrude2DMesh.cpp" />
-    <ClCompile Include="generator\VertexNormals.cpp" />
-    <ClCompile Include="IndicesBoolean.cpp" />
-    <ClCompile Include="io\CsvShape2DReader.cpp" />
-    <ClCompile Include="io\ObjMeshWriter.cpp" />
-    <ClCompile Include="io\ObjWriter.cpp" />
-    <ClCompile Include="LinearExtrude.cpp" />
-    <ClCompile Include="generator\CrystalGrain.cpp" />
-    <ClCompile Include="generator\Icosahedron.cpp" />
-    <ClCompile Include="generator\LinearExtrude2DMesh.cpp" />
-    <ClCompile Include="generator\SphereIco.cpp" />
-    <ClCompile Include="io\CsvShape2DWriter.cpp" />
-    <ClCompile Include="io\ObjReader.cpp" />
-    <ClCompile Include="io\PlyReader.cpp" />
-    <ClCompile Include="io\PlyWriter.cpp" />
-    <ClCompile Include="io\StlReader.cpp" />
-    <ClCompile Include="io\StlWriter.cpp" />
-    <ClCompile Include="io\SvgShape2DWriter.cpp" />
-    <ClCompile Include="lua\AbstractMultiType.cpp" />
-    <ClCompile Include="lua\AbstractType.cpp" />
-    <ClCompile Include="lua\CallbackFunction.cpp" />
+    <ClCompile Include="lua\AbstractMultiType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="lua\CallbackFunction.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="lua\CommandCreator.cpp" />
-    <ClCompile Include="lua\CommandType.cpp" />
-    <ClCompile Include="lua\GlmMat4Type.cpp" />
-    <ClCompile Include="lua\GlmVec2Type.cpp" />
-    <ClCompile Include="lua\GlmVec3Type.cpp" />
-    <ClCompile Include="lua\ListOfFloatType.cpp" />
-    <ClCompile Include="lua\ListOfVec3Type.cpp" />
+    <ClCompile Include="lua\ListOfFloatType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="lua\ListOfVec3Type.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="lua\LogFunctions.cpp" />
     <ClCompile Include="lua\LuaUtilities.cpp" />
-    <ClCompile Include="lua\MeshType.cpp" />
-    <ClCompile Include="lua\MultiMeshType.cpp" />
-    <ClCompile Include="lua\MultiIndicesType.cpp" />
+    <ClCompile Include="lua\MultiMeshType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="lua\MultiIndicesType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="lua\Runner.cpp" />
-    <ClCompile Include="lua\SceneType.cpp" />
-    <ClCompile Include="lua\Shape2DType.cpp" />
+    <ClCompile Include="lua\Shape2DType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="lua\types\AbstractType.cpp" />
+    <ClCompile Include="lua\types\CommandType.cpp" />
+    <ClCompile Include="lua\types\GlmMat4Type.cpp" />
+    <ClCompile Include="lua\types\GlmVec2Type.cpp" />
+    <ClCompile Include="lua\types\GlmVec3Type.cpp" />
+    <ClCompile Include="lua\types\MeshType.cpp" />
+    <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
-    <ClCompile Include="lua\IndicesType.cpp" />
-    <ClCompile Include="ManipulateVertices.cpp" />
-    <ClCompile Include="MatchShape2D.cpp" />
-    <ClCompile Include="MeasureBoundingBox.cpp" />
+    <ClCompile Include="lua\IndicesType.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="MeshProc.cpp" />
-    <ClCompile Include="MeshSmooth.cpp" />
-    <ClCompile Include="MixLoops.cpp" />
-    <ClCompile Include="MorphMeshLoop.cpp" />
-    <ClCompile Include="OpenBorder.cpp" />
-    <ClCompile Include="Parameter.cpp" />
-    <ClCompile Include="ParameterBinding.cpp" />
-    <ClCompile Include="SelectBottomTriangles.cpp" />
-    <ClCompile Include="SelectRandomTriangles.cpp" />
-    <ClCompile Include="SelectTrianglesFromSelectedVertices.cpp" />
-    <ClCompile Include="SelectVertices.cpp" />
-    <ClCompile Include="SelectVerticesFromSelectedTriangles.cpp" />
-    <ClCompile Include="Subdivision.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
-    <ClCompile Include="VertexSurfaceDistanceToCut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3rd-party\tinyxml2\README.md" />
@@ -193,87 +179,72 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h" />
-    <ClInclude Include="AbstractCommand.h" />
-    <ClInclude Include="algo\LoopsFromEdges.h" />
-    <ClInclude Include="BakeTransform.h" />
-    <ClInclude Include="CloseLoopWithPin.h" />
     <ClInclude Include="CmdLineArgs.h" />
-    <ClInclude Include="CollapseTriangles.h" />
-    <ClInclude Include="CommandFactory.h" />
-    <ClInclude Include="CommandRegistration.h" />
-    <ClInclude Include="Convex2DHull.h" />
-    <ClInclude Include="CutHalfSpace.h" />
+    <ClInclude Include="commands\AbstractCommand.h" />
+    <ClInclude Include="commands\CommandFactory.h" />
+    <ClInclude Include="commands\CommandRegistration.h" />
+    <ClInclude Include="commands\generator\Cuboid.h" />
+    <ClInclude Include="commands\io\ObjReader.h" />
+    <ClInclude Include="commands\io\ObjWriter.h" />
+    <ClInclude Include="commands\io\PlyReader.h" />
+    <ClInclude Include="commands\io\PlyWriter.h" />
+    <ClInclude Include="commands\io\StlReader.h" />
+    <ClInclude Include="commands\io\StlWriter.h" />
+    <ClInclude Include="commands\Parameter.h" />
+    <ClInclude Include="commands\ParameterBinding.h" />
     <ClInclude Include="data\HalfSpace.h" />
     <ClInclude Include="data\HashableEdge.h" />
     <ClInclude Include="data\Mesh.h" />
     <ClInclude Include="data\Scene.h" />
     <ClInclude Include="data\Shape2D.h" />
     <ClInclude Include="data\Triangle.h" />
-    <ClInclude Include="DeleteTriangles.h" />
-    <ClInclude Include="DevPlayground.h" />
-    <ClInclude Include="DisplacementNoise.h" />
-    <ClInclude Include="Extract2DLoops.h" />
-    <ClInclude Include="ExtractSubMesh.h" />
-    <ClInclude Include="fitting\MorphRotateOutline.h" />
-    <ClInclude Include="FlatSkirt.h" />
-    <ClInclude Include="generator\Cuboid.h" />
-    <ClInclude Include="generator\RotateExtrude2DMesh.h" />
-    <ClInclude Include="generator\VertexNormals.h" />
-    <ClInclude Include="IndicesBoolean.h" />
-    <ClInclude Include="io\CsvShape2DReader.h" />
-    <ClInclude Include="io\ObjMeshWriter.h" />
-    <ClInclude Include="io\ObjWriter.h" />
-    <ClInclude Include="LinearExtrude.h" />
-    <ClInclude Include="generator\CrystalGrain.h" />
-    <ClInclude Include="generator\Icosahedron.h" />
-    <ClInclude Include="generator\LinearExtrude2DMesh.h" />
-    <ClInclude Include="generator\SphereIco.h" />
-    <ClInclude Include="io\CsvShape2DWriter.h" />
-    <ClInclude Include="io\ObjReader.h" />
-    <ClInclude Include="io\PlyReader.h" />
-    <ClInclude Include="io\PlyWriter.h" />
-    <ClInclude Include="io\StlReader.h" />
-    <ClInclude Include="io\StlWriter.h" />
-    <ClInclude Include="io\SvgShape2DWriter.h" />
-    <ClInclude Include="lua\AbstractMultiType.h" />
-    <ClInclude Include="lua\AbstractType.h" />
-    <ClInclude Include="lua\CallbackFunction.h" />
+    <ClInclude Include="lua\AbstractMultiType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="lua\CallbackFunction.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="lua\CommandCreator.h" />
-    <ClInclude Include="lua\CommandType.h" />
-    <ClInclude Include="lua\GlmMat4Type.h" />
-    <ClInclude Include="lua\GlmVec2Type.h" />
-    <ClInclude Include="lua\GlmVec3Type.h" />
-    <ClInclude Include="lua\ListOfFloatType.h" />
-    <ClInclude Include="lua\ListOfVec3Type.h" />
+    <ClInclude Include="lua\ListOfFloatType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="lua\ListOfVec3Type.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="lua\LogFunctions.h" />
     <ClInclude Include="lua\LuaResources.h" />
     <ClInclude Include="lua\LuaUtilities.h" />
-    <ClInclude Include="lua\MeshType.h" />
-    <ClInclude Include="lua\MultiMeshType.h" />
-    <ClInclude Include="lua\MultiIndicesType.h" />
+    <ClInclude Include="lua\MultiMeshType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="lua\MultiIndicesType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="lua\Runner.h" />
-    <ClInclude Include="lua\SceneType.h" />
-    <ClInclude Include="lua\Shape2DType.h" />
+    <ClInclude Include="lua\Shape2DType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="lua\types\AbstractType.h" />
+    <ClInclude Include="lua\types\CommandType.h" />
+    <ClInclude Include="lua\types\GlmMat4Type.h" />
+    <ClInclude Include="lua\types\GlmVec2Type.h" />
+    <ClInclude Include="lua\types\GlmVec3Type.h" />
+    <ClInclude Include="lua\types\MeshType.h" />
+    <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />
-    <ClInclude Include="lua\IndicesType.h" />
-    <ClInclude Include="ManipulateVertices.h" />
-    <ClInclude Include="MatchShape2D.h" />
-    <ClInclude Include="MeasureBoundingBox.h" />
-    <ClInclude Include="MeshSmooth.h" />
-    <ClInclude Include="MixLoops.h" />
-    <ClInclude Include="MorphMeshLoop.h" />
-    <ClInclude Include="OpenBorder.h" />
-    <ClInclude Include="Parameter.h" />
-    <ClInclude Include="ParameterBinding.h" />
-    <ClInclude Include="SelectBottomTriangles.h" />
-    <ClInclude Include="SelectRandomTriangles.h" />
-    <ClInclude Include="SelectTrianglesFromSelectedVertices.h" />
-    <ClInclude Include="SelectVertices.h" />
-    <ClInclude Include="SelectVerticesFromSelectedTriangles.h" />
-    <ClInclude Include="Subdivision.h" />
+    <ClInclude Include="lua\IndicesType.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />
-    <ClInclude Include="VertexSurfaceDistanceToCut.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="lua\LuaResources.rc" />

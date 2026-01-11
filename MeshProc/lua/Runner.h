@@ -14,8 +14,10 @@ namespace sgrottel
 
 namespace meshproc
 {
-
-	class CommandFactory;
+	namespace commands
+	{
+		class CommandFactory;
+	}
 
 	namespace lua
 	{
@@ -69,7 +71,7 @@ namespace meshproc
 				Runner& m_owner;
 			};
 
-			Runner(sgrottel::ISimpleLog& log, CommandFactory& factory);
+			Runner(sgrottel::ISimpleLog& log, commands::CommandFactory& factory);
 
 			bool RegisterCommands();
 
