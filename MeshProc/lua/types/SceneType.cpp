@@ -23,6 +23,7 @@ bool SceneType::Init()
 		{"place", &SceneType::CallbackPlaceMesh},
 		{nullptr, nullptr}
 	};
+
 	if (!InitImpl(memberFuncs))
 	{
 		return false;

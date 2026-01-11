@@ -147,6 +147,7 @@
     <ClCompile Include="lua\types\AbstractType.cpp" />
     <ClCompile Include="lua\types\CommandType.cpp" />
     <ClCompile Include="lua\types\GlmMat4Type.cpp" />
+    <ClCompile Include="lua\types\GlmUVec3Type.cpp" />
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
     <ClCompile Include="lua\types\GlmVec3Type.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="lua\types\AbstractType.h" />
     <ClInclude Include="lua\types\CommandType.h" />
     <ClInclude Include="lua\types\GlmMat4Type.h" />
+    <ClInclude Include="lua\types\GlmUVec3Type.h" />
     <ClInclude Include="lua\types\GlmVec2Type.h" />
     <ClInclude Include="lua\types\GlmVec3Type.h" />
     <ClInclude Include="lua\types\MeshType.h" />

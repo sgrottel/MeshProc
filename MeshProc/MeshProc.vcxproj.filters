@@ -186,6 +186,9 @@
     <ClCompile Include="commands\edit\Subdivision.cpp">
       <Filter>commands\edit</Filter>
     </ClCompile>
+    <ClCompile Include="lua\types\GlmUVec3Type.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -339,6 +342,9 @@
     </ClInclude>
     <ClInclude Include="commands\edit\Subdivision.h">
       <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmUVec3Type.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

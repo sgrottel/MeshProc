@@ -45,6 +45,28 @@ do
 	local subdiv = meshproc.edit.Subdivision.new()
 	subdiv:set("Mesh", oct)
 	subdiv:invoke()
+
+	local vCnt = oct:vertexSize()
+	local tCnt = oct:triangleSize()
+	log.write("Oct mesh: " .. tostring(vCnt) .. "v " .. tostring(tCnt) .. "t")
+
+	for vI = 1, vCnt do
+		local v = oct:vertexGet(vI)
+		log.write("v["..tostring(vI).."] = { "..tostring(v.x)..", "..tostring(v.y)..", "..tostring(v.z).." }")
+
+		if (v.x == 0 and v.y == 0) or (v.x == 0 and v.z == 0) or (v.y == 0 and v.z == 0) then
+			oct:vertexSet(vI, v * 3)
+		end
+	end
+
+	for tI = 1, tCnt do
+		local t = oct:triangleGet(tI)
+		log.write("t["..tostring(tI).."] = { "..tostring(t.x)..", "..tostring(t.y)..", "..tostring(t.z).." }")
+		-- for debugging, the next lines change winding of triangle
+		--t.y, t.z = t.z, t.y
+		--oct:triangleSet(tI, t)
+	end
+
 end
 
 -- -- 2D Shapes
