@@ -280,9 +280,9 @@ bool CommandType::Init()
 	static const struct luaL_Reg commandObjectLib_memberFuncs[] = {
 		{"__tostring", &CommandType::CallbackCommandToString},
 		{"__gc", &CommandType::CallbackDelete},
-		{"invoke", &CommandType::CallbackCommandInvoke},
-		{"set", &CommandType::CallbackCommandSet},
-		{"get", &CommandType::CallbackCommandGet},
+		{"__newindex", &CommandType::CallbackCommandSet},
+		{"__index", &CommandType::CallbackCommandIndexDispatcher},
+		{AbstractCommand::InvokeMethodName, &CommandType::CallbackCommandInvoke},
 		{nullptr, nullptr}
 	};
 	return InitImpl(commandObjectLib_memberFuncs);
@@ -305,9 +305,9 @@ int CommandType::CallbackCommandInvoke(lua_State* lua)
 	return CallLuaImpl(&CommandType::InvokeImpl, lua);
 }
 
-int CommandType::CallbackCommandGet(lua_State* lua)
+int CommandType::CallbackCommandIndexDispatcher(lua_State* lua)
 {
-	return CallLuaImpl(&CommandType::GetImpl, lua);
+	return CallLuaImpl(&CommandType::IndexDispatcherImpl, lua);
 }
 
 int CommandType::CallbackCommandSet(lua_State* lua)
@@ -346,10 +346,29 @@ int CommandType::InvokeImpl(lua_State* lua)
 	return 0;
 }
 
-int CommandType::GetImpl(lua_State* lua)
+int CommandType::GetImpl(lua_State* lua, std::shared_ptr<commands::AbstractCommand> cmd, const std::string& name)
 {
 	static constexpr auto functable = MakeLuaTryPushValTable();
 
+	std::shared_ptr<ParameterBinding::ParamBindingBase> param = cmd->GetParam(name);
+	if (!param)
+	{
+		Log().Error("Field name %s not found", name.c_str());
+		return 0;
+	}
+
+	size_t functableIndex = static_cast<size_t>(param->m_type);
+	if (functableIndex < functable.size())
+	{
+		return functable[functableIndex](lua, param, Log());
+	}
+
+	Log().Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
+	return 0;
+}
+
+int CommandType::IndexDispatcherImpl(lua_State* lua)
+{
 	auto cmd = CommandType::LuaGet(lua, 1);
 	if (!cmd)
 	{
@@ -371,21 +390,25 @@ int CommandType::GetImpl(lua_State* lua)
 	size_t len;
 	std::string name = luaL_tolstring(lua, 2, &len); // copy type string
 
-	std::shared_ptr<ParameterBinding::ParamBindingBase> param = cmd->GetParam(name);
-	if (!param)
+	if (name == AbstractCommand::InvokeMethodName)
 	{
-		Log().Error("Field name %s not found", name.c_str());
-		return 0;
+		// the special invoke method is being called
+		// fetch function pointer from metatable
+		luaL_getmetatable(lua, LUA_TYPE_NAME);
+
+		lua_getfield(lua, -1, AbstractCommand::InvokeMethodName);
+
+		if (lua_isnil(lua, -1))
+		{
+			lua_pop(lua, 2); // pop nil and metatable
+			return luaL_error(lua, "Invoke not found on this type");
+		}
+
+		lua_remove(lua, -2); // remove metatable, keep value
+		return 1;
 	}
 
-	size_t functableIndex = static_cast<size_t>(param->m_type);
-	if (functableIndex < functable.size())
-	{
-		return functable[functableIndex](lua, param, Log());
-	}
-
-	Log().Error("Getting field %s value of type %s is not supported", name.c_str(), GetParamTypeName(param->m_type));
-	return 0;
+	return GetImpl(lua, cmd, name);
 }
 
 int CommandType::SetImpl(lua_State* lua)

@@ -22,17 +22,21 @@ log.write("Call arg never: " .. tostring(args.never) .. " [" .. type(args.never)
 local cube = nil
 do
 	local make = meshproc.generator.Cuboid.new()
-	make:set("SizeX", tonumber(args.sizex) or error("arg.sizex is not a number"))
+	log.detail("Creating "..tostring(make))
+	make["SizeX"] = (tonumber(args.sizex) or error("arg.sizex is not a number"))
 	make:invoke()
-	cube = make:get("Mesh")
+	cube = make["Mesh"]
 end
+
+-- explicitly collect the no longer used "make" object
+collectgarbage("collect")
 
 -- create an icosahedron mesh
 local ico = nil
 do
 	local make = meshproc.generator.Icosahedron.new()
 	make:invoke()
-	ico = make:get("Mesh")
+	ico = make["Mesh"]
 
 	ico:apply_transform(XMat4.translate(0.5, 1, 3))
 
@@ -48,11 +52,11 @@ local oct = nil
 do
 	local make = meshproc.generator.Octahedron.new()
 	make:invoke()
-	oct = make:get("Mesh")
+	oct = make["Mesh"]
 
 	-- in-place edit `oct`
 	local subdiv = meshproc.edit.Subdivision.new()
-	subdiv:set("Mesh", oct)
+	subdiv["Mesh"] = oct
 	subdiv:invoke()
 
 	local vCnt = oct:vertex_length()
@@ -122,7 +126,7 @@ scene:place(oct, XMat4.translate(2.5, 4, 3))
 -- save scene to file
 do
 	local stl = meshproc.io.StlWriter.new()
-	stl:set("Scene", scene)
-	stl:set("Path", "out.stl")
+	stl.Scene = scene -- alternative syntax to the array operators
+	stl.Path = "out.stl"
 	stl:invoke()
 end

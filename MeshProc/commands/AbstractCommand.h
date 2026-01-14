@@ -22,6 +22,8 @@ namespace meshproc
 		class AbstractCommand
 		{
 		public:
+			static constexpr const char* InvokeMethodName = "invoke";
+
 			AbstractCommand(const sgrottel::ISimpleLog& log);
 
 			virtual bool Invoke() = 0;
@@ -83,6 +85,10 @@ namespace meshproc
 		template<ParamMode PM, ParamType PT, typename T>
 		void AbstractCommand::ParamBindingRefs::AddParamBinding(const std::string& name, T& var)
 		{
+			if (name == InvokeMethodName)
+			{
+				throw std::logic_error("Cannot add param. This is a reserved name.");
+			}
 			if (m_params.find(name) != m_params.end())
 			{
 				throw std::logic_error("Cannot add param. Another param with same name already registered");
