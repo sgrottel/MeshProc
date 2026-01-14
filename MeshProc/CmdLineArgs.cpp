@@ -1,5 +1,7 @@
 #include "CmdLineArgs.h"
 
+#include "VersionInfo.h"
+
 #include <SimpleLog/SimpleLog.hpp>
 #include <yaclap.hpp>
 
@@ -8,7 +10,7 @@ namespace
 
 	void LogGreeting(const sgrottel::ISimpleLog& log)
 	{
-		log.Message("MeshProc");
+		log.Message("MeshProc  --  v%d.%d.%d.%d", MESHPROC_VER_MAJOR, MESHPROC_VER_MINOR, MESHPROC_VER_PATCH, MESHPROC_VER_BUILD );
 	}
 
 	std::wstring_view Trim(std::wstring_view str)
