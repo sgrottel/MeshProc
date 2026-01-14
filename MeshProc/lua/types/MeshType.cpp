@@ -25,6 +25,8 @@ bool MeshType::Init()
 		{"__tostring", &MeshType::CallbackToString},
 		{"__gc", &MeshType::CallbackDelete},
 
+		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
+
 		{"vertex_length", &MeshType::CallbackVertexLength},
 		{"vertex_resize", &MeshType::CallbackVertexResize},
 		{"vertex_get", &MeshType::CallbackVertexGet},
@@ -49,6 +51,159 @@ bool MeshType::Init()
 	{
 		return false;
 	}
+
+/*
+
+You’re thinking about this exactly the right way, and yes — if you do nothing special, then:
+
+```lua
+foo.bar:baz()
+```
+
+will call your C++ callback with **`self = bar`**, not `foo`.
+
+But the good news is:
+**Lua gives you a clean, idiomatic way to make `bar` act as a “view” or “sub?object” of `foo`, while still letting your C++ callback access the original `foo` without storing an explicit pointer in `bar`.**
+
+Let’s walk through the architecture that makes this work.
+
+---
+
+# Key idea
+Lua userdata can have **one uservalue table** (Lua 5.3) or **multiple uservalues** (Lua 5.4).
+You can use this to attach the parent object (`foo`) to the child object (`bar`) *without storing it in your C++ struct*.
+
+This is the cleanest and most idiomatic solution.
+
+---
+
+# The architecture you want
+
+You want:
+
+- `foo` ? a userdata representing your C++ object
+- `foo.bar` ? a Lua table or userdata representing a *sub?object*
+- `foo.bar` should still be able to call methods on `foo`
+- `foo.bar:baz()` should call your C++ function with access to the original `foo`
+
+This is exactly what uservalues are for.
+
+---
+
+# Step 1 — Create `foo` as userdata
+
+```cpp
+fooCpp* foo = (fooCpp*)lua_newuserdata(L, sizeof(fooCpp));
+luaL_getmetatable(L, "FooMeta");
+lua_setmetatable(L, -2);
+```
+
+---
+
+# Step 2 — Create `foo.bar` as a Lua table (or userdata)
+
+```cpp
+lua_newtable(L);          // bar table
+```
+
+Now attach `foo` as the uservalue of `bar`:
+
+```cpp
+lua_pushvalue(L, -2);     // push foo
+lua_setuservalue(L, -2);  // bar.uservalue = foo
+```
+
+Now:
+
+- `bar` is a Lua object
+- `bar` has a hidden reference to `foo`
+- No explicit pointer stored in C++ memory
+
+---
+
+# Step 3 — Give `bar` its own metatable with methods
+
+```cpp
+luaL_getmetatable(L, "BarMeta");
+lua_setmetatable(L, -2);
+```
+
+Inside `"BarMeta"` you define:
+
+```cpp
+static const luaL_Reg barMethods[] = {
+	{"baz", &CallbackBaz},
+	{NULL, NULL}
+};
+```
+
+---
+
+# Step 4 — In your callback, retrieve the parent `foo`
+
+Your callback receives:
+
+- `self = bar`
+
+So you do:
+
+```cpp
+int CallbackBaz(lua_State* L) {
+	// self = bar
+	lua_getuservalue(L, 1);  // push bar.uservalue (which is foo)
+
+	fooCpp* foo = (fooCpp*)lua_touserdata(L, -1);
+
+	// now you have foo!
+	...
+}
+```
+
+This is the magic line:
+
+```cpp
+lua_getuservalue(L, 1);
+```
+
+It retrieves the parent object (`foo`) that you attached earlier.
+
+---
+
+# Result in Lua
+
+```lua
+foo.bar:baz()
+```
+
+- `self` is `bar`
+- `bar.uservalue` is `foo`
+- Your C++ callback can access both
+
+---
+
+# Summary
+
+| Goal | Solution |
+|------|----------|
+| `foo.bar:baz()` should call method on `foo` | Store `foo` as uservalue of `bar` |
+| Avoid storing explicit pointer in C++ struct | Use Lua uservalue table |
+| Access parent from callback | `lua_getuservalue(L, 1)` |
+| Keep clean metatable structure | Separate metatables for foo and bar |
+
+---
+
+# Final answer
+
+**Yes, you can access `foo` from inside `baz` without storing a pointer in `bar`.
+Attach `foo` as the uservalue of `bar`, and retrieve it in the callback with `lua_getuservalue`.**
+
+This is the idiomatic Lua way to build hierarchical objects.
+
+---
+
+If you want, I can show you a complete minimal working example (C++ + Lua) that implements `foo.bar:baz()` exactly as you described.
+
+*/
 
 	lua_getglobal(lua(), "meshproc");		// load global "meshproc"
 	lua_newtable(lua());					// push new table on stack, which will become "meshproc.Mesh"

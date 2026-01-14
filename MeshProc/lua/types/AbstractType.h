@@ -29,7 +29,7 @@ namespace meshproc
 				static int CallbackDelete(lua_State* lua);
 				static int CallbackToString(lua_State* lua);
 
-				bool InitImpl(const struct luaL_Reg memberFunc[]);
+				bool InitImpl(const struct luaL_Reg memberFunc[], const char* const TYPE_NAME = TIMPL::LUA_TYPE_NAME);
 
 			private:
 
@@ -92,12 +92,12 @@ namespace meshproc
 			}
 
 			template<typename TVAR, typename TIMPL>
-			bool AbstractType<TVAR, TIMPL>::InitImpl(const struct luaL_Reg memberFuncs[])
+			bool AbstractType<TVAR, TIMPL>::InitImpl(const struct luaL_Reg memberFuncs[], const char* const TYPE_NAME)
 			{
 				if (!Runner::Component<TIMPL>::AssertStateReady()) return false;
 
 				// The member functions for the MeshObject
-				luaL_newmetatable(Runner::Component<TIMPL>::lua(), TIMPL::LUA_TYPE_NAME);
+				luaL_newmetatable(Runner::Component<TIMPL>::lua(), TYPE_NAME);
 
 				bool hasIndexDispatcher = false;
 				for (const struct luaL_Reg* func = memberFuncs; func->func != nullptr; func++)
