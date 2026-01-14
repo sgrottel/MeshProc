@@ -33,9 +33,9 @@ do
 	make:invoke()
 	ico = make:get("Mesh")
 
-	ico:applyTransform(XMat4.translate(0.5, 1, 3))
+	ico:apply_transform(XMat4.translate(0.5, 1, 3))
 
-	local minBB, maxBB = ico:calcBoundingBox()
+	local minBB, maxBB = ico:calc_boundingbox()
 	log.write("Ico bbox: { "..tostring(minBB.x)..", "..tostring(minBB.y)..", "..tostring(minBB.z).." } - { "..tostring(maxBB.x)..", "..tostring(maxBB.y)..", "..tostring(maxBB.z).." }")
 
 	minBB.x = minBB.x + 0.01
@@ -54,25 +54,25 @@ do
 	subdiv:set("Mesh", oct)
 	subdiv:invoke()
 
-	local vCnt = oct:vertexSize()
-	local tCnt = oct:triangleSize()
+	local vCnt = oct:vertex_length()
+	local tCnt = oct:triangle_length()
 	log.write("Oct mesh: " .. tostring(vCnt) .. "v " .. tostring(tCnt) .. "t")
 
 	for vI = 1, vCnt do
-		local v = oct:vertexGet(vI)
+		local v = oct:vertex_get(vI)
 		log.detail("v["..tostring(vI).."] = { "..tostring(v.x)..", "..tostring(v.y)..", "..tostring(v.z).." }")
 
 		if (v.x == 0 and v.y == 0) or (v.x == 0 and v.z == 0) or (v.y == 0 and v.z == 0) then
-			oct:vertexSet(vI, v * 3)
+			oct:vertex_set(vI, v * 3)
 		end
 	end
 
 	for tI = 1, tCnt do
-		local t = oct:triangleGet(tI)
+		local t = oct:triangle_get(tI)
 		log.detail("t["..tostring(tI).."] = { "..tostring(t.x)..", "..tostring(t.y)..", "..tostring(t.z).." }")
 		-- for debugging, the next lines change winding of triangle
 		--t.y, t.z = t.z, t.y
-		--oct:triangleSet(tI, t)
+		--oct:triangle_set(tI, t)
 	end
 
 end

@@ -25,18 +25,22 @@ bool MeshType::Init()
 		{"__tostring", &MeshType::CallbackToString},
 		{"__gc", &MeshType::CallbackDelete},
 
-		{"vertexSize", &MeshType::CallbackVertexSize},
-		{"vertexResize", &MeshType::CallbackVertexResize},
-		{"vertexGet", &MeshType::CallbackVertexGet},
-		{"vertexSet", &MeshType::CallbackVertexSet},
+		{"vertex_length", &MeshType::CallbackVertexLength},
+		{"vertex_resize", &MeshType::CallbackVertexResize},
+		{"vertex_get", &MeshType::CallbackVertexGet},
+		{"vertex_set", &MeshType::CallbackVertexSet},
+		{"vertex_remove", &MeshType::CallbackVertexRemove},
+		{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
 
-		{"triangleSize", &MeshType::CallbackTriangleSize},
-		{"triangleResize", &MeshType::CallbackTriangleResize},
-		{"triangleGet", &MeshType::CallbackTriangleGet},
-		{"triangleSet", &MeshType::CallbackTriangleSet},
+		{"triangle_length", &MeshType::CallbackTriangleLength},
+		{"triangle_resize", &MeshType::CallbackTriangleResize},
+		{"triangle_get", &MeshType::CallbackTriangleGet},
+		{"triangle_set", &MeshType::CallbackTriangleSet},
+		{"triangle_remove", &MeshType::CallbackTriangleRemove},
 
-		{"applyTransform", &MeshType::CallbackApplyTransform},
-		{"calcBoundingBox", &MeshType::CallbackCalcBoundingBox},
+		{"apply_transform", &MeshType::CallbackApplyTransform},
+		{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
+		{"is_valid", &MeshType::CallbackIsValid},
 
 		{nullptr, nullptr}
 	};
@@ -61,7 +65,7 @@ int MeshType::CallbackCtor(lua_State* lua)
 	return 1;
 }
 
-int MeshType::CallbackVertexSize(lua_State* lua)
+int MeshType::CallbackVertexLength(lua_State* lua)
 {
 	const int argcnt = lua_gettop(lua);
 	if (argcnt != 1)
@@ -161,7 +165,17 @@ int MeshType::CallbackVertexSet(lua_State* lua)
 	return 0;
 }
 
-int MeshType::CallbackTriangleSize(lua_State* lua)
+int MeshType::CallbackVertexRemove(lua_State* lua)
+{
+	return luaL_error(lua, "NOT IMPLEMENTED");
+}
+
+int MeshType::CallbackVertexRemoveIsolated(lua_State* lua)
+{
+	return luaL_error(lua, "NOT IMPLEMENTED");
+}
+
+int MeshType::CallbackTriangleLength(lua_State* lua)
 {
 	const int argcnt = lua_gettop(lua);
 	if (argcnt != 1)
@@ -295,6 +309,11 @@ int MeshType::CallbackTriangleSet(lua_State* lua)
 	return 0;
 }
 
+int MeshType::CallbackTriangleRemove(lua_State* lua)
+{
+	return luaL_error(lua, "NOT IMPLEMENTED");
+}
+
 int MeshType::CallbackApplyTransform(lua_State* lua)
 {
 	const int argcnt = lua_gettop(lua);
@@ -361,4 +380,9 @@ int MeshType::CallbackCalcBoundingBox(lua_State* lua)
 	GlmVec3Type::Push(lua, maxBBox);
 
 	return 2;
+}
+
+int MeshType::CallbackIsValid(lua_State* lua)
+{
+	return luaL_error(lua, "NOT IMPLEMENTED");
 }
