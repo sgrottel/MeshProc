@@ -5,6 +5,7 @@
 //#include "CallbackFunction.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3Type.h"
+#include "IndexListType.h"
 //#include "ListOfFloatType.h"
 //#include "ListOfVec3Type.h"
 #include "MeshType.h"
@@ -12,7 +13,6 @@
 //#include "MultiIndicesType.h"
 #include "SceneType.h"
 //#include "Shape2DType.h"
-//#include "IndicesType.h"
 
 #include "commands/AbstractCommand.h"
 
@@ -112,8 +112,8 @@ namespace
 	//template<>
 	//struct LuaParamMapping<ParamType::Shape2D> : LuaWrappedParamMapping<Shape2DType, data::Shape2D> {};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::Indices> : LuaWrappedParamMapping<IndicesType, std::vector<uint32_t>> {};
+	template<>
+	struct LuaParamMapping<ParamType::IndexList> : LuaWrappedParamMapping<IndexListType, std::vector<uint32_t>> {};
 
 	//template<>
 	//struct LuaParamMapping<ParamType::MultiIndices> : LuaWrappedParamMapping<MultiIndicesType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};

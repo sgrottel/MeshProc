@@ -45,7 +45,40 @@ do
 
 	minBB.x = minBB.x + 0.01
 
+	local vsel = meshproc.IndexList.new()
+	vsel:insert(2)  -- list is [2]
+	vsel:insert(3)  -- insert at the end; list is [2, 3]
+	vsel:insert(2, 4)  -- inserts entry "4" right before the second entry in the list; list is [2, 4, 3]
+	vsel:insert(8)  -- insert at the end; list is [2, 4, 3, 8]
+	vsel:remove(2)  -- remove at 2; list is [2, 3, 8]
+	vsel:remove()  -- remove last; list is [2, 3]
+	vsel:resize(4)  -- resized and list is now [2, 3, 0, 0] with invalid entries "0"
+	vsel[4] = 42  -- set access; list is now [2, 3, 0, 42]
+	for i, v in ipairs(vsel) do log.detail("vsel["..i.."] = "..v) end -- iterating list
+	vsel:remove(3) -- list is now [2, 3, 42]
+	log.write(tostring(#vsel)) -- size of list
+	for i, v in ipairs(vsel) do log.detail("vsel["..i.."] = "..v) end -- iterating list
+
+	vsel:resize(0)  -- clear
+
+	for i = 1, ico:vertex_length() do
+		local v = ico:vertex_get(i)
+		if (v.x < minBB.x) then
+			vsel:insert(i)
+		end
+	end
+	for i, v in ipairs(vsel) do log.detail("vsel["..i.."] = "..v) end
+
+	-- ico:vertex_remove(vsel) -- remove multiple vertices (and connected triangles)
+	-- ico:vertex_remove(2) -- remove vertex 3 (and connected triangles)
+	-- ico:vertex_remove() -- remove last vertex in list (and connected triangles)
+
 end
+
+-- explicitly collect the no longer used "make" object
+collectgarbage("collect")
+
+-- do return end
 
 -- create an octahedron-based star mesh
 local oct = nil

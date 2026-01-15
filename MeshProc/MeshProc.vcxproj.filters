@@ -168,6 +168,9 @@
     <ClCompile Include="commands\generator\SphereIco.cpp">
       <Filter>commands\generator</Filter>
     </ClCompile>
+    <ClCompile Include="lua\types\IndexListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -309,6 +312,9 @@
     </ClInclude>
     <ClInclude Include="commands\generator\SphereIco.h">
       <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\IndexListType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

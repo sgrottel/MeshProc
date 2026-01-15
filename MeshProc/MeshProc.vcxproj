@@ -123,6 +123,7 @@
     <ClCompile Include="lua\types\GlmUVec3Type.cpp" />
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
     <ClCompile Include="lua\types\GlmVec3Type.cpp" />
+    <ClCompile Include="lua\types\IndexListType.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
     <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="lua\types\GlmUVec3Type.h" />
     <ClInclude Include="lua\types\GlmVec2Type.h" />
     <ClInclude Include="lua\types\GlmVec3Type.h" />
+    <ClInclude Include="lua\types\IndexListType.h" />
     <ClInclude Include="lua\types\MeshType.h" />
     <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />

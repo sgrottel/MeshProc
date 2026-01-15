@@ -34,7 +34,7 @@ namespace meshproc
 //			MultiMesh,
 			Scene,
 //			Shape2D,
-//			Indices, // e.g. vertices, also edges/loops, or triangles
+			IndexList, // e.g. vertices, also edges/loops, or triangles
 //			MultiIndices,
 //			Callback,
 //			ListOfVec3,
@@ -125,14 +125,14 @@ namespace meshproc
 		//	static type NilVal() { return nullptr; }
 		//};
 
-		//template<>
-		//struct ParamTypeInfo<ParamType::Indices>
-		//{
-		//	static constexpr const char* name = "Indices";
-		//	typedef std::shared_ptr<std::vector<uint32_t>> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
+		template<>
+		struct ParamTypeInfo<ParamType::IndexList>
+		{
+			static constexpr const char* name = "IndexList";
+			typedef std::shared_ptr<std::vector<uint32_t>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
 
 		//template<>
 		//struct ParamTypeInfo<ParamType::MultiIndices>

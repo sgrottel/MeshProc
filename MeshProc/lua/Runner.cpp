@@ -3,7 +3,6 @@
 #include "CommandCreator.h"
 #include "LuaResources.h"
 
-//#include "IndicesType.h"
 //#include "ListOfFloatType.h"
 //#include "ListOfVec3Type.h"
 #include "LogFunctions.h"
@@ -13,12 +12,12 @@
 #include "VersionCheck.h"
 
 #include "types/CommandType.h"
+#include "types/IndexListType.h"
 #include "types/SceneType.h"
 #include "types/MeshType.h"
 
 #define IMPL_COMPONENTS(FUNC) \
-/*	FUNC(IndicesType) \
-	FUNC(ListOfFloatType) \
+/*	FUNC(ListOfFloatType) \
 	FUNC(ListOfVec3Type)*/ \
 	FUNC(LogFunctions) \
 /*	FUNC(MultiIndicesType) \
@@ -26,6 +25,7 @@
 	FUNC(Shape2DType) */ \
 	FUNC(VersionCheck) \
 	FUNC(types, CommandType) \
+	FUNC(types, IndexListType) \
 	FUNC(types, MeshType) \
 	FUNC(types, SceneType)
 
