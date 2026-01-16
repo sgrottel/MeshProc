@@ -1,6 +1,9 @@
 #pragma once
 
+#include "AbstractListType.h"
 #include "AbstractType.h"
+
+#include <glm/glm.hpp>
 
 namespace meshproc
 {
@@ -17,6 +20,9 @@ namespace meshproc
 			{
 			public:
 				static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Mesh";
+				//static constexpr const char* LUA_SUBTYPE_TRIANGLELIST_NAME = "SGR.MeshProc.Data.Mesh_Triangle";
+
+				static int LuaPush(lua_State* lua, std::shared_ptr<data::Mesh> val);
 
 				MeshType(Runner& owner)
 					: AbstractType<data::Mesh, MeshType>{ owner }
@@ -24,7 +30,27 @@ namespace meshproc
 				bool Init();
 
 			private:
+
+				class Vertex : public AbstractListType<glm::vec3, Vertex>
+				{
+				public:
+					static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Mesh_Vertex";
+
+					using MyAbstractListType = AbstractListType<glm::vec3, Vertex>;
+
+					using MyAbstractListType::CallbackToString;
+
+					//using MyAbstractListType::CallbackLength;
+					//using MyAbstractListType::CallbackDispatchGet;
+					//using MyAbstractListType::CallbackSet;
+					//using MyAbstractListType::CallbackInsert;
+					//using MyAbstractListType::CallbackRemove;
+					//using MyAbstractListType::CallbackResize;
+				};
+
 				static int CallbackCtor(lua_State* lua);
+
+				static int CallbackIndexDispatch(lua_State* lua);
 
 				static int CallbackVertexLength(lua_State* lua);
 				static int CallbackVertexResize(lua_State* lua);

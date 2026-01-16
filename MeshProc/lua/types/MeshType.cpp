@@ -14,6 +14,35 @@ using namespace meshproc;
 using namespace meshproc::lua;
 using namespace meshproc::lua::types;
 
+int MeshType::LuaPush(lua_State* lua, std::shared_ptr<data::Mesh> val)
+{
+	int retval = AbstractType<data::Mesh, MeshType>::LuaPush(lua, val);
+	if (retval != 1)
+	{
+		// error case
+		assert(retval == 0);
+		return 0;
+	}
+	// top of stack is MeshType user object
+
+	// Add a user value table to store fields
+	lua_newtable(lua);
+	lua_setuservalue(lua, -2);
+
+	lua_getuservalue(lua, -1);
+
+	lua_newuserdata(lua, 0);
+	luaL_getmetatable(lua, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_setmetatable(lua, -2);
+	lua_setfield(lua, -2, "vertex");
+
+	lua_pop(lua, 1);
+
+	// TODO: add proxy interface objects as fields
+
+	return 1;
+}
+
 bool MeshType::Init()
 {
 	static const struct luaL_Reg staticFuncs[] = {
@@ -24,6 +53,7 @@ bool MeshType::Init()
 	static const struct luaL_Reg memberFuncs[] = {
 		{"__tostring", &MeshType::CallbackToString},
 		{"__gc", &MeshType::CallbackDelete},
+		{"__index", &MeshType::CallbackIndexDispatch},
 
 		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
 
@@ -211,12 +241,64 @@ If you want, I can show you a complete minimal working example (C++ + Lua) that 
 	lua_setfield(lua(), -2, "Mesh");		// store new table as "Mesh" in "meshproc"; also pops that table
 	lua_pop(lua(), 1);						// remove "meshproc" from stack
 
+	// TODO: Vertex user table!
+	static const struct luaL_Reg vertexMemberFuncs[] = {
+		{"__tostring", &Vertex::CallbackToString},
+		//{"__gc", &Vertex::CallbackDelete},
+
+		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
+
+		//{"vertex_length", &MeshType::CallbackVertexLength},
+		//{"vertex_resize", &MeshType::CallbackVertexResize},
+		//{"vertex_get", &MeshType::CallbackVertexGet},
+		//{"vertex_set", &MeshType::CallbackVertexSet},
+		//{"vertex_remove", &MeshType::CallbackVertexRemove},
+		//{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
+
+		//{"triangle_length", &MeshType::CallbackTriangleLength},
+		//{"triangle_resize", &MeshType::CallbackTriangleResize},
+		//{"triangle_get", &MeshType::CallbackTriangleGet},
+		//{"triangle_set", &MeshType::CallbackTriangleSet},
+		//{"triangle_remove", &MeshType::CallbackTriangleRemove},
+
+		//{"apply_transform", &MeshType::CallbackApplyTransform},
+		//{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
+		//{"is_valid", &MeshType::CallbackIsValid},
+
+		{nullptr, nullptr}
+	};
+
+	if (!InitImpl(vertexMemberFuncs, MeshType::Vertex::LUA_TYPE_NAME))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 int MeshType::CallbackCtor(lua_State* lua)
 {
 	MeshType::LuaPush(lua, std::make_shared<data::Mesh>());
+	return 1;
+}
+
+int MeshType::CallbackIndexDispatch(lua_State* lua)
+{
+	if (lua_getmetatable(lua, 1))
+	{
+		lua_pushvalue(lua, 2); // key
+		lua_rawget(lua, -2); // metatable[key]
+		if (!lua_isnil(lua, -1))
+		{
+			return 1; // found in metatable
+		}
+		lua_pop(lua, 1); // pop nil
+		lua_pop(lua, 1); // pop metatable
+	}
+	
+	lua_getuservalue(lua, 1);
+	lua_pushvalue(lua, 2);
+	lua_rawget(lua, -2);
 	return 1;
 }
 

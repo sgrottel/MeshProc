@@ -26,6 +26,9 @@ do
 	make["SizeX"] = (tonumber(args.sizex) or error("arg.sizex is not a number"))
 	make:invoke()
 	cube = make["Mesh"]
+
+	log.detail(tostring(cube))
+	log.detail(tostring(cube.vertex))
 end
 
 -- explicitly collect the no longer used "make" object

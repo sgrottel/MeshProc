@@ -112,9 +112,12 @@ namespace meshproc
 				if (!hasIndexDispatcher)
 				{
 					// default __index dispatcher just references the metatable
-					lua_pushstring(Runner::Component<TIMPL>::lua(), "__index");
-					lua_pushvalue(Runner::Component<TIMPL>::lua(), -2);	// pushes the metatable
-					lua_settable(Runner::Component<TIMPL>::lua(), -3);	// metatable.__index = metatable
+					lua_pushvalue(Runner::Component<TIMPL>::lua(), -1);
+					lua_setfield(Runner::Component<TIMPL>::lua(), -2, "__index");
+
+					// lua_pushstring(Runner::Component<TIMPL>::lua(), "__index");
+					// lua_pushvalue(Runner::Component<TIMPL>::lua(), -2);	// pushes the metatable
+					// lua_settable(Runner::Component<TIMPL>::lua(), -3);	// metatable.__index = metatable
 				}
 
 				luaL_setfuncs(Runner::Component<TIMPL>::lua(), memberFuncs, 0);
