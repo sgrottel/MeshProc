@@ -4,10 +4,10 @@
 
 //#include "CallbackFunction.h"
 #include "GlmMat4Type.h"
+#include "GlmVec3ListType.h"
 #include "GlmVec3Type.h"
 #include "IndexListType.h"
 //#include "ListOfFloatType.h"
-//#include "ListOfVec3Type.h"
 #include "MeshType.h"
 //#include "MultiMeshType.h"
 //#include "MultiIndicesType.h"
@@ -173,8 +173,8 @@ namespace
 	//	}
 	//};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::ListOfVec3> : LuaWrappedParamMapping<ListOfVec3Type, std::vector<glm::vec3>> {};
+	template<>
+	struct LuaParamMapping<ParamType::Vec3List> : LuaWrappedParamMapping<GlmVec3ListType, std::vector<glm::vec3>> {};
 
 	//template<>
 	//struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};

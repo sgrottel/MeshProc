@@ -2,13 +2,17 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
+#include <unordered_map>
+
 using namespace meshproc;
+using namespace meshproc::commands;
+using namespace meshproc::commands::edit;
 
 DisplacementNoise::DisplacementNoise(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::In, ParamType::ListOfVec3>("Dirs", m_dirs);
+	AddParamBinding<ParamMode::In, ParamType::Vec3List>("Dirs", m_dirs);
 	AddParamBinding<ParamMode::In, ParamType::Float>("Min", m_min);
 	AddParamBinding<ParamMode::In, ParamType::Float>("Max", m_max);
 	AddParamBinding<ParamMode::In, ParamType::UInt32>("Seed", m_seed);

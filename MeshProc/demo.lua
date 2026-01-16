@@ -33,10 +33,48 @@ collectgarbage("collect")
 
 -- create an icosahedron mesh
 local ico = nil
+local croncle = nil
 do
 	local make = meshproc.generator.Icosahedron.new()
 	make:invoke()
 	ico = make["Mesh"]
+
+	make:invoke()
+	croncle = make["Mesh"]
+
+	do
+		local vertNorms = meshproc.compute.VertexNormals.new()
+		local move = meshproc.edit.DisplacementNoise.new()
+		local subdiv = meshproc.edit.Subdivision.new()
+
+		vertNorms["Mesh"] = croncle
+		move["Mesh"] = croncle
+		subdiv["Mesh"] = croncle
+		move["Seed"] = 0815
+		move["Min"] = 0
+		move["Max"] = 0.1
+
+		vertNorms:invoke()
+		move["Dirs"] = vertNorms["Normals"]
+		move:invoke()
+		subdiv:invoke()
+
+		move["Min"] = -0.1
+		move["Max"] = 0.3
+		vertNorms:invoke()
+		move["Dirs"] = vertNorms["Normals"]
+		move:invoke()
+		subdiv:invoke()
+
+		move["Min"] = -0.2
+		move["Max"] = 0.2
+		vertNorms:invoke()
+		move["Dirs"] = vertNorms["Normals"]
+		move:invoke()
+
+		log.detail(tostring(#(vertNorms["Normals"]) == croncle:vertex_length()))
+
+	end
 
 	ico:apply_transform(XMat4.translate(0.5, 1, 3))
 
@@ -153,6 +191,8 @@ scene:place(cube, XMat4.translate(0, 2, 0)) -- second instance of 'cube' transla
 scene:place(ico)
 
 scene:place(oct, XMat4.translate(2.5, 4, 3))
+
+scene:place(croncle, XMat4.translate(-2, 2, 1))
 
 -- scene:place(poly, XMat4.translate(0, 0, 2))
 

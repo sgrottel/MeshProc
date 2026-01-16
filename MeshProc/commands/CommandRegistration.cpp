@@ -13,6 +13,10 @@ namespace
 //   #include "namespace/class_name.h"
 //   And the template specialization of `RegisterCommandHelper` for class runtime registration logic
 
+#define COMMAND_PATH compute, VertexNormals
+#include "CommandRegistration.inc"
+#define COMMAND_PATH edit, DisplacementNoise
+#include "CommandRegistration.inc"
 #define COMMAND_PATH edit, Subdivision
 #include "CommandRegistration.inc"
 #define COMMAND_PATH generator, Cuboid

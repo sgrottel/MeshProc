@@ -94,6 +94,8 @@
     <ClCompile Include="commands\AbstractCommand.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
     <ClCompile Include="commands\CommandRegistration.cpp" />
+    <ClCompile Include="commands\compute\VertexNormals.cpp" />
+    <ClCompile Include="commands\edit\DisplacementNoise.cpp" />
     <ClCompile Include="commands\edit\Subdivision.cpp" />
     <ClCompile Include="commands\generator\Cuboid.cpp" />
     <ClCompile Include="commands\generator\Icosahedron.cpp" />
@@ -117,11 +119,13 @@
     <ClCompile Include="lua\LogFunctions.cpp" />
     <ClCompile Include="lua\LuaUtilities.cpp" />
     <ClCompile Include="lua\Runner.cpp" />
+    <ClCompile Include="lua\types\AbstractListType.cpp" />
     <ClCompile Include="lua\types\AbstractType.cpp" />
     <ClCompile Include="lua\types\CommandType.cpp" />
     <ClCompile Include="lua\types\GlmMat4Type.cpp" />
     <ClCompile Include="lua\types\GlmUVec3Type.cpp" />
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
+    <ClCompile Include="lua\types\GlmVec3ListType.cpp" />
     <ClCompile Include="lua\types\GlmVec3Type.cpp" />
     <ClCompile Include="lua\types\IndexListType.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
@@ -158,6 +162,8 @@
     <ClInclude Include="commands\AbstractCommand.h" />
     <ClInclude Include="commands\CommandFactory.h" />
     <ClInclude Include="commands\CommandRegistration.h" />
+    <ClInclude Include="commands\compute\VertexNormals.h" />
+    <ClInclude Include="commands\edit\DisplacementNoise.h" />
     <ClInclude Include="commands\edit\Subdivision.h" />
     <ClInclude Include="commands\generator\Cuboid.h" />
     <ClInclude Include="commands\generator\Icosahedron.h" />
@@ -182,11 +188,13 @@
     <ClInclude Include="lua\LuaResources.h" />
     <ClInclude Include="lua\LuaUtilities.h" />
     <ClInclude Include="lua\Runner.h" />
+    <ClInclude Include="lua\types\AbstractListType.h" />
     <ClInclude Include="lua\types\AbstractType.h" />
     <ClInclude Include="lua\types\CommandType.h" />
     <ClInclude Include="lua\types\GlmMat4Type.h" />
     <ClInclude Include="lua\types\GlmUVec3Type.h" />
     <ClInclude Include="lua\types\GlmVec2Type.h" />
+    <ClInclude Include="lua\types\GlmVec3ListType.h" />
     <ClInclude Include="lua\types\GlmVec3Type.h" />
     <ClInclude Include="lua\types\IndexListType.h" />
     <ClInclude Include="lua\types\MeshType.h" />

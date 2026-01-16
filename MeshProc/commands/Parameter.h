@@ -37,7 +37,7 @@ namespace meshproc
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 //			MultiIndices,
 //			Callback,
-//			ListOfVec3,
+			Vec3List,
 //			ListOfFloat,
 
 			LAST
@@ -152,14 +152,14 @@ namespace meshproc
 		//	static type NilVal() { return nullptr; }
 		//};
 
-		//template<>
-		//struct ParamTypeInfo<ParamType::ListOfVec3>
-		//{
-		//	static constexpr const char* name = "ListOfVec3";
-		//	typedef std::shared_ptr<std::vector<glm::vec3>> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
+		template<>
+		struct ParamTypeInfo<ParamType::Vec3List>
+		{
+			static constexpr const char* name = "Vec3List";
+			typedef std::shared_ptr<std::vector<glm::vec3>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
 
 		//template<>
 		//struct ParamTypeInfo<ParamType::ListOfFloat>

@@ -3,15 +3,16 @@
 #include <SimpleLog/SimpleLog.hpp>
 
 using namespace meshproc;
+using namespace meshproc::commands;
 
-generator::VertexNormals::VertexNormals(const sgrottel::ISimpleLog& log)
+compute::VertexNormals::VertexNormals(const sgrottel::ISimpleLog& log)
 	: AbstractCommand(log)
 {
-	AddParamBinding<ParamMode::Out, ParamType::ListOfVec3>("Normals", m_normals);
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
+	AddParamBinding<ParamMode::Out, ParamType::Vec3List>("Normals", m_normals);
 }
 
-bool generator::VertexNormals::Invoke()
+bool compute::VertexNormals::Invoke()
 {
 	if (!m_mesh)
 	{

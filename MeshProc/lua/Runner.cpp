@@ -15,16 +15,17 @@
 #include "types/IndexListType.h"
 #include "types/SceneType.h"
 #include "types/MeshType.h"
+#include "types/GlmVec3ListType.h"
 
 #define IMPL_COMPONENTS(FUNC) \
-/*	FUNC(ListOfFloatType) \
-	FUNC(ListOfVec3Type)*/ \
+/*	FUNC(ListOfFloatType)*/ \
 	FUNC(LogFunctions) \
 /*	FUNC(MultiIndicesType) \
 	FUNC(MultiMeshType) \
 	FUNC(Shape2DType) */ \
 	FUNC(VersionCheck) \
 	FUNC(types, CommandType) \
+	FUNC(types, GlmVec3ListType) \
 	FUNC(types, IndexListType) \
 	FUNC(types, MeshType) \
 	FUNC(types, SceneType)

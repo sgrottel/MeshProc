@@ -49,6 +49,9 @@
     <Filter Include="commands\edit">
       <UniqueIdentifier>{34bad5c1-9afb-45db-9f22-e5f5d2f5c29b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="commands\compute">
+      <UniqueIdentifier>{8cfc4c3b-e159-40ab-ac0a-6c69bdcb83b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MeshProc.cpp">
@@ -170,6 +173,18 @@
     </ClCompile>
     <ClCompile Include="lua\types\IndexListType.cpp">
       <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\AbstractListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\VertexNormals.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\GlmVec3ListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\DisplacementNoise.cpp">
+      <Filter>commands\edit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +330,18 @@
     </ClInclude>
     <ClInclude Include="lua\types\IndexListType.h">
       <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\AbstractListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\VertexNormals.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmVec3ListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\DisplacementNoise.h">
+      <Filter>commands\edit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
