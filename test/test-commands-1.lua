@@ -221,7 +221,7 @@ scene:place(ico)
 
 scene:place(oct, XMat4.translate(2.5, 4, 3))
 
--- scene:place(croncle, XMat4.translate(-2, 2, 1))
+scene:place(croncle, XMat4.translate(-2, 2, 1))
 
 -- save scene to file
 do
