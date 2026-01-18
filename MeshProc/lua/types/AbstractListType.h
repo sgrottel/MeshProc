@@ -5,6 +5,7 @@
 #include "lua/LuaUtilities.h"
 
 #include <vector>
+#include <memory>
 
 namespace meshproc
 {
@@ -25,6 +26,7 @@ namespace meshproc
 
 				static void OnInserted(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
 				static void OnRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
+				static void OnManyRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, std::vector<uint32_t>& /*idxListZeroBaseSortedAsc*/) {}
 				static void OnResized(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*newsize*/, uint32_t /*oldsize*/) {}
 			};
 
@@ -34,6 +36,8 @@ namespace meshproc
 			public:
 
 			protected:
+				static constexpr const char* LUA_INDEX_LIST_TYPE_NAME = "SGR.MeshProc.Data.IndexList";
+
 				using MyAbstractType = AbstractType<std::vector<TINNERVAR>, TIMPL>;
 
 				static int CallbackCtor(lua_State* lua)
@@ -175,7 +179,7 @@ namespace meshproc
 					if (argcnt == 2)
 					{
 						list->push_back(val);
-						TLISTTRAITS::OnInserted(lua, 1, list, list->size() - 1);
+						TLISTTRAITS::OnInserted(lua, 1, list, static_cast<uint32_t>(list->size() - 1));
 						return 0;
 					}
 
@@ -191,7 +195,7 @@ namespace meshproc
 					if (idx == list->size() + 1)
 					{
 						list->push_back(val);
-						TLISTTRAITS::OnInserted(lua, 1, list, list->size() - 1);
+						TLISTTRAITS::OnInserted(lua, 1, list, static_cast<uint32_t>(list->size() - 1));
 						return 0;
 					}
 
@@ -222,6 +226,53 @@ namespace meshproc
 						list->pop_back();
 						TLISTTRAITS::OnRemoved(lua, 1, list, static_cast<uint32_t>(list->size()));
 						return 0;
+					}
+
+					if (lua_isuserdata(lua, 2))
+					{
+						void* ud = luaL_checkudata(lua, 2, LUA_INDEX_LIST_TYPE_NAME);
+						if (ud != nullptr)
+						{
+							// param is an IndexListType -> optimized implementation
+
+							//
+							// re-definition of private and inaccassible "AbstractType<std::vector<uint32_t>, IndexListType>::wrapped"
+							// This is required to break a cyclic dependency
+							//
+							struct WrappedIndices {
+								std::shared_ptr<std::vector<uint32_t>> indices;
+							};
+							WrappedIndices* wrappedIndices = static_cast<WrappedIndices*>(ud);
+
+							std::vector<uint32_t> ids;
+							ids.resize(wrappedIndices->indices->size());
+							std::copy(wrappedIndices->indices->begin(), wrappedIndices->indices->end(), ids.begin());
+
+							std::sort(ids.begin(), ids.end());
+							ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
+
+							size_t write = 0;
+							size_t next_id_index = 0;
+
+							for (size_t read = 0; read < list->size(); ++read)
+							{
+								if (next_id_index < ids.size() && read == ids[next_id_index])
+								{
+									++next_id_index; // skip this index
+								}
+								else
+								{
+									list->at(write++) = list->at(read);
+								}
+							}
+
+							list->resize(write);
+
+							TLISTTRAITS::OnManyRemoved(lua, 1, list, ids);
+							return 0;
+						}
+
+						return luaL_error(lua, "Failed to get insert index argument integer; unexpected userdata");
 					}
 
 					uint32_t idx;

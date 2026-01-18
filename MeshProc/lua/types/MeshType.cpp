@@ -89,6 +89,48 @@ void MeshType::VertexListTraits::OnResized(lua_State* lua, int idx, listptr_t li
 		});
 }
 
+void MeshType::VertexListTraits::OnManyRemoved(lua_State* lua, int idx, listptr_t /*list*/, std::vector<uint32_t>& idxListZeroBaseSortedAsc)
+{
+	if (idxListZeroBaseSortedAsc.empty()) return;
+
+	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+
+	std::unordered_map<uint32_t, uint32_t> remap;
+	const uint32_t oldSize = static_cast<uint32_t>(mesh->vertices.size() + idxListZeroBaseSortedAsc.size());
+	remap.reserve(mesh->vertices.size());
+	uint32_t off = 0;
+	for (uint32_t i = 0; i < oldSize; ++i)
+	{
+		if (off < idxListZeroBaseSortedAsc.size() && i == idxListZeroBaseSortedAsc.at(off))
+		{
+			off++;
+		}
+		else
+		{
+			remap.insert(std::make_pair(i, i - off));
+		}
+	}
+
+	std::erase_if(mesh->triangles, [&remap](data::Triangle& t)
+		{
+			return !remap.contains(t[0])
+				|| !remap.contains(t[1])
+				|| !remap.contains(t[2]);
+		});
+
+
+	for (data::Triangle& t : mesh->triangles)
+	{
+		for (size_t i = 0; i < 3; ++i)
+		{
+			t[i] = remap.at(t[i]);
+		}
+	}
+}
+
 int MeshType::Vertex::CallbackRemoveIsolated(lua_State* lua)
 {
 	luaL_checkudata(lua, -1, LUA_TYPE_NAME);

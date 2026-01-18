@@ -146,9 +146,11 @@ do
 	end
 	for i, v in ipairs(vsel) do log.detail("vsel["..i.."] = "..v) end
 
-	-- ico:vertex_remove(vsel) -- remove multiple vertices (and connected triangles)
-	-- ico:vertex_remove(2) -- remove vertex 3 (and connected triangles)
-	-- ico:vertex_remove() -- remove last vertex in list (and connected triangles)
+	ico.vertex:remove(vsel) -- remove multiple vertices (and connected triangles)
+	ico.vertex:remove(2) -- remove vertex 3 (and connected triangles)
+	ico.vertex:remove() -- remove last vertex in list (and connected triangles)
+
+	ico.vertex:remove_isolated() -- could happen because of implicitly delete triangles
 
 end
 

@@ -37,6 +37,7 @@ namespace meshproc
 					static void OnInserted(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase);
 					static void OnRemoved(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase);
 					static void OnResized(lua_State* lua, int idx, listptr_t list, uint32_t newsize, uint32_t oldsize);
+					static void OnManyRemoved(lua_State* lua, int idx, listptr_t list, std::vector<uint32_t>& idxListZeroBaseSortedAsc);
 				};
 
 				class Vertex : public AbstractListType<glm::vec3, Vertex, VertexListTraits>
@@ -70,6 +71,7 @@ namespace meshproc
 					static void OnInserted(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
 					static void OnRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
 					static void OnResized(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*newsize*/, uint32_t /*oldsize*/) {}
+					static void OnManyRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, std::vector<uint32_t>& /*idxListZeroBaseSortedAsc*/) {}
 				};
 
 				class Triangle : public AbstractListType<data::Triangle, Triangle, TriangleListTraits>

@@ -17,7 +17,7 @@ namespace meshproc
 			class IndexListType : public AbstractListType<uint32_t, IndexListType>
 			{
 			public:
-				static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.IndexList";
+				static constexpr const char* LUA_TYPE_NAME = LUA_INDEX_LIST_TYPE_NAME;
 
 				IndexListType(Runner& owner)
 					: AbstractListType<uint32_t, IndexListType>{ owner }
