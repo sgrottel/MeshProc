@@ -168,18 +168,8 @@ jobs:
       run: |
         $exe = "bin\x64\${{matrix.configuration}}\MeshProc.exe"
 
-        & $exe run ".\test\gen-test-obj.lua" -v
+        & '.\test\run-all.ps1' -exe:$exe -Verbose
         if ($LASTEXITCODE -ne 0) { throw }
-
-        cd test
-
-        .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-1.obj -Verbose
-        if ($LASTEXITCODE -ne 0) { throw }
-
-        .\Compare-WavefrontObjFiles.ps1 .\test-obj.obj .\test-obj-2.obj -Verbose
-        if ($LASTEXITCODE -ne 0) { throw }
-
-        cd ..
 
     - name: Upload Artifacts
       if: ${{ matrix.configuration == 'Release' }}
