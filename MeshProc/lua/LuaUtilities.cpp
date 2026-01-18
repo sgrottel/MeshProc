@@ -6,11 +6,13 @@
 namespace
 {
 
-	void indent(int depth) {
+	void indent(int depth)
+	{
 		for (int i = 0; i < depth; ++i) std::cout << "  ";
 	}
 
-	void dump_value(lua_State* L, int index, int depth, const void* prevPtr = nullptr) {
+	void dump_value(lua_State* L, int index, int depth, const void* prevPtr = nullptr)
+	{
 		int type = lua_type(L, index);
 		switch (type) {
 		case LUA_TNUMBER:
@@ -30,7 +32,8 @@ namespace
 			{
 				std::cout << " {\n";
 				lua_pushnil(L);  // first key
-				while (lua_next(L, index < 0 ? index - 1 : index)) {
+				while (lua_next(L, index < 0 ? index - 1 : index))
+				{
 					indent(depth + 1);
 					std::cout << "[";
 					dump_value(L, -2, depth + 1);  // key
@@ -48,6 +51,28 @@ namespace
 			}
 		}
 			break;
+		case LUA_TUSERDATA:
+		{
+			std::string name{ "error" };
+			if (lua_getmetatable(L, index))
+			{
+				void* mt_ptr = (void*)lua_topointer(L, -1);
+				lua_pushnil(L); // first key for lua_next
+				while (lua_next(L, LUA_REGISTRYINDEX) != 0)
+				{
+					if (lua_topointer(L, -1) == mt_ptr && lua_type(L, -2) == LUA_TSTRING)
+					{
+						name = lua_tostring(L, -2);
+						lua_pop(L, 2); // pop key + value
+						break;
+					}
+					lua_pop(L, 1); // pop value
+				}
+				lua_pop(L, 1); // pop mt
+			}
+			std::cout << "userdata \"" << name << "\" @" << lua_topointer(L, index);
+		}
+			break;
 		default:
 			std::cout << lua_typename(L, type) << " @" << lua_topointer(L, index);
 			break;
@@ -56,10 +81,12 @@ namespace
 
 }
 
-void meshproc::lua::DumpLuaStack(lua_State* L) {
+void meshproc::lua::DumpLuaStack(lua_State* L)
+{
 	int top = lua_gettop(L);
 	std::cout << "Lua stack (top -> bottom):\n";
-	for (int i = top; i >= 1; --i) {
+	for (int i = top; i >= 1; --i)
+	{
 		indent(1);
 		std::cout << i << ": ";
 		dump_value(L, i, 1);

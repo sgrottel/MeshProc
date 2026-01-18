@@ -12,7 +12,19 @@ namespace meshproc
 	{
 		namespace types
 		{
+
 			template<typename TINNERVAR, typename TIMPL>
+			class AbstractListTypeListTraits : private AbstractType<std::vector<TINNERVAR>, TIMPL>
+			{
+			public:
+				using listptr_t = std::shared_ptr<std::vector<TINNERVAR>>;
+				static listptr_t LuaGetList(lua_State* lua, int idx)
+				{
+					return AbstractType<std::vector<TINNERVAR>, TIMPL>::LuaGet(lua, idx);
+				}
+			};
+
+			template<typename TINNERVAR, typename TIMPL, typename TLISTTRAITS = AbstractListTypeListTraits<TINNERVAR, TIMPL>>
 			class AbstractListType : public AbstractType<std::vector<TINNERVAR>, TIMPL>
 			{
 			public:
@@ -36,7 +48,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");
@@ -56,7 +68,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");
@@ -110,7 +122,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 3, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");
@@ -144,7 +156,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 2 or 3, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");
@@ -192,7 +204,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 1 or 2, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");
@@ -229,7 +241,7 @@ namespace meshproc
 						return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
 					}
 
-					const auto list = MyAbstractType::LuaGet(lua, 1);
+					const typename TLISTTRAITS::listptr_t list = TLISTTRAITS::LuaGetList(lua, 1);
 					if (!list)
 					{
 						return luaL_error(lua, "Pre-First argument expected to be a IndexList");

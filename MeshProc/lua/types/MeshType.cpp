@@ -1,7 +1,5 @@
 #include "MeshType.h"
 
-#include "data/Mesh.h"
-
 #include "GlmMat4Type.h"
 #include "GlmUVec3Type.h"
 #include "GlmVec3Type.h"
@@ -13,6 +11,68 @@
 using namespace meshproc;
 using namespace meshproc::lua;
 using namespace meshproc::lua::types;
+
+std::vector<data::Triangle>* MeshType::TriangleListTraits::LuaGetList(lua_State* lua, int idx)
+{
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+	return &(mesh->triangles);
+}
+
+void MeshType::Triangle::LuaPushElementValue(lua_State* lua, const std::vector<data::Triangle>& list, uint32_t indexZeroBased)
+{
+	const auto& t = list.at(indexZeroBased);
+
+	// triangle [0, 0, 0] is special as invalid -- keep
+	// in all other cases increase vertex indices to be 1-based
+	if (t[0] == 0 && t[1] == 0 && t[2] == 0)
+	{
+		GlmUVec3Type::Push(lua, glm::uvec3{ 0, 0, 0 });
+	}
+	else
+	{
+		GlmUVec3Type::Push(lua, glm::uvec3{ t[0] + 1, t[1] + 1, t[2] + 1 });
+	}
+}
+
+bool MeshType::Triangle::LuaGetElement(lua_State* lua, int i, data::Triangle& outVal)
+{
+	glm::uvec3 tr;
+	if (!GlmUVec3Type::TryGet(lua, i, tr))
+	{
+		return luaL_error(lua, "Second argument expected to be a vec3");
+	}
+
+	// tr vertex indices are 1-based, unless all are zero
+	if (tr.x != 0 && tr.y != 0 && tr.z != 0)
+	{
+		tr.x--;
+		tr.y--;
+		tr.z--;
+	}
+	else
+	{
+		// at least one is zero
+		if (tr.x != 0 || tr.y != 0 || tr.z != 0)
+		{
+			// at least one is non-zero
+			// => triangle does not use consistent 1-based indices
+			return luaL_error(lua, "Vertex indices in triangle do not seem 1-based (%d, %d, &d)", tr.x, tr.y, tr.z);
+		}
+	}
+
+	outVal[0] = tr.x;
+	outVal[1] = tr.y;
+	outVal[2] = tr.z;
+
+	return true;
+}
+
+data::Triangle MeshType::Triangle::GetInvalidValue()
+{
+	return data::Triangle{};
+}
 
 int MeshType::LuaPush(lua_State* lua, std::shared_ptr<data::Mesh> val)
 {
@@ -34,11 +94,19 @@ int MeshType::LuaPush(lua_State* lua, std::shared_ptr<data::Mesh> val)
 	lua_newuserdata(lua, 0);
 	luaL_getmetatable(lua, MeshType::Vertex::LUA_TYPE_NAME);
 	lua_setmetatable(lua, -2);
+	lua_pushvalue(lua, -3);
+	lua_setuservalue(lua, -2);
 	lua_setfield(lua, -2, "vertex");
 
-	lua_pop(lua, 1);
+	lua_newuserdata(lua, 0);
+	luaL_getmetatable(lua, MeshType::Triangle::LUA_TYPE_NAME);
+	lua_setmetatable(lua, -2);
+	lua_pushvalue(lua, -3);
+	lua_setuservalue(lua, -2);
 
-	// TODO: add proxy interface objects as fields
+	lua_setfield(lua, -2, "triangle");
+
+	lua_pop(lua, 1);
 
 	return 1;
 }
@@ -62,13 +130,8 @@ bool MeshType::Init()
 		{"vertex_get", &MeshType::CallbackVertexGet},
 		{"vertex_set", &MeshType::CallbackVertexSet},
 		{"vertex_remove", &MeshType::CallbackVertexRemove},
-		{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
 
-		{"triangle_length", &MeshType::CallbackTriangleLength},
-		{"triangle_resize", &MeshType::CallbackTriangleResize},
-		{"triangle_get", &MeshType::CallbackTriangleGet},
-		{"triangle_set", &MeshType::CallbackTriangleSet},
-		{"triangle_remove", &MeshType::CallbackTriangleRemove},
+		{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
 
 		{"apply_transform", &MeshType::CallbackApplyTransform},
 		{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
@@ -241,10 +304,9 @@ If you want, I can show you a complete minimal working example (C++ + Lua) that 
 	lua_setfield(lua(), -2, "Mesh");		// store new table as "Mesh" in "meshproc"; also pops that table
 	lua_pop(lua(), 1);						// remove "meshproc" from stack
 
-	// TODO: Vertex user table!
+	// Vertex user table!
 	static const struct luaL_Reg vertexMemberFuncs[] = {
 		{"__tostring", &Vertex::CallbackToString},
-		//{"__gc", &Vertex::CallbackDelete},
 
 		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
 
@@ -255,20 +317,28 @@ If you want, I can show you a complete minimal working example (C++ + Lua) that 
 		//{"vertex_remove", &MeshType::CallbackVertexRemove},
 		//{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
 
-		//{"triangle_length", &MeshType::CallbackTriangleLength},
-		//{"triangle_resize", &MeshType::CallbackTriangleResize},
-		//{"triangle_get", &MeshType::CallbackTriangleGet},
-		//{"triangle_set", &MeshType::CallbackTriangleSet},
-		//{"triangle_remove", &MeshType::CallbackTriangleRemove},
-
-		//{"apply_transform", &MeshType::CallbackApplyTransform},
-		//{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
-		//{"is_valid", &MeshType::CallbackIsValid},
 
 		{nullptr, nullptr}
 	};
 
 	if (!InitImpl(vertexMemberFuncs, MeshType::Vertex::LUA_TYPE_NAME))
+	{
+		return false;
+	}
+
+	// Triangle user table!
+	static const struct luaL_Reg triangleMemberFuncs[] = {
+		{"__tostring", &Triangle::CallbackToString},
+		{"__len", &Triangle::CallbackLength},
+		{"__index", &Triangle::CallbackDispatchGet},
+		{"__newindex", &Triangle::CallbackSet},
+		{"insert", &Triangle::CallbackInsert},
+		{"remove", &Triangle::CallbackRemove},
+		{"resize", &Triangle::CallbackResize},
+		{nullptr, nullptr}
+	};
+
+	if (!InitImpl(triangleMemberFuncs, MeshType::Triangle::LUA_TYPE_NAME))
 	{
 		return false;
 	}
@@ -408,145 +478,6 @@ int MeshType::CallbackVertexRemove(lua_State* lua)
 }
 
 int MeshType::CallbackVertexRemoveIsolated(lua_State* lua)
-{
-	return luaL_error(lua, "NOT IMPLEMENTED");
-}
-
-int MeshType::CallbackTriangleLength(lua_State* lua)
-{
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 1)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	lua_pushinteger(lua, mesh->triangles.size());
-	return 1;
-}
-
-int MeshType::CallbackTriangleResize(lua_State* lua)
-{
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 2)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t newSize;
-	if (lua::GetLuaUint32(lua, 2, newSize) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-
-	mesh->triangles.resize(newSize, data::Triangle{ 0, 0, 0 });
-
-	return 0;
-}
-
-int MeshType::CallbackTriangleGet(lua_State* lua)
-{
-	// since Lua handles doubles/floats and integers the same, we can just use a xyz_math XVec3
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 2)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t idx;
-	if (lua::GetLuaUint32(lua, 2, idx) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-	if (idx == 0 || idx > mesh->triangles.size())
-	{
-		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(mesh->triangles.size()), static_cast<int>(idx));
-	}
-
-	const auto& t = mesh->triangles.at(idx - 1);
-
-	// triangle [0, 0, 0] is special as invalid -- keep
-	// in all other cases increase vertex indices to be 1-based
-	if (t[0] == 0 && t[1] == 0 && t[2] == 0)
-	{
-		GlmUVec3Type::Push(lua, glm::uvec3{ 0, 0, 0 });
-		return 1;
-	}
-
-	GlmUVec3Type::Push(lua, glm::uvec3{ t[0] + 1, t[1] + 1, t[2] + 1 });
-	return 1;
-}
-
-int MeshType::CallbackTriangleSet(lua_State* lua)
-{
-	// since Lua handles doubles/floats and integers the same, we can just use a xyz_math XVec3
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 3)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 3, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t idx;
-	if (lua::GetLuaUint32(lua, 2, idx) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-	if (idx == 0 || idx > mesh->triangles.size())
-	{
-		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(mesh->triangles.size()), static_cast<int>(idx));
-	}
-
-	glm::uvec3 tr;
-	if (!GlmUVec3Type::TryGet(lua, 3, tr))
-	{
-		return luaL_error(lua, "Second argument expected to be a vec3");
-	}
-
-	// tr vertex indices are 1-based, unless all are zero
-	if (tr.x != 0 && tr.y != 0 && tr.z != 0)
-	{
-		tr.x--;
-		tr.y--;
-		tr.z--;
-	}
-	else
-	{
-		// at least one is zero
-		if (tr.x != 0 || tr.y != 0 || tr.z != 0)
-		{
-			// at least one is non-zero
-			// => triangle does not use consistent 1-based indices
-			return luaL_error(lua, "Vertex indices in triangle do not seem 1-based (%d, %d, &d)", tr.x, tr.y, tr.z);
-		}
-	}
-
-	auto& t = mesh->triangles.at(idx - 1);
-	t[0] = tr.x;
-	t[1] = tr.y;
-	t[2] = tr.z;
-	return 0;
-}
-
-int MeshType::CallbackTriangleRemove(lua_State* lua)
 {
 	return luaL_error(lua, "NOT IMPLEMENTED");
 }

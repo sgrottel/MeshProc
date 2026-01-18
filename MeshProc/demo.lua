@@ -29,6 +29,13 @@ do
 
 	log.detail(tostring(cube))
 	log.detail(tostring(cube.vertex))
+	log.detail(tostring(cube.triangle))
+	local tri = cube.triangle[2]
+	log.detail("tri[2] = "..tostring(tri.x)..", "..tostring(tri.y)..", "..tostring(tri.z).."")
+	cube.triangle:remove(2)
+	-- tri.x, tri.y = tri.y, tri.x
+	cube.triangle:insert(tri)
+	log.detail("#triangles = "..tostring(#cube.triangle))
 end
 
 -- explicitly collect the no longer used "make" object
@@ -134,7 +141,7 @@ do
 	subdiv:invoke()
 
 	local vCnt = oct:vertex_length()
-	local tCnt = oct:triangle_length()
+	local tCnt = #oct.triangle
 	log.write("Oct mesh: " .. tostring(vCnt) .. "v " .. tostring(tCnt) .. "t")
 
 	for vI = 1, vCnt do
@@ -146,12 +153,11 @@ do
 		end
 	end
 
-	for tI = 1, tCnt do
-		local t = oct:triangle_get(tI)
+	for tI, t in ipairs(oct.triangle) do
 		log.detail("t["..tostring(tI).."] = { "..tostring(t.x)..", "..tostring(t.y)..", "..tostring(t.z).." }")
 		-- for debugging, the next lines change winding of triangle
-		--t.y, t.z = t.z, t.y
-		--oct:triangle_set(tI, t)
+		-- t.y, t.z = t.z, t.y
+		-- oct.triangle[tI] = t
 	end
 
 end
