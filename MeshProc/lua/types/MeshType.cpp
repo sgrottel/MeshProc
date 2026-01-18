@@ -8,12 +8,115 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
+#include <unordered_set>
+
 using namespace meshproc;
 using namespace meshproc::lua;
 using namespace meshproc::lua::types;
 
+std::vector<glm::vec3>* MeshType::VertexListTraits::LuaGetList(lua_State* lua, int idx)
+{
+	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+	return &mesh->vertices;
+}
+
+void MeshType::VertexListTraits::OnInserted(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase)
+{
+	if (idxZeroBase + 1 == list->size())
+	{
+		// when a vertex was appended, and the mesh was valid before, aka all triangles referenced existing vertices,
+		// then no triangle will reference the new vertex yet, or any vertex-idx beyond that.
+		// So, no need to update the triangle data
+		return;
+	}
+
+	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+
+	for (data::Triangle& t : mesh->triangles)
+	{
+		for (size_t i = 0; i < 3; ++i)
+		{
+			if (t[i] >= idxZeroBase)
+			{
+				t[i]++;
+			}
+		}
+	}
+
+}
+
+void MeshType::VertexListTraits::OnRemoved(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase)
+{
+	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+
+	std::erase_if(mesh->triangles, [idxZeroBase](data::Triangle& t) { return t.HasIndex(idxZeroBase); });
+
+	for (data::Triangle& t : mesh->triangles)
+	{
+		for (size_t i = 0; i < 3; ++i)
+		{
+			if (t[i] > idxZeroBase)
+			{
+				t[i]--;
+			}
+		}
+	}
+}
+
+void MeshType::VertexListTraits::OnResized(lua_State* lua, int idx, listptr_t list, uint32_t newsize, uint32_t oldsize)
+{
+	if (newsize >= oldsize) return;
+
+	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
+	lua_getuservalue(lua, idx);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+
+	std::erase_if(mesh->triangles, [newsize](data::Triangle& t)
+		{
+			return t[0] >= newsize
+				|| t[1] >= newsize
+				|| t[2] >= newsize;
+		});
+}
+
+int MeshType::Vertex::CallbackRemoveIsolated(lua_State* lua)
+{
+	luaL_checkudata(lua, -1, LUA_TYPE_NAME);
+	lua_getuservalue(lua, -1);
+	auto mesh = MeshType::LuaGet(lua, -1);
+	lua_pop(lua, 1);
+	mesh->RemoveIsolatedVertices();
+	return 0;
+}
+
+void MeshType::Vertex::LuaPushElementValue(lua_State* lua, const std::vector<glm::vec3>& list, uint32_t indexZeroBased)
+{
+	GlmVec3Type::Push(lua, list.at(indexZeroBased));
+}
+
+bool MeshType::Vertex::LuaGetElement(lua_State* lua, int i, glm::vec3& outVal)
+{
+	return GlmVec3Type::TryGet(lua, i, outVal);
+}
+
+glm::vec3 MeshType::Vertex::GetInvalidValue()
+{
+	return { 0.0f, 0.0f, 0.0f };
+}
+
 std::vector<data::Triangle>* MeshType::TriangleListTraits::LuaGetList(lua_State* lua, int idx)
 {
+	luaL_checkudata(lua, idx, MeshType::Triangle::LUA_TYPE_NAME);
 	lua_getuservalue(lua, idx);
 	auto mesh = MeshType::LuaGet(lua, -1);
 	lua_pop(lua, 1);
@@ -123,16 +226,6 @@ bool MeshType::Init()
 		{"__gc", &MeshType::CallbackDelete},
 		{"__index", &MeshType::CallbackIndexDispatch},
 
-		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
-
-		{"vertex_length", &MeshType::CallbackVertexLength},
-		{"vertex_resize", &MeshType::CallbackVertexResize},
-		{"vertex_get", &MeshType::CallbackVertexGet},
-		{"vertex_set", &MeshType::CallbackVertexSet},
-		{"vertex_remove", &MeshType::CallbackVertexRemove},
-
-		{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
-
 		{"apply_transform", &MeshType::CallbackApplyTransform},
 		{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
 		{"is_valid", &MeshType::CallbackIsValid},
@@ -145,159 +238,6 @@ bool MeshType::Init()
 		return false;
 	}
 
-/*
-
-You’re thinking about this exactly the right way, and yes — if you do nothing special, then:
-
-```lua
-foo.bar:baz()
-```
-
-will call your C++ callback with **`self = bar`**, not `foo`.
-
-But the good news is:
-**Lua gives you a clean, idiomatic way to make `bar` act as a “view” or “sub?object” of `foo`, while still letting your C++ callback access the original `foo` without storing an explicit pointer in `bar`.**
-
-Let’s walk through the architecture that makes this work.
-
----
-
-# Key idea
-Lua userdata can have **one uservalue table** (Lua 5.3) or **multiple uservalues** (Lua 5.4).
-You can use this to attach the parent object (`foo`) to the child object (`bar`) *without storing it in your C++ struct*.
-
-This is the cleanest and most idiomatic solution.
-
----
-
-# The architecture you want
-
-You want:
-
-- `foo` ? a userdata representing your C++ object
-- `foo.bar` ? a Lua table or userdata representing a *sub?object*
-- `foo.bar` should still be able to call methods on `foo`
-- `foo.bar:baz()` should call your C++ function with access to the original `foo`
-
-This is exactly what uservalues are for.
-
----
-
-# Step 1 — Create `foo` as userdata
-
-```cpp
-fooCpp* foo = (fooCpp*)lua_newuserdata(L, sizeof(fooCpp));
-luaL_getmetatable(L, "FooMeta");
-lua_setmetatable(L, -2);
-```
-
----
-
-# Step 2 — Create `foo.bar` as a Lua table (or userdata)
-
-```cpp
-lua_newtable(L);          // bar table
-```
-
-Now attach `foo` as the uservalue of `bar`:
-
-```cpp
-lua_pushvalue(L, -2);     // push foo
-lua_setuservalue(L, -2);  // bar.uservalue = foo
-```
-
-Now:
-
-- `bar` is a Lua object
-- `bar` has a hidden reference to `foo`
-- No explicit pointer stored in C++ memory
-
----
-
-# Step 3 — Give `bar` its own metatable with methods
-
-```cpp
-luaL_getmetatable(L, "BarMeta");
-lua_setmetatable(L, -2);
-```
-
-Inside `"BarMeta"` you define:
-
-```cpp
-static const luaL_Reg barMethods[] = {
-	{"baz", &CallbackBaz},
-	{NULL, NULL}
-};
-```
-
----
-
-# Step 4 — In your callback, retrieve the parent `foo`
-
-Your callback receives:
-
-- `self = bar`
-
-So you do:
-
-```cpp
-int CallbackBaz(lua_State* L) {
-	// self = bar
-	lua_getuservalue(L, 1);  // push bar.uservalue (which is foo)
-
-	fooCpp* foo = (fooCpp*)lua_touserdata(L, -1);
-
-	// now you have foo!
-	...
-}
-```
-
-This is the magic line:
-
-```cpp
-lua_getuservalue(L, 1);
-```
-
-It retrieves the parent object (`foo`) that you attached earlier.
-
----
-
-# Result in Lua
-
-```lua
-foo.bar:baz()
-```
-
-- `self` is `bar`
-- `bar.uservalue` is `foo`
-- Your C++ callback can access both
-
----
-
-# Summary
-
-| Goal | Solution |
-|------|----------|
-| `foo.bar:baz()` should call method on `foo` | Store `foo` as uservalue of `bar` |
-| Avoid storing explicit pointer in C++ struct | Use Lua uservalue table |
-| Access parent from callback | `lua_getuservalue(L, 1)` |
-| Keep clean metatable structure | Separate metatables for foo and bar |
-
----
-
-# Final answer
-
-**Yes, you can access `foo` from inside `baz` without storing a pointer in `bar`.
-Attach `foo` as the uservalue of `bar`, and retrieve it in the callback with `lua_getuservalue`.**
-
-This is the idiomatic Lua way to build hierarchical objects.
-
----
-
-If you want, I can show you a complete minimal working example (C++ + Lua) that implements `foo.bar:baz()` exactly as you described.
-
-*/
-
 	lua_getglobal(lua(), "meshproc");		// load global "meshproc"
 	lua_newtable(lua());					// push new table on stack, which will become "meshproc.Mesh"
 	luaL_setfuncs(lua(), staticFuncs, 0);	// Add static functions to new table
@@ -307,16 +247,14 @@ If you want, I can show you a complete minimal working example (C++ + Lua) that 
 	// Vertex user table!
 	static const struct luaL_Reg vertexMemberFuncs[] = {
 		{"__tostring", &Vertex::CallbackToString},
+		{"__len", &Vertex::CallbackLength},
+		{"__index", &Vertex::CallbackDispatchGet},
+		{"__newindex", &Vertex::CallbackSet},
+		{"insert", &Vertex::CallbackInsert},
+		{"remove", &Vertex::CallbackRemove},
+		{"resize", &Vertex::CallbackResize},
 
-		// TODO: split into sub-object types for clearer access and use of "__len", "__index" (dispatcher), and "__newindex" along with the functions
-
-		//{"vertex_length", &MeshType::CallbackVertexLength},
-		//{"vertex_resize", &MeshType::CallbackVertexResize},
-		//{"vertex_get", &MeshType::CallbackVertexGet},
-		//{"vertex_set", &MeshType::CallbackVertexSet},
-		//{"vertex_remove", &MeshType::CallbackVertexRemove},
-		//{"vertex_remove_isolated", &MeshType::CallbackVertexRemoveIsolated},
-
+		{"remove_isolated", &Vertex::CallbackRemoveIsolated},
 
 		{nullptr, nullptr}
 	};
@@ -370,116 +308,6 @@ int MeshType::CallbackIndexDispatch(lua_State* lua)
 	lua_pushvalue(lua, 2);
 	lua_rawget(lua, -2);
 	return 1;
-}
-
-int MeshType::CallbackVertexLength(lua_State* lua)
-{
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 1)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	lua_pushinteger(lua, mesh->vertices.size());
-	return 1;
-}
-
-int MeshType::CallbackVertexResize(lua_State* lua)
-{
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 2)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t newSize;
-	if (lua::GetLuaUint32(lua, 2, newSize) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-	
-	mesh->vertices.resize(newSize, glm::vec3{ 0, 0, 0 });
-
-	return 0;
-}
-
-int MeshType::CallbackVertexGet(lua_State* lua)
-{
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 2)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t idx;
-	if (lua::GetLuaUint32(lua, 2, idx) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-	if (idx == 0 || idx > mesh->vertices.size())
-	{
-		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(mesh->vertices.size()), static_cast<int>(idx));
-	}
-
-	GlmVec3Type::Push(lua, mesh->vertices.at(idx - 1));
-	return 1;
-}
-
-int MeshType::CallbackVertexSet(lua_State* lua)
-{
-	// since Lua handles doubles/floats and integers the same, we can just use a xyz_math XVec3
-	const int argcnt = lua_gettop(lua);
-	if (argcnt != 3)
-	{
-		return luaL_error(lua, "Arguments number mismatch: must be 3, is %d", argcnt);
-	}
-	const auto mesh = MeshType::LuaGet(lua, 1);
-	if (!mesh)
-	{
-		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
-	}
-
-	uint32_t idx;
-	if (lua::GetLuaUint32(lua, 2, idx) != GetResult::Ok)
-	{
-		return luaL_error(lua, "First argument expected to be an integer");
-	}
-	if (idx == 0 || idx > mesh->vertices.size())
-	{
-		return luaL_error(lua, "Argument out of bounds expected [1..%d], got %d", static_cast<int>(mesh->vertices.size()), static_cast<int>(idx));
-	}
-
-	if (!GlmVec3Type::TryGet(lua, 3, mesh->vertices.at(idx - 1)))
-	{
-		return luaL_error(lua, "Second argument expected to be a vec3");
-	}
-
-	return 0;
-}
-
-int MeshType::CallbackVertexRemove(lua_State* lua)
-{
-	return luaL_error(lua, "NOT IMPLEMENTED");
-}
-
-int MeshType::CallbackVertexRemoveIsolated(lua_State* lua)
-{
-	return luaL_error(lua, "NOT IMPLEMENTED");
 }
 
 int MeshType::CallbackApplyTransform(lua_State* lua)
@@ -552,5 +380,22 @@ int MeshType::CallbackCalcBoundingBox(lua_State* lua)
 
 int MeshType::CallbackIsValid(lua_State* lua)
 {
-	return luaL_error(lua, "NOT IMPLEMENTED");
+	return CallLuaImpl(&MeshType::IsValid, lua);
+}
+
+int MeshType::IsValid(lua_State* lua)
+{
+	const int argcnt = lua_gettop(lua);
+	if (argcnt != 1)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", argcnt);
+	}
+	const auto mesh = MeshType::LuaGet(lua, 1);
+	if (!mesh)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
+	}
+
+	lua_pushboolean(lua, mesh->IsValid());
+	return 1;
 }

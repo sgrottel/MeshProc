@@ -40,6 +40,9 @@ namespace meshproc
 
 				static wrapped* GetWrappedObject(lua_State* lua, int idx)
 				{
+					const int stacksize = lua_gettop(lua);
+					if (stacksize == 0) throw std::runtime_error("Trying to get lua userobject from empty stack");
+					if ((idx > 0 && stacksize < idx) || (idx < 0 && stacksize < -idx)) throw std::runtime_error("Trying to get lua userobject from invalid stack position");
 					void* ud = luaL_checkudata(lua, idx, TIMPL::LUA_TYPE_NAME);
 					return reinterpret_cast<wrapped*>(ud);
 				}

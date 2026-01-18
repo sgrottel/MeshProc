@@ -36,6 +36,35 @@ do
 	-- tri.x, tri.y = tri.y, tri.x
 	cube.triangle:insert(tri)
 	log.detail("#triangles = "..tostring(#cube.triangle))
+
+	log.write("Testcube deleting vertices first");
+	make:invoke()
+	local testcube = make["Mesh"]
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	while #testcube.vertex > 0 do
+		testcube.vertex:remove(math.random(#testcube.vertex))
+		log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	end
+	make:invoke()
+	local testcube = make["Mesh"]
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	testcube.vertex:resize(6);
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+
+	log.write("Testcube deleting triangles first");
+	make:invoke()
+	local testcube = make["Mesh"]
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	testcube.triangle:resize(2)
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	testcube.vertex:remove_isolated()
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	testcube.triangle:resize(0)
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+	testcube.vertex:remove_isolated()
+	log.detail("testcube mesh: " .. tostring(#testcube.vertex) .. "v " .. tostring(#testcube.triangle) .. "t; valid="..tostring(testcube:is_valid()))
+
+	log.write("Testcube end")
 end
 
 -- explicitly collect the no longer used "make" object
@@ -82,7 +111,7 @@ do
 		move["Dirs"] = vertNorms["Normals"]
 		move:invoke()
 
-		log.detail(tostring(#(vertNorms["Normals"]) == croncle:vertex_length()))
+		log.detail(tostring(#(vertNorms["Normals"]) == #croncle.vertex))
 
 	end
 
@@ -109,8 +138,8 @@ do
 
 	vsel:resize(0)  -- clear
 
-	for i = 1, ico:vertex_length() do
-		local v = ico:vertex_get(i)
+	for i = 1, #ico.vertex do
+		local v = ico.vertex[i]
 		if (v.x < minBB.x) then
 			vsel:insert(i)
 		end
@@ -140,16 +169,15 @@ do
 	subdiv["Mesh"] = oct
 	subdiv:invoke()
 
-	local vCnt = oct:vertex_length()
+	local vCnt = #oct.vertex
 	local tCnt = #oct.triangle
 	log.write("Oct mesh: " .. tostring(vCnt) .. "v " .. tostring(tCnt) .. "t")
 
-	for vI = 1, vCnt do
-		local v = oct:vertex_get(vI)
+	for vI, v in ipairs(oct.vertex) do
 		log.detail("v["..tostring(vI).."] = { "..tostring(v.x)..", "..tostring(v.y)..", "..tostring(v.z).." }")
 
 		if (v.x == 0 and v.y == 0) or (v.x == 0 and v.z == 0) or (v.y == 0 and v.z == 0) then
-			oct:vertex_set(vI, v * 3)
+			oct.vertex[vI] = v * 3
 		end
 	end
 

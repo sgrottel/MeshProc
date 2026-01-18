@@ -22,6 +22,10 @@ namespace meshproc
 				{
 					return AbstractType<std::vector<TINNERVAR>, TIMPL>::LuaGet(lua, idx);
 				}
+
+				static void OnInserted(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
+				static void OnRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
+				static void OnResized(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*newsize*/, uint32_t /*oldsize*/) {}
 			};
 
 			template<typename TINNERVAR, typename TIMPL, typename TLISTTRAITS = AbstractListTypeListTraits<TINNERVAR, TIMPL>>
@@ -171,6 +175,7 @@ namespace meshproc
 					if (argcnt == 2)
 					{
 						list->push_back(val);
+						TLISTTRAITS::OnInserted(lua, 1, list, list->size() - 1);
 						return 0;
 					}
 
@@ -186,12 +191,14 @@ namespace meshproc
 					if (idx == list->size() + 1)
 					{
 						list->push_back(val);
+						TLISTTRAITS::OnInserted(lua, 1, list, list->size() - 1);
 						return 0;
 					}
 
 					auto where = list->cbegin();
 					std::advance(where, idx - 1);
 					list->insert(where, val);
+					TLISTTRAITS::OnInserted(lua, 1, list, idx - 1);
 
 					return 0;
 				}
@@ -213,6 +220,7 @@ namespace meshproc
 					if (argcnt == 1)
 					{
 						list->pop_back();
+						TLISTTRAITS::OnRemoved(lua, 1, list, static_cast<uint32_t>(list->size()));
 						return 0;
 					}
 
@@ -229,6 +237,7 @@ namespace meshproc
 					auto where = list->cbegin();
 					std::advance(where, idx - 1);
 					list->erase(where);
+					TLISTTRAITS::OnRemoved(lua, 1, list, idx - 1);
 
 					return 0;
 				}
@@ -253,7 +262,12 @@ namespace meshproc
 						return luaL_error(lua, "Failed to get insert index argument integer");
 					}
 
-					list->resize(newlen, TIMPL::GetInvalidValue());
+					const uint32_t oldSize = static_cast<uint32_t>(list->size());
+					if (oldSize != newlen)
+					{
+						list->resize(newlen, TIMPL::GetInvalidValue());
+						TLISTTRAITS::OnResized(lua, 1, list, newlen, oldSize);
+					}
 
 					return 0;
 				}

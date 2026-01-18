@@ -29,21 +29,37 @@ namespace meshproc
 
 			private:
 
-				class Vertex : public AbstractListType<glm::vec3, Vertex>
+				class VertexListTraits
+				{
+				public:
+					using listptr_t = std::vector<glm::vec3>*;
+					static listptr_t LuaGetList(lua_State* lua, int idx);
+					static void OnInserted(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase);
+					static void OnRemoved(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase);
+					static void OnResized(lua_State* lua, int idx, listptr_t list, uint32_t newsize, uint32_t oldsize);
+				};
+
+				class Vertex : public AbstractListType<glm::vec3, Vertex, VertexListTraits>
 				{
 				public:
 					static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Mesh_Vertex";
 
-					using MyAbstractListType = AbstractListType<glm::vec3, Vertex>;
+					using MyAbstractListType = AbstractListType<glm::vec3, Vertex, VertexListTraits>;
 
 					using MyAbstractListType::CallbackToString;
 
-					//using MyAbstractListType::CallbackLength;
-					//using MyAbstractListType::CallbackDispatchGet;
-					//using MyAbstractListType::CallbackSet;
-					//using MyAbstractListType::CallbackInsert;
-					//using MyAbstractListType::CallbackRemove;
-					//using MyAbstractListType::CallbackResize;
+					using MyAbstractListType::CallbackLength;
+					using MyAbstractListType::CallbackDispatchGet;
+					using MyAbstractListType::CallbackSet;
+					using MyAbstractListType::CallbackInsert;
+					using MyAbstractListType::CallbackRemove;
+					using MyAbstractListType::CallbackResize;
+
+					static int CallbackRemoveIsolated(lua_State* lua);
+
+					static void LuaPushElementValue(lua_State* lua, const std::vector<glm::vec3>& list, uint32_t indexZeroBased);
+					static bool LuaGetElement(lua_State* lua, int i, glm::vec3& outVal);
+					static glm::vec3 GetInvalidValue();
 				};
 
 				class TriangleListTraits
@@ -51,6 +67,9 @@ namespace meshproc
 				public:
 					using listptr_t = std::vector<data::Triangle>*;
 					static listptr_t LuaGetList(lua_State* lua, int idx);
+					static void OnInserted(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
+					static void OnRemoved(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*idxZeroBase*/) {}
+					static void OnResized(lua_State* /*lua*/, int /*idx*/, listptr_t /*list*/, uint32_t /*newsize*/, uint32_t /*oldsize*/) {}
 				};
 
 				class Triangle : public AbstractListType<data::Triangle, Triangle, TriangleListTraits>
@@ -78,16 +97,11 @@ namespace meshproc
 
 				static int CallbackIndexDispatch(lua_State* lua);
 
-				static int CallbackVertexLength(lua_State* lua);
-				static int CallbackVertexResize(lua_State* lua);
-				static int CallbackVertexGet(lua_State* lua);
-				static int CallbackVertexSet(lua_State* lua);
-				static int CallbackVertexRemove(lua_State* lua);
-				static int CallbackVertexRemoveIsolated(lua_State* lua);
-
 				static int CallbackApplyTransform(lua_State* lua);
 				static int CallbackCalcBoundingBox(lua_State* lua);
 				static int CallbackIsValid(lua_State* lua);
+
+				int IsValid(lua_State* lua);
 
 			};
 		}
