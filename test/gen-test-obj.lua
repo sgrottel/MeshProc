@@ -7,6 +7,7 @@
 --
 meshproc.Version.assert_or_newer(0, 5, 0)
 meshproc.Version.assert_older_than(0, 6, 0)
+math.randomseed(12345)
 
 local xyz_math = require("xyz_math")
 

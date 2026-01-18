@@ -18,7 +18,6 @@ namespace meshproc
 			{
 			public:
 				static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Mesh";
-				//static constexpr const char* LUA_SUBTYPE_TRIANGLELIST_NAME = "SGR.MeshProc.Data.Mesh_Triangle";
 
 				static int LuaPush(lua_State* lua, std::shared_ptr<data::Mesh> val);
 

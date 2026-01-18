@@ -9,6 +9,7 @@
 meshproc.Version.assert_or_newer(0, 5, 0)
 meshproc.Version.assert_older_than(0, 6, 0)
 log.detail("MeshProc v"..tostring(meshproc.Version.get()).." ["..tostring(meshproc.Version.get()[1]).."."..tostring(meshproc.Version.get()[2]).."]")
+math.randomseed(12345)
 
 -- load math library
 local xyz_math = require("xyz_math")

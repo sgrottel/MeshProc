@@ -9,6 +9,7 @@
 meshproc.Version.assert_or_newer(0, 5, 0)
 meshproc.Version.assert_older_than(0, 6, 0)
 log.detail("MeshProc v"..tostring(meshproc.Version.get()).." ["..tostring(meshproc.Version.get()[1]).."."..tostring(meshproc.Version.get()[2]).."]")
+math.randomseed(1235)
 
 -- load math library
 local xyz_math = require("xyz_math")
@@ -21,6 +22,14 @@ do
 	make["Iterations"] = 2
 	make:invoke()
 	mesh = make["Mesh"]
+
+	local sel = meshproc.IndexList.new()
+	for i = 1, 4 do
+		x = math.random(#mesh.vertex)
+		sel:insert(x)
+		-- mesh.vertex[x] = mesh.vertex[x] * 4
+	end
+
 end
 
 -- explicitly collect the no longer used "make" object
