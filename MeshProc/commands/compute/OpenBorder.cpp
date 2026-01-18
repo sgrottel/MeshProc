@@ -1,25 +1,20 @@
 #include "OpenBorder.h"
 
-#include "algo/LoopsFromEdges.h"
+#include "utilities/LoopsFromEdges.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
-#include <glm/glm.hpp>
-
-#include <unordered_map>
-
-#include <iostream>
-
 using namespace meshproc;
+using namespace meshproc::commands;
 
-OpenBorder::OpenBorder(const sgrottel::ISimpleLog& log)
+compute::OpenBorder::OpenBorder(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::Out, ParamType::MultiIndices>("EdgeLists", m_edgeLists);
+	AddParamBinding<ParamMode::Out, ParamType::IndexListList>("EdgeLists", m_edgeLists);
 }
 
-bool OpenBorder::Invoke()
+bool compute::OpenBorder::Invoke()
 {
 	if (!m_mesh)
 	{
@@ -36,7 +31,7 @@ bool OpenBorder::Invoke()
 
 	std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
 
-	algo::LoopsFromEdges(openEdges, m_edgeLists, Log());
+	utilities::LoopsFromEdges(openEdges, m_edgeLists, Log());
 	Log().Detail("Found %d open border loops", static_cast<int>(m_edgeLists->size()));
 
 	return true;

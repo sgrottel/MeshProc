@@ -7,10 +7,10 @@
 #include "GlmVec3ListType.h"
 #include "GlmVec3Type.h"
 #include "IndexListType.h"
+#include "IndexListListType.h"
 //#include "ListOfFloatType.h"
 #include "MeshType.h"
 //#include "MultiMeshType.h"
-//#include "MultiIndicesType.h"
 #include "SceneType.h"
 //#include "Shape2DType.h"
 
@@ -115,8 +115,8 @@ namespace
 	template<>
 	struct LuaParamMapping<ParamType::IndexList> : LuaWrappedParamMapping<IndexListType, std::vector<uint32_t>> {};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::MultiIndices> : LuaWrappedParamMapping<MultiIndicesType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
+	template<>
+	struct LuaParamMapping<ParamType::IndexListList> : LuaWrappedParamMapping<IndexListListType, std::vector<std::shared_ptr<std::vector<uint32_t>>>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::Mat4>

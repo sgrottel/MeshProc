@@ -136,6 +136,10 @@ do
 	log.write(tostring(#vsel)) -- size of list
 	for i, v in ipairs(vsel) do log.detail("vsel["..i.."] = "..v) end -- iterating list
 
+	local edges = meshproc.IndexListList.new()
+	edges:insert(vsel)
+	edges:insert(edges[1])
+
 	vsel:resize(0)  -- clear
 
 	for i = 1, #ico.vertex do
@@ -151,6 +155,21 @@ do
 	ico.vertex:remove() -- remove last vertex in list (and connected triangles)
 
 	ico.vertex:remove_isolated() -- could happen because of implicitly delete triangles
+
+	local openborder = meshproc.compute.OpenBorder.new()
+	openborder["Mesh"] = ico
+	openborder:invoke()
+	local closeWithPin = meshproc.edit.CloseLoopWithPin.new()
+	closeWithPin["Mesh"] = ico
+	for _, border in ipairs(openborder["EdgeLists"]) do
+		closeWithPin["Loop"] = border
+		closeWithPin:invoke()
+	end
+
+	local vi = closeWithPin["NewVertexIndex"]
+	local v = ico.vertex[vi]
+	v.x = minBB.x
+	ico.vertex[vi] = v
 
 end
 

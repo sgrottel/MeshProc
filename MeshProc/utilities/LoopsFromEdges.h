@@ -10,9 +10,11 @@ namespace meshproc
 	namespace utilities
 	{
 
-/*
 		template<typename EdgesT>
-		void LoopsFromEdges(EdgesT const& edges, commands::ParamTypeInfo_t<commands::ParamType::MultiIndices>& outLoops, sgrottel::ISimpleLog const& log)
+		void LoopsFromEdges(
+			EdgesT const& edges,
+			commands::ParamTypeInfo_t<commands::ParamType::IndexListList>& outLoops,
+			sgrottel::ISimpleLog const& log)
 		{
 			std::unordered_map<uint32_t, std::unordered_set<uint32_t>> halfEdges;
 			halfEdges.reserve(edges.size());
@@ -48,12 +50,12 @@ namespace meshproc
 			}
 			else
 			{
-				outLoops = std::make_shared<std::vector<ParamTypeInfo_t<ParamType::Indices>>>();
+				outLoops = std::make_shared<std::vector<commands::ParamTypeInfo_t<commands::ParamType::IndexList>>>();
 			}
 
 			while (!halfEdges.empty())
 			{
-				ParamTypeInfo_t<ParamType::Indices> loop = outLoops->emplace_back(std::make_shared<std::vector<uint32_t>>());
+				commands::ParamTypeInfo_t<commands::ParamType::IndexList> loop = outLoops->emplace_back(std::make_shared<std::vector<uint32_t>>());
 
 				uint32_t next, last;
 				{
@@ -80,6 +82,5 @@ namespace meshproc
 				}
 			}
 		}
-*/
 	}
 }

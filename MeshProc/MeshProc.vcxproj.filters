@@ -186,6 +186,15 @@
     <ClCompile Include="commands\edit\DisplacementNoise.cpp">
       <Filter>commands\edit</Filter>
     </ClCompile>
+    <ClCompile Include="lua\types\IndexListListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\OpenBorder.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\CloseLoopWithPin.cpp">
+      <Filter>commands\edit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -341,6 +350,15 @@
       <Filter>lua\types</Filter>
     </ClInclude>
     <ClInclude Include="commands\edit\DisplacementNoise.h">
+      <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\IndexListListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\OpenBorder.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\CloseLoopWithPin.h">
       <Filter>commands\edit</Filter>
     </ClInclude>
   </ItemGroup>

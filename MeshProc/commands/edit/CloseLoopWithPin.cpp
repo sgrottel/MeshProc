@@ -3,17 +3,17 @@
 #include <SimpleLog/SimpleLog.hpp>
 
 using namespace meshproc;
+using namespace meshproc::commands;
 
-CloseLoopWithPin::CloseLoopWithPin(const sgrottel::ISimpleLog& log)
+edit::CloseLoopWithPin::CloseLoopWithPin(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::InOut, ParamType::Vec3>("PinOffset", m_offset);
-	AddParamBinding<ParamMode::In, ParamType::Indices>("Loop", m_loop);
+	AddParamBinding<ParamMode::In, ParamType::IndexList>("Loop", m_loop);
 	AddParamBinding<ParamMode::Out, ParamType::UInt32>("NewVertexIndex", m_newVertexIndex);
 }
 
-bool CloseLoopWithPin::Invoke()
+bool edit::CloseLoopWithPin::Invoke()
 {
 	if (!m_mesh)
 	{
@@ -34,8 +34,6 @@ bool CloseLoopWithPin::Invoke()
 		center += m_mesh->vertices[i];
 	}
 	center /= static_cast<float>(m_loop->size());
-
-	center += m_offset;
 
 	uint32_t vi1 = m_loop->at(0);
 	uint32_t vi2 = m_loop->at(1);
@@ -65,6 +63,8 @@ bool CloseLoopWithPin::Invoke()
 		}
 		m_mesh->triangles.push_back({ m_loop->at(i1), m_loop->at(i2), m_newVertexIndex });
 	}
+
+	m_newVertexIndex++; // as lua param this must be 1-based
 
 	return true;
 }
