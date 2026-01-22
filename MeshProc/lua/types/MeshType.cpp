@@ -271,6 +271,7 @@ bool MeshType::Init()
 		{"apply_transform", &MeshType::CallbackApplyTransform},
 		{"calc_boundingbox", &MeshType::CallbackCalcBoundingBox},
 		{"is_valid", &MeshType::CallbackIsValid},
+		{"clone", &MeshType::CallbackClone},
 
 		{nullptr, nullptr}
 	};
@@ -439,5 +440,28 @@ int MeshType::IsValid(lua_State* lua)
 	}
 
 	lua_pushboolean(lua, mesh->IsValid());
+	return 1;
+}
+
+int MeshType::CallbackClone(lua_State* lua)
+{
+	const int argcnt = lua_gettop(lua);
+	if (argcnt != 1)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", argcnt);
+	}
+	const auto mesh = MeshType::LuaGet(lua, 1);
+	if (!mesh)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Mesh");
+	}
+
+	std::shared_ptr<data::Mesh> clone = std::make_shared<data::Mesh>();
+	clone->vertices.resize(mesh->vertices.size());
+	std::copy(mesh->vertices.begin(), mesh->vertices.end(), clone->vertices.begin());
+	clone->triangles.resize(mesh->triangles.size());
+	std::copy(mesh->triangles.begin(), mesh->triangles.end(), clone->triangles.begin());
+
+	LuaPush(lua, clone);
 	return 1;
 }

@@ -101,6 +101,7 @@ namespace meshproc
 				static int CallbackApplyTransform(lua_State* lua);
 				static int CallbackCalcBoundingBox(lua_State* lua);
 				static int CallbackIsValid(lua_State* lua);
+				static int CallbackClone(lua_State* lua);
 
 				int IsValid(lua_State* lua);
 

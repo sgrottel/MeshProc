@@ -16,6 +16,7 @@ local xyz_math = require("xyz_math")
 log.write("Test script")
 
 local mesh = nil
+local mesh2 = nil
 do
 	local make = meshproc.generator.SphereIco.new()
 	log.detail("Creating "..tostring(make))
@@ -42,6 +43,8 @@ do
 	log.detail("HalfSpace dist to ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z)..") = "..tostring(p:dist(a)))
 
 	p:set(XVec3(0, 0, 1), -0.1)
+
+	mesh2 = mesh:clone()
 
 	local cut = meshproc.edit.CutHalfSpace.new()
 	cut["Mesh"] = mesh
@@ -97,6 +100,7 @@ collectgarbage("collect")
 local scene = meshproc.Scene.new()
 
 scene:place(mesh)
+scene:place(mesh2, XMat4.translate(0, 3, 0))
 -- scene:place(cube, XMat4.translate(0, 2, 0)) -- second instance of 'cube' translated to +y
 
 -- save scene to file
