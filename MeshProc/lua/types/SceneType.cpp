@@ -21,6 +21,7 @@ bool SceneType::Init()
 		{"__tostring", &SceneType::CallbackToString},
 		{"__gc", &SceneType::CallbackDelete},
 		{"place", &SceneType::CallbackPlaceMesh},
+		{"bake", &SceneType::CallbackBake},
 		{nullptr, nullptr}
 	};
 
@@ -78,4 +79,53 @@ int SceneType::CallbackPlaceMesh(lua_State* lua)
 	scene->m_meshes.push_back(std::make_pair(mesh, mat));
 
 	return 0;
+}
+
+int SceneType::CallbackBake(lua_State* lua)
+{
+	int size = lua_gettop(lua);
+	if (size != 1)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", size);
+	}
+	auto scene = SceneType::LuaGet(lua, 1);
+	if (!scene)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Scene");
+	}
+
+	std::shared_ptr<data::Mesh> all = std::make_shared<data::Mesh>();
+
+	size_t vcnt = 0;
+	size_t tcnt = 0;
+	for (auto const& p : scene->m_meshes)
+	{
+		vcnt += p.first->vertices.size();
+		tcnt += p.first->triangles.size();
+	}
+
+	all->vertices.reserve(vcnt);
+	all->triangles.reserve(tcnt);
+
+	vcnt = 0;
+	for (auto const& p : scene->m_meshes)
+	{
+		for (auto const& v : p.first->vertices)
+		{
+			const glm::vec4 tv = p.second * glm::vec4{ v, 1.0f };
+			all->vertices.push_back(glm::vec3{ tv } / tv.w);
+		}
+		for (auto const& t : p.first->triangles)
+		{
+			all->triangles.push_back({
+				static_cast<uint32_t>(t[0] + vcnt),
+				static_cast<uint32_t>(t[1] + vcnt),
+				static_cast<uint32_t>(t[2] + vcnt)
+				});
+		}
+		vcnt += p.first->vertices.size();
+	}
+
+	MeshType::LuaPush(lua, all);
+	return 1;
 }

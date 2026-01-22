@@ -16,7 +16,6 @@ local xyz_math = require("xyz_math")
 log.write("Test script")
 
 local mesh = nil
-local mesh2 = nil
 do
 	local make = meshproc.generator.SphereIco.new()
 	log.detail("Creating "..tostring(make))
@@ -44,19 +43,26 @@ do
 
 	p:set(XVec3(0, 0, 1), -0.1)
 
-	mesh2 = mesh:clone()
+	local mesh2 = mesh:clone()
 
 	local cut = meshproc.edit.CutHalfSpace.new()
 	cut["Mesh"] = mesh
 	cut["HalfSpace"] = p
 	cut:invoke()
 
-	local sel = meshproc.IndexList.new()
-	for i = 1, 4 do
-		x = math.random(#mesh.vertex)
-		sel:insert(x)
-		-- mesh.vertex[x] = mesh.vertex[x] * 4
-	end
+	local scene = meshproc.Scene.new()
+
+	scene:place(mesh)
+	scene:place(mesh2, XMat4.translate(0, 3, 0))
+
+	mesh = scene:bake()
+
+	-- local sel = meshproc.IndexList.new()
+	-- for i = 1, 4 do
+	-- 	x = math.random(#mesh.vertex)
+	-- 	sel:insert(x)
+	-- 	-- mesh.vertex[x] = mesh.vertex[x] * 4
+	-- end
 
 end
 
@@ -100,8 +106,7 @@ collectgarbage("collect")
 local scene = meshproc.Scene.new()
 
 scene:place(mesh)
-scene:place(mesh2, XMat4.translate(0, 3, 0))
--- scene:place(cube, XMat4.translate(0, 2, 0)) -- second instance of 'cube' translated to +y
+-- scene:place(mesh2, XMat4.translate(0, 3, 0))
 
 -- save scene to file
 do
