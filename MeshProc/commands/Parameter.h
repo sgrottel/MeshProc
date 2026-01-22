@@ -11,6 +11,7 @@ namespace meshproc
 {
 	namespace data
 	{
+		class HalfSpace;
 		class Mesh;
 		class Scene;
 		class Shape2D;
@@ -39,6 +40,7 @@ namespace meshproc
 //			Callback,
 			Vec3List,
 //			ListOfFloat,
+			HalfSpace,
 
 			LAST
 		};
@@ -169,6 +171,15 @@ namespace meshproc
 		//	static constexpr bool canSetNil = true;
 		//	static type NilVal() { return nullptr; }
 		//};
+
+		template<>
+		struct ParamTypeInfo<ParamType::HalfSpace>
+		{
+			static constexpr const char* name = "HalfSpace";
+			typedef std::shared_ptr<data::HalfSpace> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
 
 		template<ParamType PT>
 		using ParamTypeInfo_t = typename ParamTypeInfo<PT>::type;

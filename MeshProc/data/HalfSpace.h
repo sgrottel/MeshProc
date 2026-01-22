@@ -18,44 +18,60 @@ namespace meshproc
 		class HalfSpace
 		{
 		public:
-			inline const glm::vec3& GetPlaneNormalParam() const noexcept
+
+			bool Set(const glm::vec3& normal, float dist)
 			{
-				return m_planeNormalParam;
-			}
-			inline const float& GetPlaneDistParam() const noexcept
-			{
-				return m_planeDistParam;
+				if (normal.x == 0 && normal.y == 0 && normal.z == 0)
+				{
+					return false;
+				}
+
+				m_normal = glm::normalize(normal);
+				m_dist = dist;
+
+				return true;
 			}
 
-			bool ValidateParams(sgrottel::ISimpleLog const& log);
+			bool Set(const glm::vec3& normal, const glm::vec3& point)
+			{
+				if (normal.x == 0 && normal.y == 0 && normal.z == 0)
+				{
+					return false;
+				}
+
+				m_normal = glm::normalize(normal);
+				m_dist = glm::dot(m_normal, point);
+
+				return true;
+			}
 
 			inline glm::vec3 const& Normal() const noexcept
 			{
 				return m_normal;
 			}
-			inline glm::vec3 const& Plane() const noexcept
+			inline glm::vec3 const Plane() const noexcept
 			{
-				return m_plane;
+				return m_normal * m_dist;
 			}
 			inline float Dist() const noexcept
 			{
-				return m_planeDistParam;
+				return m_dist;
 			}
 
 			// signed dist of vertex v to plane
 			inline float Dist(glm::vec3 const& v) const
 			{
-				return glm::dot(v - m_plane, m_normal);
+				return glm::dot(v, m_normal) - m_dist;
 			}
 
 			template<typename CT>
-			inline bool IsCut(HashableEdge const& edge, CT const& distContainer)
+			inline bool IsCut(HashableEdge const& edge, CT const& distContainer) const
 			{
 				return std::signbit(distContainer.at(edge.start)) != std::signbit(distContainer.at(edge.end));
 			}
 
 			template<typename DCT, typename VCT>
-			inline glm::vec3 CutInterpolate(HashableEdge const& edge, DCT const& distContainer, VCT const& vertexContainer)
+			inline glm::vec3 CutInterpolate(HashableEdge const& edge, DCT const& distContainer, VCT const& vertexContainer) const
 			{
 				const float adi = abs(distContainer.at(edge.start));
 				const float adj = abs(distContainer.at(edge.end));
@@ -67,10 +83,8 @@ namespace meshproc
 			std::tuple<glm::vec3, glm::vec3> Make2DCoordSys() const;
 
 		private:
-			const glm::vec3 m_planeNormalParam{ 0.0f, 0.0f, 1.0f };
-			const float m_planeDistParam{ 0.0f };
-			glm::vec3 m_normal{};
-			glm::vec3 m_plane{};
+			glm::vec3 m_normal{ 0.0f, 0.0f, 1.0f };
+			float m_dist{ 0.0f };
 		};
 	}
 }

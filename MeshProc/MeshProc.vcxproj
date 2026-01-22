@@ -97,6 +97,7 @@
     <ClCompile Include="commands\compute\OpenBorder.cpp" />
     <ClCompile Include="commands\compute\VertexNormals.cpp" />
     <ClCompile Include="commands\edit\CloseLoopWithPin.cpp" />
+    <ClCompile Include="commands\edit\CutHalfSpace.cpp" />
     <ClCompile Include="commands\edit\DisplacementNoise.cpp" />
     <ClCompile Include="commands\edit\Subdivision.cpp" />
     <ClCompile Include="commands\generator\Cuboid.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
     <ClCompile Include="lua\types\GlmVec3ListType.cpp" />
     <ClCompile Include="lua\types\GlmVec3Type.cpp" />
+    <ClCompile Include="lua\types\HalfSpaceType.cpp" />
     <ClCompile Include="lua\types\IndexListListType.cpp" />
     <ClCompile Include="lua\types\IndexListType.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
@@ -168,6 +170,7 @@
     <ClInclude Include="commands\compute\OpenBorder.h" />
     <ClInclude Include="commands\compute\VertexNormals.h" />
     <ClInclude Include="commands\edit\CloseLoopWithPin.h" />
+    <ClInclude Include="commands\edit\CutHalfSpace.h" />
     <ClInclude Include="commands\edit\DisplacementNoise.h" />
     <ClInclude Include="commands\edit\Subdivision.h" />
     <ClInclude Include="commands\generator\Cuboid.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="lua\types\GlmVec2Type.h" />
     <ClInclude Include="lua\types\GlmVec3ListType.h" />
     <ClInclude Include="lua\types\GlmVec3Type.h" />
+    <ClInclude Include="lua\types\HalfSpaceType.h" />
     <ClInclude Include="lua\types\IndexListListType.h" />
     <ClInclude Include="lua\types\IndexListType.h" />
     <ClInclude Include="lua\types\MeshType.h" />

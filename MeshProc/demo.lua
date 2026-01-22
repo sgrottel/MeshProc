@@ -23,6 +23,31 @@ do
 	make:invoke()
 	mesh = make["Mesh"]
 
+	local p = meshproc.HalfSpace.new()
+	local a, b = p:get()
+	log.detail("HalfSpace: ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z).."), "..tostring(b))
+
+	p:set(XVec3(1, 2, 0), 3)
+	a, b = p:get()
+	log.detail("HalfSpace: ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z).."), "..tostring(b))
+
+	p:set(XVec3(0, 2, 0), XVec3(1, 1, 1))
+	a, b = p:get()
+	log.detail("HalfSpace: ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z).."), "..tostring(b))
+
+	a = XVec3(2, 2, 2)
+	log.detail("HalfSpace dist to ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z)..") = "..tostring(p:dist(a)))
+
+	a = XVec3(-2, -3, 2)
+	log.detail("HalfSpace dist to ("..tostring(a.x)..", "..tostring(a.y)..", "..tostring(a.z)..") = "..tostring(p:dist(a)))
+
+	p:set(XVec3(0, 0, 1), -0.1)
+
+	local cut = meshproc.edit.CutHalfSpace.new()
+	cut["Mesh"] = mesh
+	cut["HalfSpace"] = p
+	cut:invoke()
+
 	local sel = meshproc.IndexList.new()
 	for i = 1, 4 do
 		x = math.random(#mesh.vertex)

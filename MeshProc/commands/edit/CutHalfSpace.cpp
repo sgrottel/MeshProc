@@ -1,10 +1,13 @@
 #include "CutHalfSpace.h"
 
-#include "algo/LoopsFromEdges.h"
+#include "utilities/LoopsFromEdges.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
 #include <glm/glm.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -15,9 +18,12 @@
 #include <algorithm>
 #include <functional>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using namespace meshproc;
+using namespace meshproc::commands;
+using namespace meshproc::commands::edit;
 
 namespace
 {
@@ -55,18 +61,39 @@ namespace
 		return false;
 	}
 
+	static float cross(const glm::vec2& u, const glm::vec2& v) {
+		return u.x * v.y - u.y * v.x;
+	}
+
+	glm::vec2 intersect(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d)
+	{
+		glm::vec2 r = b - a;
+		glm::vec2 s = d - c;
+		float denom = cross(r, s);
+		assert(denom != 0.0f); // nonzero because they intersect
+		float t = cross(c - a, s) / denom;
+		return a + t * r;
+	}
+
+	glm::vec2 prec(const glm::vec2& value, float scale = 0.0001f)
+	{
+		return {
+			std::round(value.x / scale) * scale,
+			std::round(value.y / scale) * scale
+		};
+	}
+
 }
 
 CutHalfSpace::CutHalfSpace(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 	, m_mesh{ nullptr }
-	, m_halfSpace{}
+	, m_halfSpace{ std::make_shared<data::HalfSpace>() }
 	, m_openLoops{ nullptr }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::In, ParamType::Vec3>("PlaneNormal", m_halfSpace.GetPlaneNormalParam());
-	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneDist", m_halfSpace.GetPlaneDistParam());
-	AddParamBinding<ParamMode::Out, ParamType::MultiIndices>("OpenLoops", m_openLoops);
+	AddParamBinding<ParamMode::In, ParamType::HalfSpace>("HalfSpace", m_halfSpace);
+	AddParamBinding<ParamMode::Out, ParamType::IndexListList>("OpenLoops", m_openLoops);
 }
 
 bool CutHalfSpace::Invoke()
@@ -76,8 +103,9 @@ bool CutHalfSpace::Invoke()
 		Log().Error("Mesh not set");
 		return false;
 	}
-	if (!m_halfSpace.ValidateParams(Log()))
+	if (!m_halfSpace)
 	{
+		Log().Error("HalfSpace not set");
 		return false;
 	}
 
@@ -117,7 +145,7 @@ bool CutHalfSpace::Invoke()
 
 	// cut border (hashable)edges and generate new triangles and vertices
 	std::unordered_map<data::HashableEdge, uint32_t> newVert;
-	std::vector<uint32_t> triVerts;
+	std::unordered_set<uint32_t> triVerts;
 	triVerts.reserve(6);
 	for (data::Triangle const& t : border)
 	{
@@ -127,39 +155,47 @@ bool CutHalfSpace::Invoke()
 		{
 			if (dist[t[i]] >= 0.0f)
 			{
-				triVerts.push_back(t[i]);
+				triVerts.insert(t[i]);
 			}
 		}
 		for (size_t i = 0; i < 3; ++i)
 		{
 			const auto he = t.HashableEdge(static_cast<uint32_t>(i));
-			if (m_halfSpace.IsCut(he, dist))
+			if (m_halfSpace->IsCut(he, dist))
 			{
 				if (newVert.contains(he))
 				{
-					triVerts.push_back(newVert.at(he));
+					triVerts.insert(newVert.at(he));
 				}
 				else
 				{
-					glm::vec3 nv = m_halfSpace.CutInterpolate(he, dist, m_mesh->vertices);
+					glm::vec3 nv = m_halfSpace->CutInterpolate(he, dist, m_mesh->vertices);
 					uint32_t nvIdx = static_cast<uint32_t>(m_mesh->vertices.size());
-					m_mesh->vertices.push_back(nv);
-					newVert.insert(std::make_pair(he, nvIdx));
-					triVerts.push_back(nvIdx);
-				}
-				if (triVerts.size() == 4)
-				{
-					if (he.Has(triVerts[0]))
+					for (size_t nvI = 0; nvI < m_mesh->vertices.size(); ++nvI)
 					{
-						std::swap(triVerts[2], triVerts[3]);
+						if (m_mesh->vertices.at(nvI) == nv)
+						{
+							nvIdx = nvI;
+							break;
+						}
 					}
+					if (nvIdx == static_cast<uint32_t>(m_mesh->vertices.size()))
+					{
+						m_mesh->vertices.push_back(nv);
+					}
+					newVert.insert(std::make_pair(he, nvIdx));
+					triVerts.insert(nvIdx);
 				}
 			}
 		}
 
 		if (triVerts.size() == 3)
 		{
-			data::Triangle nt{ triVerts[0], triVerts[1], triVerts[2] };
+			auto tvi = triVerts.begin();
+			uint32_t t0 = *tvi++;
+			uint32_t t1 = *tvi++;
+			uint32_t t2 = *tvi++;
+			data::Triangle nt{ t0, t1, t2};
 
 			const glm::vec3 nn = nt.CalcNormal(m_mesh->vertices);
 			const glm::vec3 on = t.CalcNormal(m_mesh->vertices);
@@ -173,7 +209,61 @@ bool CutHalfSpace::Invoke()
 		}
 		else if (triVerts.size() == 4)
 		{
-			m_mesh->AddQuad(triVerts[0], triVerts[2], triVerts[1], triVerts[3]);
+			auto tvi = triVerts.begin();
+			uint32_t t0 = *tvi++;
+			uint32_t t1 = *tvi++;
+			uint32_t t2 = *tvi++;
+			uint32_t t3 = *tvi++;
+
+			if (!t.HasIndex(t0))
+			{
+				if (t.HasIndex(t1))
+				{
+					std::swap(t0, t1);
+				}
+				else if (t.HasIndex(t2))
+				{
+					std::swap(t0, t2);
+				}
+				else if (t.HasIndex(t3))
+				{
+					std::swap(t0, t3);
+				}
+				else
+				{
+					Log().Error("Failed to generated border quad at cut: vertex indices not found in source triangle");
+					return false;
+				}
+			}
+
+			if (!t.HasIndex(t1))
+			{
+				if (t.HasIndex(t2))
+				{
+					std::swap(t1, t2);
+				}
+				else if (t.HasIndex(t3))
+				{
+					std::swap(t1, t3);
+				}
+				else
+				{
+					Log().Error("Failed to generated border quad at cut: vertex indices not found in source triangle");
+					return false;
+				}
+			}
+
+			const glm::vec3 off = m_mesh->vertices.at(t.ThirdIndex(t0, t1));
+			const glm::vec3 va = glm::normalize(m_mesh->vertices.at(t0) - off);
+			const glm::vec3 vb = glm::normalize(m_mesh->vertices.at(t3) - off);
+			// const glm::vec3 vc = m_mesh->vertices.at(t2) - off;
+			const float vd = glm::distance(va, vb);
+			if (vd < 0.00001)
+			{
+				std::swap(t2, t3);
+			}
+
+			m_mesh->AddQuad(t0, t1, t2, t3);
 			auto back = --(m_mesh->triangles.end());
 			data::Triangle& nt2 = *back;
 			data::Triangle& nt = *(--back);
@@ -229,17 +319,17 @@ bool CutHalfSpace::Invoke()
 
 	// finally collect open edges and build closed plane surface
 	const std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
-	algo::LoopsFromEdges(openEdges, m_openLoops, Log());
+	utilities::LoopsFromEdges(openEdges, m_openLoops, Log());
 
 	float minX = 0.0f;
-	auto [projX, projY] = m_halfSpace.Make2DCoordSys();
+	auto [projX, projY] = m_halfSpace->Make2DCoordSys();
 	std::unordered_map<uint32_t, glm::vec2> pt2d;
 	for (auto loop : *m_openLoops)
 	{
 		for (uint32_t vi : *loop)
 		{
 			if (pt2d.contains(vi)) continue;
-			const glm::vec3 v = m_mesh->vertices.at(vi) - m_halfSpace.Plane();
+			const glm::vec3 v = m_mesh->vertices.at(vi) - m_halfSpace->Plane();
 			const float x = glm::dot(v, projX);
 			pt2d.insert(std::make_pair(vi, glm::vec2(x, glm::dot(v, projY))));
 			if (x < minX)
@@ -280,6 +370,8 @@ bool CutHalfSpace::Invoke()
 			return false;
 		}
 
+		std::unordered_set<glm::vec2> intersections;
+
 		for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
 			const uint32_t i0 = fit->vertex(0)->info();
 			const uint32_t i1 = fit->vertex(1)->info();
@@ -287,20 +379,26 @@ bool CutHalfSpace::Invoke()
 
 			glm::vec2 c = (pt2d.at(i0) + pt2d.at(i1) + pt2d.at(i2));
 			c /= glm::vec2(3.0f);
+
 			glm::vec2 c2{ minX - 1.0f, c.y };
-			bool inside = false;
+
+			intersections.clear();
 			for (auto const& edge : openEdges)
 			{
-				if (segments_intersect(c, c2, pt2d.at(edge.i0), pt2d.at(edge.i1)))
+				const auto& p1 = pt2d.at(edge.i0);
+				const auto& p2 = pt2d.at(edge.i1);
+				if (segments_intersect(c, c2, p1, p2))
 				{
-					inside = !inside;
+					intersections.insert(prec(intersect(c, c2, p1, p2)));
 				}
 			}
-			if (!inside) continue;
+			if (intersections.size() % 2 == 0) {
+				continue;
+			}
 
 			data::Triangle t{ i0, i1, i2 };
 			const glm::vec3 n = t.CalcNormal(m_mesh->vertices);
-			const float p = glm::dot(n, m_halfSpace.Normal());
+			const float p = glm::dot(n, m_halfSpace->Normal());
 			if (p > 0.0f) t.Flip();
 			m_mesh->triangles.push_back(t);
 		}

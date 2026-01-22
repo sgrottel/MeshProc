@@ -13,6 +13,7 @@
 //#include "MultiMeshType.h"
 #include "SceneType.h"
 //#include "Shape2DType.h"
+#include "HalfSpaceType.h"
 
 #include "commands/AbstractCommand.h"
 
@@ -178,6 +179,9 @@ namespace
 
 	//template<>
 	//struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::HalfSpace> : LuaWrappedParamMapping<HalfSpaceType, data::HalfSpace> {};
 
 	template<ParamType PT>
 	static int LuaTryPushVal(lua_State* lua, std::shared_ptr<ParameterBinding::ParamBindingBase> param, sgrottel::ISimpleLog& log)

@@ -54,6 +54,7 @@ bool generator::SphereIco::Invoke()
 					(mesh->vertices[e.first.x] + mesh->vertices[e.first.y]) * 0.5f));
 		}
 
+		newTris.clear();
 		newTris.reserve(mesh->triangles.size() * 4);
 
 		for (data::Triangle const& t : mesh->triangles)

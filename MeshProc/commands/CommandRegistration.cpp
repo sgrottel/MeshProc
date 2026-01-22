@@ -19,6 +19,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, CloseLoopWithPin
 #include "CommandRegistration.inc"
+#define COMMAND_PATH edit, CutHalfSpace
+#include "CommandRegistration.inc"
 #define COMMAND_PATH edit, DisplacementNoise
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, Subdivision

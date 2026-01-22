@@ -10,8 +10,9 @@
 #include "VersionCheck.h"
 
 #include "types/CommandType.h"
-#include "types/IndexListType.h"
+#include "types/HalfSpaceType.h"
 #include "types/IndexListListType.h"
+#include "types/IndexListType.h"
 #include "types/SceneType.h"
 #include "types/MeshType.h"
 #include "types/GlmVec3ListType.h"
@@ -23,6 +24,7 @@
 	FUNC(Shape2DType) */ \
 	FUNC(VersionCheck) \
 	FUNC(types, CommandType) \
+	FUNC(types, HalfSpaceType) \
 	FUNC(types, GlmVec3ListType) \
 	FUNC(types, IndexListType) \
 	FUNC(types, IndexListListType) \
