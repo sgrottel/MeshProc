@@ -2,7 +2,6 @@
 
 #include "lua/LuaUtilities.h"
 
-//#include "CallbackFunction.h"
 #include "FloatListType.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3ListListType.h"
@@ -177,33 +176,6 @@ namespace
 			return GlmVec3Type::TryGet(lua, 3, tar);
 		}
 	};
-
-	//template<>
-	//struct LuaParamMapping<ParamType::Callback>
-	//{
-	//	static void PushVal(lua_State* lua, const std::shared_ptr<lua::CallbackFunction>& v)
-	//	{
-	//		if (v)
-	//		{
-	//			v->Push();
-	//		}
-	//		else
-	//		{
-	//			lua_pushnil(lua);
-	//		}
-	//	}
-
-	//	static bool GetVal(lua_State* lua, std::shared_ptr<lua::CallbackFunction>& tar)
-	//	{
-	//		if (!lua_isfunction(lua, 3))
-	//		{
-	//			tar.reset();
-	//			return false;
-	//		}
-	//		tar = std::make_shared<lua::CallbackFunction>(lua, 3);
-	//		return true;
-	//	}
-	//};
 
 	template<>
 	struct LuaParamMapping<ParamType::Vec3List> : LuaWrappedParamMapping<GlmVec3ListType, std::vector<glm::vec3>> {};

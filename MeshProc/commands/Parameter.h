@@ -16,10 +16,6 @@ namespace meshproc
 		class Scene;
 		class Shape2D;
 	}
-	namespace lua
-	{
-		class CallbackFunction;
-	}
 
 	namespace commands
 	{
@@ -40,7 +36,6 @@ namespace meshproc
 //			Shape2D,
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 			IndexListList,
-//			Callback,
 			HalfSpace,
 
 			LAST
@@ -154,15 +149,6 @@ namespace meshproc
 			static constexpr bool canSetNil = true;
 			static type NilVal() { return nullptr; }
 		};
-
-		//template<>
-		//struct ParamTypeInfo<ParamType::Callback>
-		//{
-		//	static constexpr const char* name = "Callback";
-		//	typedef std::shared_ptr<lua::CallbackFunction> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
 
 		template<>
 		struct ParamTypeInfo<ParamType::Vec3List>
