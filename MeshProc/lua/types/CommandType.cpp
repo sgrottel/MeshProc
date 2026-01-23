@@ -4,6 +4,7 @@
 
 //#include "CallbackFunction.h"
 #include "GlmMat4Type.h"
+#include "GlmVec3ListListType.h"
 #include "GlmVec3ListType.h"
 #include "GlmVec3Type.h"
 #include "IndexListType.h"
@@ -206,6 +207,9 @@ namespace
 
 	template<>
 	struct LuaParamMapping<ParamType::Vec3List> : LuaWrappedParamMapping<GlmVec3ListType, std::vector<glm::vec3>> {};
+
+	template<>
+	struct LuaParamMapping<ParamType::Vec3ListList> : LuaWrappedParamMapping<GlmVec3ListListType, std::vector<std::shared_ptr<std::vector<glm::vec3>>>> {};
 
 	//template<>
 	//struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};

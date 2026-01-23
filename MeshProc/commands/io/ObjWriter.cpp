@@ -13,10 +13,34 @@ ObjWriter::ObjWriter(const sgrottel::ISimpleLog& log)
 {
 	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
 	AddParamBinding<ParamMode::In, ParamType::Scene>("Scene", m_scene);
+	AddParamBinding<ParamMode::In, ParamType::Vec3ListList>("VertexColors", m_vertexColors);
 }
 
 bool ObjWriter::Invoke()
 {
+	if (!m_scene)
+	{
+		Log().Error(L"'Scene' not set");
+		return false;
+	}
+
+	if (m_vertexColors)
+	{
+		if (m_scene->m_meshes.size() != m_vertexColors->size())
+		{
+			Log().Error(L"Inconsistent vertex colors; scene with %d meshes; vertex colors for %d meshes", m_scene->m_meshes.size(), m_vertexColors->size());
+		}
+		for (size_t i = 0; i < m_scene->m_meshes.size(); ++i)
+		{
+			auto const& g = m_scene->m_meshes.at(i).first->vertices;
+			auto const& c = m_vertexColors->at(i);
+			if (g.size() != c->size() && c->size() != 0)
+			{
+				Log().Error(L"Inconsistent vertex colors; Scene mesh %d has %d vertices, but %d vertex color entries", i, g.size(), c->size());
+			}
+		}
+	}
+
 	FILE* file = nullptr;
 	errno_t r = _wfopen_s(&file, m_path.c_str(), L"wb");
 	if (r != 0) {
@@ -31,20 +55,41 @@ bool ObjWriter::Invoke()
 	}
 
 	Log().Message(L"Writing OBJ: %s", m_path.c_str());
-	fprintf(file, "# MeshProc ObjWriter\n");
+	fprintf(file, "# MeshProc ObjWriter");
 
 	// export whole scene as single mesh!
 
 	// all verticies
-	for (auto const& mesh : m_scene->m_meshes)
+	for (size_t i = 0; i < m_scene->m_meshes.size(); ++i)
 	{
-		for (auto const& vertex : mesh.first->vertices)
+		auto const& mesh = m_scene->m_meshes.at(i);
+		std::shared_ptr<std::vector<glm::vec3>> col = m_vertexColors ? m_vertexColors->at(i) : nullptr;
+		if (col && col->size() != mesh.first->vertices.size())
 		{
-			glm::vec4 v = mesh.second * glm::vec4{ vertex, 1.0f };
+			col.reset();
+		}
+
+		for (size_t j = 0; j < mesh.first->vertices.size(); ++j)
+		{
+			glm::vec4 v = mesh.second * glm::vec4{ mesh.first->vertices.at(j), 1.0f };
 			v *= 1.0f / v.w;
-			fprintf(file, "v %f %f %f\n", v.x, v.y, v.z);
+			fprintf(file, "\nv %f %f %f", v.x, v.y, v.z);
+			if (col)
+			{
+				auto c = col->at(j);
+				fprintf(file, " %f %f %f",
+					std::clamp(c.x, 0.0f, 1.0f),
+					std::clamp(c.y, 0.0f, 1.0f),
+					std::clamp(c.z, 0.0f, 1.0f));
+			}
+			else if (m_vertexColors)
+			{
+				fprintf(file, " 0 0 0");
+			}
 		}
 	}
+
+	fprintf(file, "\n");
 
 	// all trianges
 	uint32_t vertexOffset = 0;

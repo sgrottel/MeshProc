@@ -30,6 +30,8 @@ namespace meshproc
 			Float,
 			String,
 			Vec3,
+			Vec3List,
+			Vec3ListList,
 			Mat4,
 			Mesh,
 //			MultiMesh,
@@ -38,7 +40,6 @@ namespace meshproc
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 			IndexListList,
 //			Callback,
-			Vec3List,
 //			ListOfFloat,
 			HalfSpace,
 
@@ -159,6 +160,15 @@ namespace meshproc
 		{
 			static constexpr const char* name = "Vec3List";
 			typedef std::shared_ptr<std::vector<glm::vec3>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
+
+		template<>
+		struct ParamTypeInfo<ParamType::Vec3ListList>
+		{
+			static constexpr const char* name = "Vec3ListList";
+			typedef std::shared_ptr<std::vector< typename ParamTypeInfo<ParamType::Vec3List>::type >> type;
 			static constexpr bool canSetNil = true;
 			static type NilVal() { return nullptr; }
 		};

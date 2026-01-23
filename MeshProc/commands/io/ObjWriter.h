@@ -23,6 +23,7 @@ namespace meshproc
 			private:
 				const std::wstring m_path{};
 				const std::shared_ptr<data::Scene> m_scene{};
+				const std::shared_ptr<std::vector<std::shared_ptr<std::vector<glm::vec3>>>> m_vertexColors{};
 			};
 
 		}

@@ -15,7 +15,7 @@ namespace meshproc
 			class GlmVec3ListType : public AbstractListType<glm::vec3, GlmVec3ListType>
 			{
 			public:
-				static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Vec3ListType";
+				static constexpr const char* LUA_TYPE_NAME = "SGR.MeshProc.Data.Vec3List";
 
 				GlmVec3ListType(Runner& owner)
 					: AbstractListType<glm::vec3, GlmVec3ListType>{ owner }

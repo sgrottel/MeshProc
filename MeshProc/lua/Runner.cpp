@@ -16,6 +16,7 @@
 #include "types/SceneType.h"
 #include "types/MeshType.h"
 #include "types/GlmVec3ListType.h"
+#include "types/GlmVec3ListListType.h"
 
 #define IMPL_COMPONENTS(FUNC) \
 /*	FUNC(ListOfFloatType)*/ \
@@ -26,6 +27,7 @@
 	FUNC(types, CommandType) \
 	FUNC(types, HalfSpaceType) \
 	FUNC(types, GlmVec3ListType) \
+	FUNC(types, GlmVec3ListListType) \
 	FUNC(types, IndexListType) \
 	FUNC(types, IndexListListType) \
 	FUNC(types, MeshType) \

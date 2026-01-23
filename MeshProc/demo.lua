@@ -61,6 +61,7 @@ end
 -- explicitly collect the no longer used "make" object
 collectgarbage("collect")
 
+local meshcol = nil
 do
 	local sel = meshproc.IndexList.new()
 	for i = 1, 4 do
@@ -72,6 +73,22 @@ do
 		end
 		sel:insert(x)
 		-- mesh.vertex[x] = mesh.vertex[x] * 4
+	end
+
+	local function clamp(x, min, max)
+		if x < min then return min end
+		if x > max then return max end
+		return x
+	end
+
+	meshcol = meshproc.Vec3List.new()
+	meshcol:resize(#mesh.vertex)
+	for i = 1, #mesh.vertex do
+		local v = mesh.vertex[i]
+		v.x = clamp(math.abs(v.x), 0, 1)
+		v.y = clamp(math.abs(v.y), 0, 1)
+		v.z = clamp(math.abs(v.z), 0, 1)
+		meshcol[i] = v
 	end
 
 end
@@ -116,8 +133,12 @@ end
 
 -- save scene to file
 do
+	local scenecol = meshproc.Vec3ListList.new()
+	scenecol:insert(meshcol)
+
 	local file = meshproc.io.ObjWriter.new()
 	file.Scene = mesh -- alternative syntax to the array operators
+	file.VertexColors = scenecol
 	file.Path = "out.obj"
 	file:invoke()
 end

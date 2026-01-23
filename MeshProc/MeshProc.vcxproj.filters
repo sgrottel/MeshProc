@@ -201,6 +201,9 @@
     <ClCompile Include="lua\types\HalfSpaceType.cpp">
       <Filter>lua\types</Filter>
     </ClCompile>
+    <ClCompile Include="lua\types\GlmVec3ListListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -371,6 +374,9 @@
       <Filter>commands\edit</Filter>
     </ClInclude>
     <ClInclude Include="lua\types\HalfSpaceType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmVec3ListListType.h">
       <Filter>lua\types</Filter>
     </ClInclude>
   </ItemGroup>

@@ -128,6 +128,7 @@
     <ClCompile Include="lua\types\GlmMat4Type.cpp" />
     <ClCompile Include="lua\types\GlmUVec3Type.cpp" />
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
+    <ClCompile Include="lua\types\GlmVec3ListListType.cpp" />
     <ClCompile Include="lua\types\GlmVec3ListType.cpp" />
     <ClCompile Include="lua\types\GlmVec3Type.cpp" />
     <ClCompile Include="lua\types\HalfSpaceType.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="lua\types\GlmMat4Type.h" />
     <ClInclude Include="lua\types\GlmUVec3Type.h" />
     <ClInclude Include="lua\types\GlmVec2Type.h" />
+    <ClInclude Include="lua\types\GlmVec3ListListType.h" />
     <ClInclude Include="lua\types\GlmVec3ListType.h" />
     <ClInclude Include="lua\types\GlmVec3Type.h" />
     <ClInclude Include="lua\types\HalfSpaceType.h" />
