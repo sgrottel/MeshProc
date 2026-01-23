@@ -12,7 +12,7 @@ Subdivision::Subdivision(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::InOut, ParamType::Mesh>("Mesh", m_mesh);
-	//AddParamBinding<ParamMode::Out, ParamType::Indices>("NewVertices", m_newVertices);
+	AddParamBinding<ParamMode::Out, ParamType::IndexList>("NewVertices", m_newVertices);
 }
 
 bool Subdivision::Invoke()
@@ -35,12 +35,12 @@ bool Subdivision::Invoke()
 			}
 		}
 	}
-//	m_newVertices = std::make_shared<std::vector<uint32_t>>();
-//	m_newVertices->reserve(edgeSubDivs.size());
+	m_newVertices = std::make_shared<std::vector<uint32_t>>();
+	m_newVertices->reserve(edgeSubDivs.size());
 	m_mesh->vertices.resize(m_mesh->vertices.size() + edgeSubDivs.size());
 	for (auto const& e : edgeSubDivs)
 	{
-//		m_newVertices->push_back(e.second);
+		m_newVertices->push_back(e.second);
 		m_mesh->vertices.at(e.second) = (m_mesh->vertices.at(e.first.i0) + m_mesh->vertices.at(e.first.i1)) * 0.5f;
 	}
 

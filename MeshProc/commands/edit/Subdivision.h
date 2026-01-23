@@ -21,7 +21,7 @@ namespace meshproc
 
 			private:
 				std::shared_ptr<data::Mesh> m_mesh;
-				//std::shared_ptr<std::vector<uint32_t>> m_newVertices;
+				std::shared_ptr<std::vector<uint32_t>> m_newVertices;
 			};
 
 		}
