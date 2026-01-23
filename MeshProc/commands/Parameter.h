@@ -28,6 +28,7 @@ namespace meshproc
 		{
 			UInt32,
 			Float,
+			FloatList,
 			String,
 			Vec3,
 			Vec3List,
@@ -40,7 +41,6 @@ namespace meshproc
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 			IndexListList,
 //			Callback,
-//			ListOfFloat,
 			HalfSpace,
 
 			LAST
@@ -65,6 +65,15 @@ namespace meshproc
 			static constexpr const char* name = "Float";
 			typedef float type;
 			static constexpr bool canSetNil = false;
+		};
+
+		template<>
+		struct ParamTypeInfo<ParamType::FloatList>
+		{
+			static constexpr const char* name = "FloatList";
+			typedef std::shared_ptr<std::vector<float>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
 		};
 
 		template<>
@@ -172,15 +181,6 @@ namespace meshproc
 			static constexpr bool canSetNil = true;
 			static type NilVal() { return nullptr; }
 		};
-
-		//template<>
-		//struct ParamTypeInfo<ParamType::ListOfFloat>
-		//{
-		//	static constexpr const char* name = "ListOfFloat";
-		//	typedef std::shared_ptr<std::vector<float>> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
 
 		template<>
 		struct ParamTypeInfo<ParamType::HalfSpace>

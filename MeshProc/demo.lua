@@ -75,22 +75,19 @@ do
 		-- mesh.vertex[x] = mesh.vertex[x] * 4
 	end
 
-	local function clamp(x, min, max)
-		if x < min then return min end
-		if x > max then return max end
-		return x
-	end
-
-	meshcol = meshproc.Vec3List.new()
-	meshcol:resize(#mesh.vertex)
+	local val = meshproc.FloatList.new()
+	val:resize(#mesh.vertex)
 	for i = 1, #mesh.vertex do
-		local v = mesh.vertex[i]
-		v.x = clamp(math.abs(v.x), 0, 1)
-		v.y = clamp(math.abs(v.y), 0, 1)
-		v.z = clamp(math.abs(v.z), 0, 1)
-		meshcol[i] = v
+		val[i] = 0
+	end
+	for i = 1, #sel do
+		val[sel[i]] = 1
 	end
 
+	local colmap = meshproc.compute.LinearColorMap.new()
+	colmap.Scalars = val
+	colmap:invoke()
+	meshcol = colmap.Colors
 end
 
 -- do return end

@@ -3,13 +3,13 @@
 #include "lua/LuaUtilities.h"
 
 //#include "CallbackFunction.h"
+#include "FloatListType.h"
 #include "GlmMat4Type.h"
 #include "GlmVec3ListListType.h"
 #include "GlmVec3ListType.h"
 #include "GlmVec3Type.h"
 #include "IndexListType.h"
 #include "IndexListListType.h"
-//#include "ListOfFloatType.h"
 #include "MeshType.h"
 //#include "MultiMeshType.h"
 #include "SceneType.h"
@@ -211,8 +211,8 @@ namespace
 	template<>
 	struct LuaParamMapping<ParamType::Vec3ListList> : LuaWrappedParamMapping<GlmVec3ListListType, std::vector<std::shared_ptr<std::vector<glm::vec3>>>> {};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::ListOfFloat> : LuaWrappedParamMapping<ListOfFloatType, std::vector<float>> {};
+	template<>
+	struct LuaParamMapping<ParamType::FloatList> : LuaWrappedParamMapping<FloatListType, std::vector<float>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::HalfSpace> : LuaWrappedParamMapping<HalfSpaceType, data::HalfSpace> {};

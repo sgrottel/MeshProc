@@ -204,6 +204,12 @@
     <ClCompile Include="lua\types\GlmVec3ListListType.cpp">
       <Filter>lua\types</Filter>
     </ClCompile>
+    <ClCompile Include="commands\compute\LinearColorMap.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\FloatListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -377,6 +383,12 @@
       <Filter>lua\types</Filter>
     </ClInclude>
     <ClInclude Include="lua\types\GlmVec3ListListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\LinearColorMap.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\FloatListType.h">
       <Filter>lua\types</Filter>
     </ClInclude>
   </ItemGroup>

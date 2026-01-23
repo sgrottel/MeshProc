@@ -94,6 +94,7 @@
     <ClCompile Include="commands\AbstractCommand.cpp" />
     <ClCompile Include="commands\CommandFactory.cpp" />
     <ClCompile Include="commands\CommandRegistration.cpp" />
+    <ClCompile Include="commands\compute\LinearColorMap.cpp" />
     <ClCompile Include="commands\compute\OpenBorder.cpp" />
     <ClCompile Include="commands\compute\VertexNormals.cpp" />
     <ClCompile Include="commands\edit\CloseLoopWithPin.cpp" />
@@ -125,6 +126,7 @@
     <ClCompile Include="lua\types\AbstractListType.cpp" />
     <ClCompile Include="lua\types\AbstractType.cpp" />
     <ClCompile Include="lua\types\CommandType.cpp" />
+    <ClCompile Include="lua\types\FloatListType.cpp" />
     <ClCompile Include="lua\types\GlmMat4Type.cpp" />
     <ClCompile Include="lua\types\GlmUVec3Type.cpp" />
     <ClCompile Include="lua\types\GlmVec2Type.cpp" />
@@ -168,6 +170,7 @@
     <ClInclude Include="commands\AbstractCommand.h" />
     <ClInclude Include="commands\CommandFactory.h" />
     <ClInclude Include="commands\CommandRegistration.h" />
+    <ClInclude Include="commands\compute\LinearColorMap.h" />
     <ClInclude Include="commands\compute\OpenBorder.h" />
     <ClInclude Include="commands\compute\VertexNormals.h" />
     <ClInclude Include="commands\edit\CloseLoopWithPin.h" />
@@ -200,6 +203,7 @@
     <ClInclude Include="lua\types\AbstractListType.h" />
     <ClInclude Include="lua\types\AbstractType.h" />
     <ClInclude Include="lua\types\CommandType.h" />
+    <ClInclude Include="lua\types\FloatListType.h" />
     <ClInclude Include="lua\types\GlmMat4Type.h" />
     <ClInclude Include="lua\types\GlmUVec3Type.h" />
     <ClInclude Include="lua\types\GlmVec2Type.h" />
