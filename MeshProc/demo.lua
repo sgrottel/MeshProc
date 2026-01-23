@@ -56,7 +56,12 @@ do
 	scene:place(mesh2, XMat4.translate(0, 3, 0))
 
 	mesh = scene:bake()
+end
 
+-- explicitly collect the no longer used "make" object
+collectgarbage("collect")
+
+do
 	local sel = meshproc.IndexList.new()
 	for i = 1, 4 do
 		local v = XVec3(0, 0, 0)
@@ -70,9 +75,6 @@ do
 	end
 
 end
-
--- explicitly collect the no longer used "make" object
-collectgarbage("collect")
 
 -- do return end
 
@@ -108,15 +110,14 @@ collectgarbage("collect")
 
 
 -- compose scene from meshes
-local scene = meshproc.Scene.new()
-
-scene:place(mesh)
+-- local scene = meshproc.Scene.new()
+-- scene:place(mesh)
 -- scene:place(mesh2, XMat4.translate(0, 3, 0))
 
 -- save scene to file
 do
-	local stl = meshproc.io.StlWriter.new()
-	stl.Scene = scene -- alternative syntax to the array operators
-	stl.Path = "out.stl"
-	stl:invoke()
+	local file = meshproc.io.ObjWriter.new()
+	file.Scene = mesh -- alternative syntax to the array operators
+	file.Path = "out.obj"
+	file:invoke()
 end

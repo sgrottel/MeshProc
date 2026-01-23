@@ -17,6 +17,8 @@
 
 #include "commands/AbstractCommand.h"
 
+#include "data/Scene.h"
+
 #include "utilities/StringUtilities.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -108,7 +110,35 @@ namespace
 	//struct LuaParamMapping<ParamType::MultiMesh> : LuaWrappedParamMapping<MultiMeshType, std::vector<std::shared_ptr<data::Mesh>>> {};
 
 	template<>
-	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene> {};
+	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene>
+	{
+		static bool GetVal(lua_State* lua, std::shared_ptr<data::Scene>& tar)
+		{
+			if (!lua_isuserdata(lua, 3))
+			{
+				return luaL_error(lua, "bad argument #3 (expected Scene, got non-userdata)");
+			}
+			if (SceneType::LuaCheck(lua, 3))
+			{
+				return LuaWrappedParamMapping<SceneType, data::Scene>::GetVal(lua, tar);
+			}
+			if (MeshType::LuaCheck(lua, 3))
+			{
+				std::shared_ptr<data::Mesh> mesh;
+				if (LuaWrappedParamMapping<MeshType, data::Mesh>::GetVal(lua, mesh))
+				{
+					tar = std::make_shared<data::Scene>();
+					tar->m_meshes.push_back(std::make_pair(mesh, glm::mat4{ 1.0f }));
+					return true;
+				}
+				else
+				{
+					return luaL_error(lua, "bad argument #3 (expected Scene, failed to get Mesh)");
+				}
+			}
+			return luaL_error(lua, "bad argument #3 (type mismatch, expected Scene)");
+		}
+	};
 
 	//template<>
 	//struct LuaParamMapping<ParamType::Shape2D> : LuaWrappedParamMapping<Shape2DType, data::Shape2D> {};

@@ -19,6 +19,7 @@ namespace meshproc
 
 				static int LuaPush(lua_State* lua, std::shared_ptr<TVAR> val);
 				static std::shared_ptr<TVAR> LuaGet(lua_State* lua, int idx);
+				static bool LuaCheck(lua_State* lua, int idx);
 
 				AbstractType(Runner& owner)
 					: Runner::Component<TIMPL>{ owner }
@@ -38,12 +39,46 @@ namespace meshproc
 					std::shared_ptr<TVAR> val;
 				};
 
-				static wrapped* GetWrappedObject(lua_State* lua, int idx)
+				static wrapped* GetWrappedObject(lua_State* lua, int idx, bool errorOnTypeMismatch = true)
 				{
 					const int stacksize = lua_gettop(lua);
 					if (stacksize == 0) throw std::runtime_error("Trying to get lua userobject from empty stack");
 					if ((idx > 0 && stacksize < idx) || (idx < 0 && stacksize < -idx)) throw std::runtime_error("Trying to get lua userobject from invalid stack position");
-					void* ud = luaL_checkudata(lua, idx, TIMPL::LUA_TYPE_NAME);
+
+					void* ud = lua_touserdata(lua, idx);
+					if (!ud)
+					{
+						// not userdata
+						if (errorOnTypeMismatch)
+						{
+							luaL_error(lua, "bad argument #%d (got non-userdata)", idx);
+						}
+						return nullptr;
+					}
+
+					// Get the object's metatable
+					if (!lua_getmetatable(lua, idx))
+					{
+						if (errorOnTypeMismatch)
+						{
+							luaL_error(lua, "bad argument #%d (userdata w/o metatable)", idx);
+						}
+						return nullptr;
+					}
+
+					luaL_getmetatable(lua, TIMPL::LUA_TYPE_NAME);
+					const int equal = lua_rawequal(lua, -1, -2);
+					lua_pop(lua, 2);
+
+					if (!equal)
+					{
+						if (errorOnTypeMismatch)
+						{
+							luaL_error(lua, "bad argument #%d (type mismatch; expected %s)", idx, TIMPL::LUA_TYPE_NAME);
+						}
+						return nullptr;
+					}
+
 					return reinterpret_cast<wrapped*>(ud);
 				}
 			};
@@ -68,6 +103,12 @@ namespace meshproc
 					return w->val;
 				}
 				return 0;
+			}
+
+			template<typename TVAR, typename TIMPL>
+			bool AbstractType<TVAR, TIMPL>::LuaCheck(lua_State* lua, int idx)
+			{
+				return GetWrappedObject(lua, idx, false) != nullptr;
 			}
 
 			template<typename TVAR, typename TIMPL>
@@ -117,10 +158,6 @@ namespace meshproc
 					// default __index dispatcher just references the metatable
 					lua_pushvalue(Runner::Component<TIMPL>::lua(), -1);
 					lua_setfield(Runner::Component<TIMPL>::lua(), -2, "__index");
-
-					// lua_pushstring(Runner::Component<TIMPL>::lua(), "__index");
-					// lua_pushvalue(Runner::Component<TIMPL>::lua(), -2);	// pushes the metatable
-					// lua_settable(Runner::Component<TIMPL>::lua(), -3);	// metatable.__index = metatable
 				}
 
 				luaL_setfuncs(Runner::Component<TIMPL>::lua(), memberFuncs, 0);

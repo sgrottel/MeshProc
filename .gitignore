@@ -13,3 +13,4 @@ extra/perf_looper/deps/google_benchmark/**
 MeshProc/vcpkg_installed
 test/test-obj.obj
 test/test-commands-1.obj
+MeshProc/out.obj
