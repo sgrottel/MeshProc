@@ -1,4 +1,4 @@
-#include "VertexSurfaceDistanceToCut.h"
+#include "VertexEdgeDistanceToCut.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -13,8 +13,9 @@
 #endif
 
 using namespace meshproc;
+using namespace meshproc::commands;
 
-VertexSurfaceDistanceToCut::VertexSurfaceDistanceToCut(const sgrottel::ISimpleLog& log)
+compute::VertexEdgeDistanceToCut::VertexEdgeDistanceToCut(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
@@ -24,10 +25,10 @@ VertexSurfaceDistanceToCut::VertexSurfaceDistanceToCut(const sgrottel::ISimpleLo
 	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneRectWidth", m_planeRectWidth); // along x
 	AddParamBinding<ParamMode::In, ParamType::Float>("PlaneRectHeight", m_planeRectHeight);
 
-	AddParamBinding<ParamMode::Out, ParamType::ListOfFloat>("Distances", m_dists);
+	AddParamBinding<ParamMode::Out, ParamType::FloatList>("Distances", m_dists);
 }
 
-bool VertexSurfaceDistanceToCut::Invoke()
+bool compute::VertexEdgeDistanceToCut::Invoke()
 {
 	if (!m_mesh)
 	{
