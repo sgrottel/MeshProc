@@ -13,20 +13,14 @@ foreach ($key in 'Verbose','Debug','ErrorAction','WarningAction') {
 	}
 }
 
-Write-Host
-Write-Host "run-test-obj.ps1" -Foreground Cyan -Background Black
-Write-Host
-& (Join-Path $PSScriptRoot "run-test-obj.ps1") -exe:$exe @innerParams
+$tests = Get-ChildItem -Path (Join-Path $PSScriptRoot run*.ps1) -exclude run-all.ps1
 
-Write-Host
-Write-Host "run-test-commands-1.ps1" -Foreground Cyan -Background Black
-Write-Host
-& (Join-Path $PSScriptRoot "run-test-commands-1.ps1") -exe:$exe @innerParams
-
-Write-Host
-Write-Host "run-test-selection.ps1" -Foreground Cyan -Background Black
-Write-Host
-& (Join-Path $PSScriptRoot "run-test-selection.ps1") -exe:$exe @innerParams
+$tests | foreach-object {
+	Write-Host
+	Write-Host $_.Name -Foreground Cyan -Background Black
+	Write-Host
+	& $_.FullName -exe:$exe @innerParams
+}
 
 Write-Host
 Write-Host "done." -Foreground Cyan -Background Black
