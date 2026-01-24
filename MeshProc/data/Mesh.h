@@ -41,6 +41,8 @@ namespace meshproc
 			bool IsValid() const;
 
 			std::unordered_set<data::HashableEdge> CollectOpenEdges() const;
+
+			void RemoveIsolatedVertices();
 		};
 
 	}

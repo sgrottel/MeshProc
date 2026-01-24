@@ -1,8 +1,8 @@
 #include "CommandCreator.h"
 
-#include "CommandType.h"
+#include "types/CommandType.h"
 
-#include "CommandFactory.h"
+#include "commands/CommandFactory.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -55,7 +55,7 @@ int CommandCreator::CallbackCreateCommand(lua_State* lua)
 
 int CommandCreator::CreateCommandImpl(lua_State* lua)
 {
-	CommandType* cmdTypeComp = GetComponent<CommandType>();
+	types::CommandType* cmdTypeComp = GetComponent<types::CommandType>();
 	if (cmdTypeComp == nullptr)
 	{
 		Log().Critical("Cannot access command type component");
@@ -79,12 +79,12 @@ int CommandCreator::CreateCommandImpl(lua_State* lua)
 
 	Log().Detail("CreateCommand(%s)", typeStr.c_str());
 
-	std::shared_ptr<AbstractCommand> cmd = m_factory.Instantiate(typeStr, Log());
+	std::shared_ptr<commands::AbstractCommand> cmd = m_factory.Instantiate(typeStr, Log());
 	if (!cmd)
 	{
 		Log().Error("Failed to create command '%s'", typeStr.c_str());
 		return 0;
 	}
 
-	return CommandType::LuaPush(lua, cmd); // cmdObj is on stack
+	return types::CommandType::LuaPush(lua, cmd); // cmdObj is on stack
 }

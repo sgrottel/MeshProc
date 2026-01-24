@@ -4,7 +4,10 @@
 
 namespace meshproc
 {
-	class CommandFactory;
+	namespace commands
+	{
+		class CommandFactory;
+	}
 
 	namespace lua
 	{
@@ -12,7 +15,7 @@ namespace meshproc
 		class CommandCreator : public Runner::Component<CommandCreator>
 		{
 		public:
-			CommandCreator(Runner& owner, const CommandFactory& factory)
+			CommandCreator(Runner& owner, const commands::CommandFactory& factory)
 				: Component<CommandCreator>{ owner }
 				, m_factory{ factory }
 			{};
@@ -25,7 +28,7 @@ namespace meshproc
 
 			int CreateCommandImpl(lua_State* lua);
 			
-			const CommandFactory& m_factory;
+			const commands::CommandFactory& m_factory;
 		};
 
 	}

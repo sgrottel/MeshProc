@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="io">
-      <UniqueIdentifier>{cd1a8422-74d3-4e0b-8f17-d53220ea4e85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="generator">
-      <UniqueIdentifier>{4791f317-3d33-4813-b172-6aac109a31cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="data">
       <UniqueIdentifier>{59ab55d1-2140-4a78-b3d6-653f66dcf76c}</UniqueIdentifier>
     </Filter>
@@ -40,11 +34,23 @@
     <Filter Include="3rd-party\xyz_math">
       <UniqueIdentifier>{3a43e98b-97af-4bd0-85fa-76cb14203680}</UniqueIdentifier>
     </Filter>
-    <Filter Include="algo">
-      <UniqueIdentifier>{3c2c12d7-f0ee-43fd-be36-c0649781453a}</UniqueIdentifier>
+    <Filter Include="commands">
+      <UniqueIdentifier>{c1e42adc-2400-4cfa-9cf5-f91a912addd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="fitting">
-      <UniqueIdentifier>{9f166cb6-a00c-4b15-89da-67ee05e6acaa}</UniqueIdentifier>
+    <Filter Include="lua\types">
+      <UniqueIdentifier>{e388a7c8-149e-4509-94c6-6ac83e01fb89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\generator">
+      <UniqueIdentifier>{b982462c-553c-4e8a-9d75-86f8749a39c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\io">
+      <UniqueIdentifier>{96b0a160-896d-4ce8-b6d1-9e172919ecff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\edit">
+      <UniqueIdentifier>{34bad5c1-9afb-45db-9f22-e5f5d2f5c29b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands\compute">
+      <UniqueIdentifier>{8cfc4c3b-e159-40ab-ac0a-6c69bdcb83b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,73 +60,13 @@
     <ClCompile Include="CmdLineArgs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenBorder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LinearExtrude.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AbstractCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Parameter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandRegistration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ParameterBinding.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CloseLoopWithPin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DevPlayground.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SelectBottomTriangles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExtractSubMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Extract2DLoops.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Convex2DHull.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="3rd-party\tinyxml2\tinyxml2.cpp">
       <Filter>3rd-party\tinyxml2</Filter>
-    </ClCompile>
-    <ClCompile Include="CutHalfSpace.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utilities\StringUtilities.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
-    <ClCompile Include="lua\AbstractMultiType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\AbstractType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\CommandCreator.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\CommandType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\GlmMat4Type.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\GlmVec2Type.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\GlmVec3Type.cpp">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\LogFunctions.cpp">
@@ -129,59 +75,8 @@
     <ClCompile Include="lua\LuaUtilities.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\MeshType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\MultiMeshType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\MultiIndicesType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\Runner.cpp">
       <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\SceneType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\Shape2DType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\IndicesType.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="io\CsvShape2DWriter.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\ObjReader.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\PlyReader.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\PlyWriter.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\StlReader.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\StlWriter.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="io\SvgShape2DWriter.cpp">
-      <Filter>io</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\SphereIco.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\CrystalGrain.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\Icosahedron.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\LinearExtrude2DMesh.cpp">
-      <Filter>generator</Filter>
     </ClCompile>
     <ClCompile Include="data\Triangle.cpp">
       <Filter>data</Filter>
@@ -201,92 +96,125 @@
     <ClCompile Include="data\HashableEdge.cpp">
       <Filter>data</Filter>
     </ClCompile>
-    <ClCompile Include="FlatSkirt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\RotateExtrude2DMesh.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="ManipulateVertices.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\CallbackFunction.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\Cuboid.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\ListOfVec3Type.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="generator\VertexNormals.cpp">
-      <Filter>generator</Filter>
-    </ClCompile>
-    <ClCompile Include="DisplacementNoise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Subdivision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="lua\VersionCheck.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="SelectRandomTriangles.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\AbstractCommand.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="CollapseTriangles.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\Parameter.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="MeasureBoundingBox.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\ParameterBinding.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="io\CsvShape2DReader.cpp">
-      <Filter>io</Filter>
+    <ClCompile Include="commands\CommandFactory.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="MatchShape2D.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\CommandRegistration.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="BakeTransform.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\AbstractType.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="SelectVertices.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\SceneType.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="SelectTrianglesFromSelectedVertices.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\GlmVec2Type.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="fitting\MorphRotateOutline.cpp">
-      <Filter>fitting</Filter>
+    <ClCompile Include="lua\types\GlmVec3Type.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="DeleteTriangles.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\GlmMat4Type.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="MixLoops.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\MeshType.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="MorphMeshLoop.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\generator\Cuboid.cpp">
+      <Filter>commands\generator</Filter>
     </ClCompile>
-    <ClCompile Include="SelectVerticesFromSelectedTriangles.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lua\types\CommandType.cpp">
+      <Filter>lua\types</Filter>
     </ClCompile>
-    <ClCompile Include="IndicesBoolean.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\io\PlyReader.cpp">
+      <Filter>commands\io</Filter>
     </ClCompile>
-    <ClCompile Include="MeshSmooth.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\io\PlyWriter.cpp">
+      <Filter>commands\io</Filter>
     </ClCompile>
-    <ClCompile Include="lua\ListOfFloatType.cpp">
-      <Filter>lua</Filter>
+    <ClCompile Include="commands\io\StlReader.cpp">
+      <Filter>commands\io</Filter>
     </ClCompile>
-    <ClCompile Include="io\ObjMeshWriter.cpp">
-      <Filter>io</Filter>
+    <ClCompile Include="commands\io\StlWriter.cpp">
+      <Filter>commands\io</Filter>
     </ClCompile>
-    <ClCompile Include="VertexSurfaceDistanceToCut.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="commands\io\ObjReader.cpp">
+      <Filter>commands\io</Filter>
     </ClCompile>
-    <ClCompile Include="io\ObjWriter.cpp">
-      <Filter>io</Filter>
+    <ClCompile Include="commands\io\ObjWriter.cpp">
+      <Filter>commands\io</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\generator\Icosahedron.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\generator\Octahedron.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\Subdivision.cpp">
+      <Filter>commands\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\GlmUVec3Type.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\generator\SphereIco.cpp">
+      <Filter>commands\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\IndexListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\AbstractListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\VertexNormals.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\GlmVec3ListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\DisplacementNoise.cpp">
+      <Filter>commands\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\IndexListListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\OpenBorder.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\CloseLoopWithPin.cpp">
+      <Filter>commands\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\edit\CutHalfSpace.cpp">
+      <Filter>commands\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\HalfSpaceType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\GlmVec3ListListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\LinearColorMap.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\types\FloatListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\VertexEdgeDistance.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
+    <ClCompile Include="commands\compute\VertexEdgeDistanceToCut.cpp">
+      <Filter>commands\compute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,84 +230,24 @@
     </None>
     <None Include="vcpkg.json" />
     <None Include="vcpkg-configuration.json" />
+    <None Include="commands\CommandRegistration.inc">
+      <Filter>commands</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLineArgs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenBorder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinearExtrude.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AbstractCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parameter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandRegistration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ParameterBinding.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CloseLoopWithPin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DevPlayground.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SelectBottomTriangles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExtractSubMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VersionInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Extract2DLoops.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Convex2DHull.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="3rd-party\tinyxml2\tinyxml2.h">
       <Filter>3rd-party\tinyxml2</Filter>
     </ClInclude>
-    <ClInclude Include="CutHalfSpace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utilities\StringUtilities.h">
       <Filter>utilities</Filter>
     </ClInclude>
-    <ClInclude Include="lua\IndicesType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\AbstractMultiType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\AbstractType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\CommandCreator.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\CommandType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\GlmMat4Type.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\GlmVec2Type.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\GlmVec3Type.h">
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="lua\LogFunctions.h">
@@ -391,56 +259,8 @@
     <ClInclude Include="lua\LuaUtilities.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\MeshType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\MultiMeshType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\MultiIndicesType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\Runner.h">
       <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\SceneType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\Shape2DType.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="io\CsvShape2DWriter.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\ObjReader.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\PlyReader.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\PlyWriter.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\StlReader.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\StlWriter.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\SvgShape2DWriter.h">
-      <Filter>io</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\CrystalGrain.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\Icosahedron.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\LinearExtrude2DMesh.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\SphereIco.h">
-      <Filter>generator</Filter>
     </ClInclude>
     <ClInclude Include="data\Mesh.h">
       <Filter>data</Filter>
@@ -460,95 +280,128 @@
     <ClInclude Include="data\HashableEdge.h">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="algo\LoopsFromEdges.h">
-      <Filter>algo</Filter>
-    </ClInclude>
-    <ClInclude Include="FlatSkirt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\RotateExtrude2DMesh.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="ManipulateVertices.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\CallbackFunction.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\Cuboid.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="lua\ListOfVec3Type.h">
-      <Filter>lua</Filter>
-    </ClInclude>
-    <ClInclude Include="generator\VertexNormals.h">
-      <Filter>generator</Filter>
-    </ClInclude>
-    <ClInclude Include="DisplacementNoise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Subdivision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="lua\VersionCheck.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="SelectRandomTriangles.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\AbstractCommand.h">
+      <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="CollapseTriangles.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\Parameter.h">
+      <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="MeasureBoundingBox.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\ParameterBinding.h">
+      <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="io\CsvShape2DReader.h">
-      <Filter>io</Filter>
+    <ClInclude Include="commands\CommandRegistration.h">
+      <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="MatchShape2D.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\CommandFactory.h">
+      <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="BakeTransform.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\AbstractType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="SelectVertices.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\SceneType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="SelectTrianglesFromSelectedVertices.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\GlmVec2Type.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="fitting\MorphRotateOutline.h">
-      <Filter>fitting</Filter>
+    <ClInclude Include="lua\types\GlmVec3Type.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="DeleteTriangles.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\GlmMat4Type.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="MixLoops.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\MeshType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="MorphMeshLoop.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\generator\Cuboid.h">
+      <Filter>commands\generator</Filter>
     </ClInclude>
-    <ClInclude Include="SelectVerticesFromSelectedTriangles.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lua\types\CommandType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
-    <ClInclude Include="IndicesBoolean.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\io\PlyReader.h">
+      <Filter>commands\io</Filter>
     </ClInclude>
-    <ClInclude Include="MeshSmooth.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\io\PlyWriter.h">
+      <Filter>commands\io</Filter>
     </ClInclude>
-    <ClInclude Include="lua\ListOfFloatType.h">
-      <Filter>lua</Filter>
+    <ClInclude Include="commands\io\StlReader.h">
+      <Filter>commands\io</Filter>
     </ClInclude>
-    <ClInclude Include="io\ObjMeshWriter.h">
-      <Filter>io</Filter>
+    <ClInclude Include="commands\io\StlWriter.h">
+      <Filter>commands\io</Filter>
     </ClInclude>
-    <ClInclude Include="VertexSurfaceDistanceToCut.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="commands\io\ObjReader.h">
+      <Filter>commands\io</Filter>
     </ClInclude>
-    <ClInclude Include="io\ObjWriter.h">
-      <Filter>io</Filter>
+    <ClInclude Include="commands\io\ObjWriter.h">
+      <Filter>commands\io</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\Icosahedron.h">
+      <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\Octahedron.h">
+      <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\Subdivision.h">
+      <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmUVec3Type.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\LoopsFromEdges.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\generator\SphereIco.h">
+      <Filter>commands\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\IndexListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\AbstractListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\VertexNormals.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmVec3ListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\DisplacementNoise.h">
+      <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\IndexListListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\OpenBorder.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\CloseLoopWithPin.h">
+      <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\edit\CutHalfSpace.h">
+      <Filter>commands\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\HalfSpaceType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\GlmVec3ListListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\LinearColorMap.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\FloatListType.h">
+      <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\VertexEdgeDistance.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\VertexEdgeDistanceToCut.h">
+      <Filter>commands\compute</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,34 +3,39 @@
 #include "CommandCreator.h"
 #include "LuaResources.h"
 
-#include "CommandType.h"
-#include "IndicesType.h"
-#include "ListOfFloatType.h"
-#include "ListOfVec3Type.h"
 #include "LogFunctions.h"
-#include "MeshType.h"
-#include "MultiIndicesType.h"
-#include "MultiMeshType.h"
-#include "SceneType.h"
-#include "Shape2DType.h"
+//#include "MultiMeshType.h"
+//#include "Shape2DType.h"
 #include "VersionCheck.h"
 
-#define IMPL_COMPONENTS(FUNC) \
-	FUNC(CommandType) \
-	FUNC(IndicesType) \
-	FUNC(ListOfFloatType) \
-	FUNC(ListOfVec3Type) \
-	FUNC(LogFunctions) \
-	FUNC(MeshType) \
-	FUNC(MultiIndicesType) \
-	FUNC(MultiMeshType) \
-	FUNC(SceneType) \
-	FUNC(Shape2DType) \
-	FUNC(VersionCheck)
+#include "types/CommandType.h"
+#include "types/FloatListType.h"
+#include "types/HalfSpaceType.h"
+#include "types/IndexListListType.h"
+#include "types/IndexListType.h"
+#include "types/SceneType.h"
+#include "types/MeshType.h"
+#include "types/GlmVec3ListType.h"
+#include "types/GlmVec3ListListType.h"
 
-#include "AbstractCommand.h"
-#include "CommandFactory.h"
-#include "ParameterBinding.h"
+#define IMPL_COMPONENTS(FUNC) \
+	FUNC(LogFunctions) \
+/*	FUNC(MultiMeshType) \
+	FUNC(Shape2DType) */ \
+	FUNC(VersionCheck) \
+	FUNC(types, CommandType) \
+	FUNC(types, FloatListType) \
+	FUNC(types, HalfSpaceType) \
+	FUNC(types, GlmVec3ListType) \
+	FUNC(types, GlmVec3ListListType) \
+	FUNC(types, IndexListType) \
+	FUNC(types, IndexListListType) \
+	FUNC(types, MeshType) \
+	FUNC(types, SceneType)
+
+#include "commands/AbstractCommand.h"
+#include "commands/CommandFactory.h"
+#include "commands/ParameterBinding.h"
 #include "utilities/StringUtilities.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -47,14 +52,28 @@ namespace
 	constexpr intptr_t LuaThisKey = 0x16A7;
 }
 
-#define RUNNER_CTORCALL(T) , m_##T{ owner }
-#define RUNNER_MEMBERDEFINITION(T) T m_##T;
-#define RUNNER_INITIMPL(T) if(!m_##T.Init()) { return false; }
+// namespaced class
+#define NSC1(a) a
+#define NSC2(a,b) a##::##b
+#define NSC3(a,b,c) a##::##b##::##c
+// underscore member name
+#define UMN1(a) m_##a
+#define UMN2(a,b) m_##a##_##b
+#define UMN3(a,b,c) m_##a##_##b##_##c
+// selection helper macros
+#define SELECT(_1,_2,_3,NAME,...) NAME
+#define EVALNAME(a) a
+#define TYPENSC(...) EVALNAME(SELECT(__VA_ARGS__, NSC3, NSC2, NSC1)(__VA_ARGS__))
+#define MEMBERNAME(...) EVALNAME(SELECT(__VA_ARGS__, UMN3, UMN2, UMN1)(__VA_ARGS__))
+
+#define RUNNER_CTORCALL(...) , MEMBERNAME(__VA_ARGS__){ owner }
+#define RUNNER_MEMBERDEFINITION(...) TYPENSC(__VA_ARGS__) MEMBERNAME(__VA_ARGS__);
+#define RUNNER_INITIMPL(...) if(!MEMBERNAME(__VA_ARGS__).Init()) { return false; }
 
 class Runner::Components {
 public:
-	Components(Runner& owner, const CommandFactory& factory)
-		: m_CommandCreator{ owner, factory }
+	Components(Runner& owner, const commands::CommandFactory& factory)
+		: m_CommandCreator { owner, factory }
 		IMPL_COMPONENTS(RUNNER_CTORCALL)
 	{ }
 
@@ -66,23 +85,23 @@ public:
 
 bool Runner::Components::Init()
 {
-	if (!m_CommandType.Init()) return false;
+	// if (!m_CommandType.Init()) return false;
 	IMPL_COMPONENTS(RUNNER_INITIMPL)
 	return true;
 }
 
-#define IMPL_RUNNER_GET_COMPONENT(T)	\
-	template<>									\
-	T* Runner::GetComponent<T>() const	\
-	{											\
-		if (!m_components) return nullptr;		\
-		return &m_components->m_##T;			\
+#define IMPL_RUNNER_GET_COMPONENT(...)	\
+	template<>	\
+	TYPENSC(__VA_ARGS__)* Runner::GetComponent<TYPENSC(__VA_ARGS__)>() const	\
+	{	\
+		if (!m_components) return nullptr;	\
+		return &m_components->MEMBERNAME(__VA_ARGS__);	\
 	}
 
 IMPL_RUNNER_GET_COMPONENT(CommandCreator)
 IMPL_COMPONENTS(IMPL_RUNNER_GET_COMPONENT)
 
-Runner::Runner(sgrottel::ISimpleLog& log, CommandFactory& factory)
+Runner::Runner(sgrottel::ISimpleLog& log, commands::CommandFactory& factory)
 	: m_log{ log }
 	, m_components{}
 {

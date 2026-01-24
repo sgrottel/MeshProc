@@ -24,10 +24,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0916BBF9-C
 	ProjectSection(SolutionItems) = preProject
 		test\Compare-WavefrontObjFiles.ps1 = test\Compare-WavefrontObjFiles.ps1
 		test\gen-test-obj.lua = test\gen-test-obj.lua
+		test\run-all.ps1 = test\run-all.ps1
+		test\run-test-commands-1.ps1 = test\run-test-commands-1.ps1
+		test\run-test-obj.ps1 = test\run-test-obj.ps1
+		test\run-test-selection.ps1 = test\run-test-selection.ps1
+		test\run-test-VertexEdgeDistanceToCut.ps1 = test\run-test-VertexEdgeDistanceToCut.ps1
+		test\test-commands-1-1.obj = test\test-commands-1-1.obj
+		test\test-commands-1.lua = test\test-commands-1.lua
 		test\test-obj-1.obj = test\test-obj-1.obj
 		test\test-obj-2.obj = test\test-obj-2.obj
 		test\test-obj.obj = test\test-obj.obj
 		test\test-obj.scad = test\test-obj.scad
+		test\test-open-torus.scad = test\test-open-torus.scad
+		test\test-selection-1.obj = test\test-selection-1.obj
+		test\test-selection.lua = test\test-selection.lua
+		test\test-VertexEdgeDistanceToCut-1.obj = test\test-VertexEdgeDistanceToCut-1.obj
+		test\test-VertexEdgeDistanceToCut.lua = test\test-VertexEdgeDistanceToCut.lua
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extra_nuget_proxy", "extra_nuget_proxy", "{51C71250-0D15-4A19-8D0B-4DB521BF4200}"

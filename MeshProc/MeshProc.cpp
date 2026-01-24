@@ -1,6 +1,6 @@
 ﻿#include "CmdLineArgs.h"
-#include "CommandFactory.h"
-#include "CommandRegistration.h"
+#include "commands/CommandFactory.h"
+#include "commands/CommandRegistration.h"
 #include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -22,8 +22,8 @@ int wmain(int argc, wchar_t **argv)
 
 	log.SetEchoDetails(cmdLine.m_verbose);
 
-	meshproc::CommandFactory cmdFactory{ log };
-	meshproc::CommandRegistration(cmdFactory, log);
+	meshproc::commands::CommandFactory cmdFactory{ log };
+	meshproc::commands::CommandRegistration(cmdFactory, log);
 
 	switch (cmdLine.m_command)
 	{

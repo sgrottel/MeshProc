@@ -21,6 +21,8 @@ bool VersionCheck::Init()
 {
 	if (!AssertStateReady()) return false;
 
+	// version number type
+	// used by `meshproc.version.get` and it's `to_string`
 	luaL_newmetatable(lua(), MeshProcVersionNumber);
 	lua_pushstring(lua(), "__index");
 	lua_pushvalue(lua(), -2);
@@ -34,23 +36,23 @@ bool VersionCheck::Init()
 	luaL_setfuncs(lua(), memberFuncs, 0);
 	lua_pop(lua(), 1);
 
-	lua_newtable(lua());
+	// version number static entry names
+	static const struct luaL_Reg staticFuncs[] = {
+		{"get", &VersionCheck::CallbackGetVersion},
+		{"assert", &VersionCheck::CallbackAssertVersion},
+		{"assert_newer_than", &VersionCheck::CallbackAssertVersionSince},
+		{"assert_or_newer", &VersionCheck::CallbackAssertVersionSinceIncluded},
+		{"assert_older_than", &VersionCheck::CallbackAssertVersionBefore},
+		{"assert_or_older", &VersionCheck::CallbackAssertVersionBeforeIncluded},
+		{NULL, NULL}
+	};
 
-	lua_pushcfunction(lua(), &VersionCheck::CallbackGetVersion);
-	lua_setfield(lua(), -2, "getVersion");
+	lua_getglobal(lua(), "meshproc");		// load global "meshproc"
 
-	lua_pushcfunction(lua(), &VersionCheck::CallbackAssertVersion);
-	lua_setfield(lua(), -2, "assert");
-	lua_pushcfunction(lua(), &VersionCheck::CallbackAssertVersionSince);
-	lua_setfield(lua(), -2, "assertNewerThan");
-	lua_pushcfunction(lua(), &VersionCheck::CallbackAssertVersionSinceIncluded);
-	lua_setfield(lua(), -2, "assertOrNewer");
-	lua_pushcfunction(lua(), &VersionCheck::CallbackAssertVersionBefore);
-	lua_setfield(lua(), -2, "assertOlderThan");
-	lua_pushcfunction(lua(), &VersionCheck::CallbackAssertVersionBeforeIncluded);
-	lua_setfield(lua(), -2, "assertOrOlder");
-
-	lua_setglobal(lua(), "meshprocVersion");
+	lua_newtable(lua());					// push new table on stack, which will become "meshproc.Version"
+	luaL_setfuncs(lua(), staticFuncs, 0);	// Add static functions to new table
+	lua_setfield(lua(), -2, "Version");		// store new table as "Version" in "meshproc"; also pops that table
+	lua_pop(lua(), 1);						// remove "meshproc" from stack
 
 	return true;
 }
@@ -104,13 +106,13 @@ int VersionCheck::CallbackGetVersion(lua_State* lua)
 {
 	lua_createtable(lua, 4, 0);
 
-	lua_pushnumber(lua, MESHPROC_VER_MAJOR);
+	lua_pushinteger(lua, MESHPROC_VER_MAJOR);
 	lua_rawseti(lua, -2, 1);
-	lua_pushnumber(lua, MESHPROC_VER_MINOR);
+	lua_pushinteger(lua, MESHPROC_VER_MINOR);
 	lua_rawseti(lua, -2, 2);
-	lua_pushnumber(lua, MESHPROC_VER_PATCH);
+	lua_pushinteger(lua, MESHPROC_VER_PATCH);
 	lua_rawseti(lua, -2, 3);
-	lua_pushnumber(lua, MESHPROC_VER_BUILD);
+	lua_pushinteger(lua, MESHPROC_VER_BUILD);
 	lua_rawseti(lua, -2, 4);
 
 	lua_getfield(lua, LUA_REGISTRYINDEX, MeshProcVersionNumber);
