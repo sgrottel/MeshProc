@@ -210,6 +210,9 @@
     <ClCompile Include="lua\types\FloatListType.cpp">
       <Filter>lua\types</Filter>
     </ClCompile>
+    <ClCompile Include="commands\compute\VertexEdgeDistance.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -390,6 +393,9 @@
     </ClInclude>
     <ClInclude Include="lua\types\FloatListType.h">
       <Filter>lua\types</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\VertexEdgeDistance.h">
+      <Filter>commands\compute</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

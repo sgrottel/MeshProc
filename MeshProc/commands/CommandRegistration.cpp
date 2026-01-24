@@ -17,6 +17,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, OpenBorder
 #include "CommandRegistration.inc"
+#define COMMAND_PATH compute, VertexEdgeDistance
+#include "CommandRegistration.inc"
 #define COMMAND_PATH compute, VertexNormals
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, CloseLoopWithPin

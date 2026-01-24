@@ -61,7 +61,7 @@ end
 -- explicitly collect the no longer used "make" object
 collectgarbage("collect")
 
-local meshcol = nil
+local meshval = nil
 do
 	local sel = meshproc.IndexList.new()
 	for i = 1, 4 do
@@ -75,17 +75,17 @@ do
 		-- mesh.vertex[x] = mesh.vertex[x] * 4
 	end
 
-	local val = meshproc.FloatList.new()
-	val:resize(#mesh.vertex)
-	for i = 1, #mesh.vertex do
-		val[i] = 0
-	end
-	for i = 1, #sel do
-		val[sel[i]] = 1
-	end
+	local dists = meshproc.compute.VertexEdgeDistance.new()
+	dists.Mesh = mesh
+	dists.Selection = sel
+	dists:invoke()
+	meshval = dists.Distances
+end
 
+local meshcol = nil
+do
 	local colmap = meshproc.compute.LinearColorMap.new()
-	colmap.Scalars = val
+	colmap.Scalars = meshval
 	colmap:invoke()
 	meshcol = colmap.Colors
 end

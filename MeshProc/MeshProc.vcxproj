@@ -96,6 +96,7 @@
     <ClCompile Include="commands\CommandRegistration.cpp" />
     <ClCompile Include="commands\compute\LinearColorMap.cpp" />
     <ClCompile Include="commands\compute\OpenBorder.cpp" />
+    <ClCompile Include="commands\compute\VertexEdgeDistance.cpp" />
     <ClCompile Include="commands\compute\VertexNormals.cpp" />
     <ClCompile Include="commands\edit\CloseLoopWithPin.cpp" />
     <ClCompile Include="commands\edit\CutHalfSpace.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="commands\CommandRegistration.h" />
     <ClInclude Include="commands\compute\LinearColorMap.h" />
     <ClInclude Include="commands\compute\OpenBorder.h" />
+    <ClInclude Include="commands\compute\VertexEdgeDistance.h" />
     <ClInclude Include="commands\compute\VertexNormals.h" />
     <ClInclude Include="commands\edit\CloseLoopWithPin.h" />
     <ClInclude Include="commands\edit\CutHalfSpace.h" />
