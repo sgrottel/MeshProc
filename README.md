@@ -1,7 +1,9 @@
 # MeshProc™  <img src="images\meshproc_icon_x48.png" alt="MeshProc Icon" align="left" style="height:1.25em;margin-right:0.25em">
 Simple Triangle Mesh Processor.
 
+[![GitHub Tag](https://img.shields.io/github/v/tag/sgrottel/MeshProc?label=latest%20tag)](https://github.com/sgrottel/MeshProc/tags) <!-- TODO: Replace with release as soon as I have one -->
 [![GitHub](https://img.shields.io/github/license/sgrottel/meshproc)](LICENSE)
+[![Build MeshProc](https://github.com/sgrottel/MeshProc/actions/workflows/build.yaml/badge.svg)](https://github.com/sgrottel/MeshProc/actions/workflows/build.yaml)
 
 This project does not want to provide a ton of different functions,
 but only important core functions with optimized implementations.

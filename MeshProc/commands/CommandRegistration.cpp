@@ -17,6 +17,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, OpenBorder
 #include "CommandRegistration.inc"
+#define COMMAND_PATH compute, ProjectionScarf
+#include "CommandRegistration.inc"
 #define COMMAND_PATH compute, SplitByEdges
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, VertexEdgeDistance
