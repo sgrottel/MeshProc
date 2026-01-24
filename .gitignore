@@ -14,3 +14,4 @@ MeshProc/vcpkg_installed
 test/test-obj.obj
 test/test-commands-1.obj
 MeshProc/out.obj
+test/test-selection.obj

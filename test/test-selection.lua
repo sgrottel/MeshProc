@@ -1,9 +1,3 @@
---
--- This script is a wild playground during development
--- It's not ment as an example or as a test or anything
---
--- run demo.lua -v
---
 
 -- compatible with MeshProc v0.5.x
 meshproc.Version.assert_or_newer(0, 5, 0)
@@ -102,44 +96,6 @@ do
 	end
 end
 
--- do return end
-
-
--- -- 2D Shapes
--- local shape = meshproc.Shape2D.new()
--- shape:add(XVec2(-1,0))
--- shape:add(XVec2(1,0))
--- shape:add(XVec2(0,2))
--- 
--- shape:add(XVec2(2, 0), 2)
--- shape:add(XVec2(2, 2), 2)
--- shape:add(XVec2(4, 2), 2)
--- shape:add(XVec2(4, 0), 2)
--- 
--- shape:add(XVec2(3, 0.5), 3)
--- shape:add(XVec2(2.5, 1), 3)
--- -- strange order of verties on purpose to have an intersection in the loops
--- shape:add(XVec2(3.5, 1), 3)
--- shape:add(XVec2(3, 1.5), 3)
--- 
--- csv = meshproc.io.CsvShape2DWriter.new()
--- csv:set("Shape", shape)
--- csv:set("Path", "shape2d.csv")
--- csv:invoke()
--- 
--- make = meshproc.generator.LinearExtrude2DMesh.new()
--- make:set("Shape2D", shape)
--- make:invoke()
--- local poly = make:get("Mesh")
---
--- -- TODO: Subtract
-
-
--- compose scene from meshes
--- local scene = meshproc.Scene.new()
--- scene:place(mesh)
--- scene:place(mesh2, XMat4.translate(0, 3, 0))
-
 -- save scene to file
 do
 	local scenecol = meshproc.Vec3ListList.new()
@@ -148,6 +104,6 @@ do
 	local file = meshproc.io.ObjWriter.new()
 	file.Scene = mesh -- alternative syntax to the array operators
 	file.VertexColors = scenecol
-	file.Path = "out.obj"
+	file.Path = "test-selection.obj"
 	file:invoke()
 end

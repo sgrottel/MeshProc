@@ -24,5 +24,10 @@ Write-Host
 & (Join-Path $PSScriptRoot "run-test-commands-1.ps1") -exe:$exe @innerParams
 
 Write-Host
+Write-Host "run-test-selection.ps1" -Foreground Cyan -Background Black
+Write-Host
+& (Join-Path $PSScriptRoot "run-test-selection.ps1") -exe:$exe @innerParams
+
+Write-Host
 Write-Host "done." -Foreground Cyan -Background Black
 Write-Host
