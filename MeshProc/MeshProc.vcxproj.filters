@@ -222,6 +222,9 @@
     <ClCompile Include="utilities\Constrained2DTriangulation.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
+    <ClCompile Include="utilities\Vec2Intersections.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -413,6 +416,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utilities\Constrained2DTriangulation.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\Vec2Intersections.h">
       <Filter>utilities</Filter>
     </ClInclude>
   </ItemGroup>

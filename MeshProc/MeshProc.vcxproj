@@ -145,6 +145,7 @@
     <ClCompile Include="MeshProc.cpp" />
     <ClCompile Include="utilities\Constrained2DTriangulation.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
+    <ClCompile Include="utilities\Vec2Intersections.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3rd-party\tinyxml2\README.md" />
@@ -226,6 +227,7 @@
     <ClInclude Include="utilities\Constrained2DTriangulation.h" />
     <ClInclude Include="utilities\LoopsFromEdges.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
+    <ClInclude Include="utilities\Vec2Intersections.h" />
     <ClInclude Include="VersionInfo.h" />
   </ItemGroup>
   <ItemGroup>

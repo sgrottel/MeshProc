@@ -38,15 +38,18 @@ std::vector<glm::uvec3> utilities::Constrained2DTriangulation::Compute() const
 
 	CDT cdt;
 
+	std::unordered_map<uint32_t, CDT::Vertex_handle> cdtVHs;
+	for (auto const& p : m_points)
+	{
+		auto const& v = p.second;
+		auto vh = cdt.insert(Point(v.x, v.y));
+		vh->info() = p.first;
+		cdtVHs.insert(std::make_pair(p.first, vh));
+	}
+
 	for (auto const& edge : m_edges)
 	{
-		auto const& v0 = m_points.at(edge.i0);
-		auto const& v1 = m_points.at(edge.i1);
-
-		auto vh0 = cdt.insert(Point(v0.x, v0.y)); vh0->info() = edge.i0;
-		auto vh1 = cdt.insert(Point(v1.x, v1.y)); vh1->info() = edge.i1;
-
-		cdt.insert_constraint(vh0, vh1);
+		cdt.insert_constraint(cdtVHs.at(edge.i0), cdtVHs.at(edge.i1));
 	}
 	if (!cdt.is_valid())
 	{

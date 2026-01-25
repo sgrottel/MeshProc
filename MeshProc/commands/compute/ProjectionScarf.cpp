@@ -1,5 +1,11 @@
 #include "ProjectionScarf.h"
 
+#include "utilities/Constrained2DTriangulation.h"
+#include "utilities/Vec2Intersections.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 #include <SimpleLog/SimpleLog.hpp>
 
 #include <array>
@@ -16,6 +22,20 @@ compute::ProjectionScarf::ProjectionScarf(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
 	AddParamBinding<ParamMode::In, ParamType::HalfSpace>("Projection", m_projection);
 	AddParamBinding<ParamMode::Out, ParamType::Mesh>("OutMesh", m_outmesh);
+}
+
+namespace
+{
+
+	glm::vec3 prec(const glm::vec3& value, float scale = 0.0001f)
+	{
+		return {
+			std::round(value.x / scale) * scale,
+			std::round(value.y / scale) * scale,
+			std::round(value.z / scale) * scale
+		};
+	}
+
 }
 
 bool compute::ProjectionScarf::Invoke()
@@ -60,6 +80,17 @@ bool compute::ProjectionScarf::Invoke()
 	// project vertices (cut triangles where needed)
 	std::vector<glm::vec3> flatVert;
 	std::unordered_set<data::HashableEdge> flatEdges;
+	std::unordered_map<glm::vec3, uint32_t> flatVertRevIdx;
+	auto addFlatVert = [&](glm::vec3 p)
+		{
+			glm::vec3 probe = prec(p);
+			if (!flatVertRevIdx.contains(probe))
+			{
+				flatVertRevIdx.insert(std::make_pair(probe, static_cast<uint32_t>(flatVert.size())));
+				flatVert.push_back(p);
+			}
+			return flatVertRevIdx.at(probe);
+		};
 	{
 		flatVert.reserve(selTri.size());
 		std::unordered_map<uint32_t, uint32_t> vm;
@@ -92,8 +123,7 @@ bool compute::ProjectionScarf::Invoke()
 					if (!vm.contains(tvi[j]))
 					{
 						const glm::vec3 p = vec[j] - m_projection->Normal() * dist[j];
-						vm.insert(std::make_pair(tvi[j], static_cast<uint32_t>(flatVert.size())));
-						flatVert.push_back(p);
+						vm.insert(std::make_pair(tvi[j], addFlatVert(p)));
 					}
 					triLoop.push_back(vm.at(tvi[j]));
 				}
@@ -113,8 +143,7 @@ bool compute::ProjectionScarf::Invoke()
 							const float b = bd / (ad + bd);
 							const glm::vec3 p = vec[j] * a + vec[j2] * b;
 							assert(m_projection->Dist(p) < 0.00001);
-							cem.insert(std::make_pair(he, static_cast<uint32_t>(flatVert.size())));
-							flatVert.push_back(p);
+							cem.insert(std::make_pair(he, addFlatVert(p)));
 						}
 						triLoop.push_back(cem.at(he));
 					}
@@ -131,6 +160,175 @@ bool compute::ProjectionScarf::Invoke()
 		}
 	}
 
+	// prepare 2d coordinates
+	std::unordered_map<uint32_t, glm::vec2> pt2d;
+	auto [projX, projY] = m_projection->Make2DCoordSys();
+	for (size_t vi = 0; vi < flatVert.size(); vi++)
+	{
+		const glm::vec3 v = flatVert.at(vi) - m_projection->Plane();
+		const float x = glm::dot(v, projX);
+		const float y = glm::dot(v, projY);
+		pt2d.insert(std::make_pair(static_cast<uint32_t>(vi), glm::vec2(x, y)));
+	}
+
+	// resolve T-Vertices (will also resolve co-linear edges)
+	{
+		std::unordered_set<data::HashableEdge> toRm;
+		std::unordered_set<data::HashableEdge> toAdd;
+		do
+		{
+			toRm.clear();
+			toAdd.clear();
+
+			for (auto it1 = flatEdges.begin(); it1 != flatEdges.end(); ++it1)
+			{
+				const glm::vec2 a = pt2d.at(it1->i0);
+				const glm::vec2 b = pt2d.at(it1->i1);
+
+				const glm::vec2 d = glm::normalize(b - a);
+				const float dd = glm::distance(a, b);
+				const glm::vec2 c{ d.y, -d.x };
+
+				for (auto pi = pt2d.begin(); pi != pt2d.end(); ++pi)
+				{
+					if (it1->Has(pi->first)) continue;
+					const glm::vec2 p = pi->second - a;
+					const float x = glm::dot(d, p);
+					if (x < 0.0f || x >= dd) continue;
+					const float y = std::abs(glm::dot(c, p));
+					if (y > 0.0001f) continue;
+
+					data::HashableEdge he = *it1;
+					toRm.insert(he);
+					toAdd.insert(data::HashableEdge{ he.i0, pi->first });
+					toAdd.insert(data::HashableEdge{ he.i1, pi->first });
+					break;
+				}
+			}
+
+			if (!toRm.empty())
+			{
+				std::erase_if(flatEdges, [&toRm](data::HashableEdge const& he) { return toRm.contains(he); });
+			}
+			if (!toAdd.empty())
+			{
+				for (data::HashableEdge const& he : toAdd)
+				{
+					flatEdges.insert(he);
+				}
+			}
+		} while (!toRm.empty() || !toAdd.empty());
+	}
+
+	// resolve flatEdge intersections in 2d
+	{
+		std::unordered_set<data::HashableEdge> of;
+		for (auto it1 = flatEdges.begin(); it1 != flatEdges.end(); ++it1)
+		{
+			const auto& a = pt2d.at(it1->i0);
+			const auto& b = pt2d.at(it1->i1);
+
+			auto it2 = it1;
+			it2++;
+			for (; it2 != flatEdges.end(); ++it2)
+			{
+				if (it1->Touch(*it2)) continue;
+				const auto& c = pt2d.at(it2->i0);
+				const auto& d = pt2d.at(it2->i1);
+
+				if (utilities::vec2segments::DoesIntersect(a, b, c, d))
+				{
+					of.insert(*it1);
+					of.insert(*it2);
+				}
+			}
+		}
+		std::erase_if(flatEdges, [&of](const data::HashableEdge& e) { return of.contains(e); });
+
+		std::unordered_set<data::HashableEdge> toRm;
+		std::unordered_set<data::HashableEdge> toAdd;
+		do
+		{
+			toRm.clear();
+			toAdd.clear();
+
+			for (auto it1 = of.begin(); it1 != of.end(); ++it1)
+			{
+				const auto& a = pt2d.at(it1->i0);
+				const auto& b = pt2d.at(it1->i1);
+				for (auto it2 = std::next(it1); it2 != of.end(); ++it2)
+				{
+					if (it1->Touch(*it2)) continue;
+					const auto& c = pt2d.at(it2->i0);
+					const auto& d = pt2d.at(it2->i1);
+					if (utilities::vec2segments::DoesIntersect(a, b, c, d))
+					{
+						data::HashableEdge e1 = *it1;
+						data::HashableEdge e2 = *it2;
+
+						toRm.insert(e1);
+						toRm.insert(e2);
+
+						glm::vec2 d1 = glm::normalize(b - a);
+						glm::vec2 d2 = glm::normalize(d - c);
+
+						// TODO: still does not always work... still reaches co-linear pairs. Why?
+						glm::vec2 e = utilities::vec2segments::CalcIntersection(a, b, c, d);
+
+						uint32_t eIdx = addFlatVert(m_projection->Plane() + projX * e.x + projY * e.y);
+						if (!pt2d.contains(eIdx))
+						{
+							pt2d.insert(std::make_pair(eIdx, e));
+						}
+
+						toAdd.insert(data::HashableEdge{ e1.i0, eIdx });
+						toAdd.insert(data::HashableEdge{ e1.i1, eIdx });
+						toAdd.insert(data::HashableEdge{ e2.i0, eIdx });
+						toAdd.insert(data::HashableEdge{ e2.i1, eIdx });
+					}
+				}
+			}
+
+			if (!toRm.empty())
+			{
+				std::erase_if(of, [&toRm](data::HashableEdge const& he) { return toRm.contains(he); });
+			}
+			if (!toAdd.empty())
+			{
+				for (data::HashableEdge const& he : toAdd)
+				{
+					of.insert(he);
+				}
+			}
+		} while (!toRm.empty() || !toAdd.empty());
+
+		for (data::HashableEdge const& he : of)
+		{
+			flatEdges.insert(he);
+		}
+	}
+
+	// compute plane triangulation base
+	std::vector<data::Triangle> flatTri;
+	{
+		utilities::Constrained2DTriangulation cvt(pt2d, flatEdges, Log());
+		auto allTries = cvt.Compute();
+		if (cvt.HasError())
+		{
+			return false;
+		}
+
+		flatTri.resize(allTries.size());
+		std::transform(
+			allTries.begin(),
+			allTries.end(),
+			flatTri.begin(),
+			[](const glm::uvec3& t)
+			{
+				return data::Triangle{ t.x, t.y, t.z };
+			});
+	}
+
 	// TODO: Implement
 
 
@@ -145,6 +343,8 @@ bool compute::ProjectionScarf::Invoke()
 	// 6. scarf base hole close polygon
 
 	m_outmesh = std::make_shared<data::Mesh>();
+	m_outmesh->vertices = std::move(flatVert);
+	m_outmesh->triangles = std::move(flatTri);
 
 	//m_outmesh->vertices.resize(m_mesh->vertices.size());
 	//std::copy(m_mesh->vertices.begin(), m_mesh->vertices.end(), m_outmesh->vertices.begin());
