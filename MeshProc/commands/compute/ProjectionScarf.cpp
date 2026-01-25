@@ -92,7 +92,7 @@ bool compute::ProjectionScarf::Invoke()
 					if (!vm.contains(tvi[j]))
 					{
 						const glm::vec3 p = vec[j] - m_projection->Normal() * dist[j];
-						vm.insert(std::make_pair(tvi[j], flatVert.size()));
+						vm.insert(std::make_pair(tvi[j], static_cast<uint32_t>(flatVert.size())));
 						flatVert.push_back(p);
 					}
 					triLoop.push_back(vm.at(tvi[j]));
@@ -113,7 +113,7 @@ bool compute::ProjectionScarf::Invoke()
 							const float b = bd / (ad + bd);
 							const glm::vec3 p = vec[j] * a + vec[j2] * b;
 							assert(m_projection->Dist(p) < 0.00001);
-							cem.insert(std::make_pair(he, flatVert.size()));
+							cem.insert(std::make_pair(he, static_cast<uint32_t>(flatVert.size())));
 							flatVert.push_back(p);
 						}
 						triLoop.push_back(cem.at(he));

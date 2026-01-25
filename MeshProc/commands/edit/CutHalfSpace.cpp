@@ -1,5 +1,6 @@
 #include "CutHalfSpace.h"
 
+#include "utilities/Constrained2DTriangulation.h"
 #include "utilities/LoopsFromEdges.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -8,12 +9,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Constrained_triangulation_face_base_2.h>
-#include <CGAL/Triangulation_data_structure_2.h>
 
 #include <algorithm>
 #include <functional>
@@ -175,7 +170,7 @@ bool CutHalfSpace::Invoke()
 					{
 						if (m_mesh->vertices.at(nvI) == nv)
 						{
-							nvIdx = nvI;
+							nvIdx = static_cast<uint32_t>(nvI);
 							break;
 						}
 					}
@@ -340,42 +335,19 @@ bool CutHalfSpace::Invoke()
 	}
 
 	{
-		// do a constraint delauney triangulation, enforcing all edges
-		// then only keep triangles by even-odd rule
-
-		// use CGAL implementation:
-		typedef CGAL::Single_precision_epick K;
-		typedef K::Point_2 Point;
-		typedef uint32_t VertexInfo;
-		typedef CGAL::Triangulation_vertex_base_with_info_2<VertexInfo, K> Vb;
-		typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
-		typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
-		typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS> CDT;
-
-		CDT cdt;
-
-		for (auto const& edge : openEdges)
+		utilities::Constrained2DTriangulation cvt(pt2d, openEdges, Log());
+		auto allTries = cvt.Compute();
+		if (cvt.HasError())
 		{
-			auto const& v0 = pt2d.at(edge.i0);
-			auto const& v1 = pt2d.at(edge.i1);
-
-			auto vh0 = cdt.insert(Point(v0.x, v0.y)); vh0->info() = edge.i0;
-			auto vh1 = cdt.insert(Point(v1.x, v1.y)); vh1->info() = edge.i1;
-
-			cdt.insert_constraint(vh0, vh1);
-		}
-		if (!cdt.is_valid())
-		{
-			Log().Error("Constrained Delaunay triangulation of open edge loops failed");
 			return false;
 		}
 
 		std::unordered_set<glm::vec2> intersections;
 
-		for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
-			const uint32_t i0 = fit->vertex(0)->info();
-			const uint32_t i1 = fit->vertex(1)->info();
-			const uint32_t i2 = fit->vertex(2)->info();
+		for (auto cvtFace : allTries) {
+			const uint32_t i0 = cvtFace.x;
+			const uint32_t i1 = cvtFace.y;
+			const uint32_t i2 = cvtFace.z;
 
 			glm::vec2 c = (pt2d.at(i0) + pt2d.at(i1) + pt2d.at(i2));
 			c /= glm::vec2(3.0f);
