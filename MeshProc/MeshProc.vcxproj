@@ -143,6 +143,7 @@
     <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
     <ClCompile Include="MeshProc.cpp" />
+    <ClCompile Include="utilities\Constrained2DTriangulation.cpp" />
     <ClCompile Include="utilities\StringUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +223,7 @@
     <ClInclude Include="lua\types\MeshType.h" />
     <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />
+    <ClInclude Include="utilities\Constrained2DTriangulation.h" />
     <ClInclude Include="utilities\LoopsFromEdges.h" />
     <ClInclude Include="utilities\StringUtilities.h" />
     <ClInclude Include="VersionInfo.h" />

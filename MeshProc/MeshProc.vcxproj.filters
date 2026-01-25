@@ -216,6 +216,12 @@
     <ClCompile Include="commands\compute\VertexEdgeDistanceToCut.cpp">
       <Filter>commands\compute</Filter>
     </ClCompile>
+    <ClCompile Include="commands\compute\ProjectionScarf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities\Constrained2DTriangulation.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -402,6 +408,12 @@
     </ClInclude>
     <ClInclude Include="commands\compute\VertexEdgeDistanceToCut.h">
       <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\ProjectionScarf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\Constrained2DTriangulation.h">
+      <Filter>utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
