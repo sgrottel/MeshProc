@@ -222,6 +222,9 @@
     <ClCompile Include="utilities\Constrained2DTriangulation.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
+    <ClCompile Include="utilities\Vec2Intersections.cpp">
+      <Filter>utilities</Filter>
+    </ClCompile>
     <ClCompile Include="commands\compute\SplitByEdges.cpp">
       <Filter>commands\compute</Filter>
     </ClCompile>
@@ -419,6 +422,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utilities\Constrained2DTriangulation.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities\Vec2Intersections.h">
       <Filter>utilities</Filter>
     </ClInclude>
     <ClInclude Include="commands\compute\SplitByEdges.h">

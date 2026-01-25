@@ -34,6 +34,11 @@ namespace meshproc
 				return i0 == i || i1 == i;
 			}
 
+			inline bool Touch(const HashableEdge& rhs) const noexcept
+			{
+				return Has(rhs.i0) || Has(rhs.i1);
+			}
+
 			union {
 				uint32_t m_idx[2];
 				struct {
