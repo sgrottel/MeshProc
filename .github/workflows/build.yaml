@@ -39,12 +39,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Check nuget package references
-      shell: pwsh
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        ./extra/nuget_proxy/m2n.ps1      
-
     - name: Inject build number
       shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -147,6 +141,12 @@ jobs:
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Check nuget package references
+      shell: pwsh
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        ./extra/nuget_proxy/m2n.ps1      
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
