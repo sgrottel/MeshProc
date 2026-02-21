@@ -17,3 +17,4 @@ MeshProc/out.obj
 test/test-selection.obj
 test/test-VertexEdgeDistanceToCut.obj
 MeshProc/out2.obj
+test/test-bars.stl
