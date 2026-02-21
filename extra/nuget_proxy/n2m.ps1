@@ -2,6 +2,8 @@
 # Native to Managed project generation
 #
 
+# This is called as custom build step on the native project's `packages.config`
+
 # Fetch native project's packages
 $packages = Select-Xml -Path (Join-Path $PSScriptRoot "../../MeshProc/packages.config") -XPath "/packages/package" `
     | Select-Object -ExpandProperty Node `
@@ -17,6 +19,9 @@ if (Test-Path $proxyProj)
 
     $setA = $packages | ForEach-Object { "$($_.id)|$($_.version)" } | Sort-Object
     $setB = $proxyPackages  | ForEach-Object { "$($_.id)|$($_.version)" } | Sort-Object
+
+    Write-Output $setA
+    Write-Output $setB
 
     $equal = ($setA -join "`n") -eq ($setB -join "`n")
 
