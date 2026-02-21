@@ -43,7 +43,7 @@ jobs:
       shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        ./extra/nuget_proxy/m_eq_n.ps1      
+        ./extra/nuget_proxy/m2n.ps1      
 
     - name: Inject build number
       shell: pwsh

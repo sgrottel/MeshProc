@@ -46,7 +46,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extra_nuget_proxy", "extra_
 	ProjectSection(SolutionItems) = preProject
 		extra\nuget_proxy\m2n.ps1 = extra\nuget_proxy\m2n.ps1
 		extra\nuget_proxy\MeshProc.csproj = extra\nuget_proxy\MeshProc.csproj
-		extra\nuget_proxy\m_eq_n.ps1 = extra\nuget_proxy\m_eq_n.ps1
 		extra\nuget_proxy\n2m.ps1 = extra\nuget_proxy\n2m.ps1
 	EndProjectSection
 EndProject
