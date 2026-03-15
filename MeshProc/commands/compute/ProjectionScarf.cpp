@@ -5,6 +5,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <SimpleLog/SimpleLog.hpp>
 
@@ -56,12 +57,12 @@ bool compute::ProjectionScarf::Invoke()
 		m_outmesh->triangles.at(i) = m_mesh->triangles.at(selTris.at(i));
 	}
 
-	uint32_t i = static_cast<uint32_t>(m_outmesh->vertices.size());
-	glm::vec3 o = m_projection->Normal() * m_projection->Dist();
-	m_outmesh->vertices.push_back(o);
-	m_outmesh->vertices.push_back(o + x2d * 10.0f);
-	m_outmesh->vertices.push_back(o + y2d * 10.0f);
-	m_outmesh->triangles.push_back({ i, i + 1, i + 2 });
+	//uint32_t i = static_cast<uint32_t>(m_outmesh->vertices.size());
+	//glm::vec3 o = m_projection->Normal() * m_projection->Dist();
+	//m_outmesh->vertices.push_back(o);
+	//m_outmesh->vertices.push_back(o + x2d * 10.0f);
+	//m_outmesh->vertices.push_back(o + y2d * 10.0f);
+	//m_outmesh->triangles.push_back({ i, i + 1, i + 2 });
 
 	Log().Error("NOT IMPLEMENTED");
 	return false;
@@ -75,7 +76,8 @@ std::vector<uint32_t> compute::ProjectionScarf::SelectTriangles()
 	for (size_t ti = 0; ti < m_mesh->triangles.size(); ++ti)
 	{
 		const glm::vec3 n = m_mesh->triangles[ti].CalcNormal(m_mesh->vertices);
-		if (glm::dot(n, m_projection->Normal()) > 0.0f)
+		const float dir = glm::dot(n, m_projection->Normal());
+		if (dir > 0.000001f)
 		{
 			sel.push_back(static_cast<uint32_t>(ti));
 		}
