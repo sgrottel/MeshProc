@@ -20,8 +20,10 @@ bool SceneType::Init()
 	static const struct luaL_Reg memberFuncs[] = {
 		{"__tostring", &SceneType::CallbackToString},
 		{"__gc", &SceneType::CallbackDelete},
+		{"__len", &SceneType::CallbackLength},
 		{"place", &SceneType::CallbackPlaceMesh},
 		{"bake", &SceneType::CallbackBake},
+		{"get_mesh", &SceneType::CallbackGetMesh},
 		{nullptr, nullptr}
 	};
 
@@ -127,5 +129,51 @@ int SceneType::CallbackBake(lua_State* lua)
 	}
 
 	MeshType::LuaPush(lua, all);
+	return 1;
+}
+
+int SceneType::CallbackLength(lua_State* lua)
+{
+	int size = lua_gettop(lua);
+	if (size != 1 && size != 2)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 1, is %d", size);
+	}
+	auto scene = SceneType::LuaGet(lua, 1);
+	if (!scene)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Scene");
+	}
+
+	// ignoring second arg
+
+	lua_pushinteger(lua, scene->m_meshes.size());
+	return 1;
+}
+
+int SceneType::CallbackGetMesh(lua_State* lua)
+{
+	int size = lua_gettop(lua);
+	if (size != 2)
+	{
+		return luaL_error(lua, "Arguments number mismatch: must be 2, is %d", size);
+	}
+	auto scene = SceneType::LuaGet(lua, 1);
+	if (!scene)
+	{
+		return luaL_error(lua, "Pre-First argument expected to be a Scene");
+	}
+
+	uint32_t idx;
+	if (GetLuaUint32(lua, 2, idx) != GetResult::Ok)
+	{
+		return luaL_error(lua, "Failed to get insert index argument integer");
+	}
+	if (idx == 0 || idx > scene->m_meshes.size() + 1)
+	{
+		return luaL_error(lua, "Invalid insert index argument integer, %d", idx);
+	}
+
+	MeshType::LuaPush(lua, scene->m_meshes.at(idx - 1).first);
 	return 1;
 }

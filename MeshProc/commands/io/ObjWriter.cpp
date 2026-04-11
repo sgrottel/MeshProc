@@ -14,6 +14,7 @@ ObjWriter::ObjWriter(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
 	AddParamBinding<ParamMode::In, ParamType::Scene>("Scene", m_scene);
 	AddParamBinding<ParamMode::In, ParamType::Vec3ListList>("VertexColors", m_vertexColors);
+	AddParamBinding<ParamMode::In, ParamType::UInt32>("SingleMesh", m_singleMesh); // TODO: Should be bool!
 }
 
 bool ObjWriter::Invoke()
@@ -57,11 +58,14 @@ bool ObjWriter::Invoke()
 	Log().Message(L"Writing OBJ: %s", m_path.c_str());
 	fprintf(file, "# MeshProc ObjWriter");
 
-	// export whole scene as single mesh!
-
-	// all verticies
+	uint32_t vertexOffset = 0;
 	for (size_t i = 0; i < m_scene->m_meshes.size(); ++i)
 	{
+		if (!m_singleMesh)
+		{
+			fprintf(file, "\no mesh_%.5d", static_cast<int>(i));
+		}
+
 		auto const& mesh = m_scene->m_meshes.at(i);
 		std::shared_ptr<std::vector<glm::vec3>> col = m_vertexColors ? m_vertexColors->at(i) : nullptr;
 		if (col && col->size() != mesh.first->vertices.size())
@@ -87,20 +91,15 @@ bool ObjWriter::Invoke()
 				fprintf(file, " 0 0 0");
 			}
 		}
-	}
 
-	fprintf(file, "\n");
-
-	// all trianges
-	uint32_t vertexOffset = 0;
-	for (auto const& mesh : m_scene->m_meshes)
-	{
 		for (data::Triangle const& t : mesh.first->triangles)
 		{
-			fprintf(file, "f %d %d %d\n", t[0] + vertexOffset + 1, t[1] + vertexOffset + 1, t[2] + vertexOffset + 1);
+			fprintf(file, "\nf %d %d %d", t[0] + vertexOffset + 1, t[1] + vertexOffset + 1, t[2] + vertexOffset + 1);
 		}
 		vertexOffset += static_cast<int>(mesh.first->vertices.size());
 	}
+
+	fprintf(file, "\n");
 
 	// done.
 	fclose(file);

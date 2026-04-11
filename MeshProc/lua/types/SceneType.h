@@ -27,6 +27,8 @@ namespace meshproc
 				static int CallbackCtor(lua_State* lua);
 				static int CallbackPlaceMesh(lua_State* lua);
 				static int CallbackBake(lua_State* lua);
+				static int CallbackLength(lua_State* lua);
+				static int CallbackGetMesh(lua_State* lua);
 
 			};
 
