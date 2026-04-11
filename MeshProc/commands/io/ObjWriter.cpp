@@ -14,7 +14,7 @@ ObjWriter::ObjWriter(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::In, ParamType::String>("Path", m_path);
 	AddParamBinding<ParamMode::In, ParamType::Scene>("Scene", m_scene);
 	AddParamBinding<ParamMode::In, ParamType::Vec3ListList>("VertexColors", m_vertexColors);
-	AddParamBinding<ParamMode::In, ParamType::UInt32>("SingleMesh", m_singleMesh); // TODO: Should be bool!
+	AddParamBinding<ParamMode::In, ParamType::Bool>("SingleMesh", m_singleMesh); // TODO: Should be bool!
 }
 
 bool ObjWriter::Invoke()

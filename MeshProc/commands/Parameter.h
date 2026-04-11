@@ -37,6 +37,7 @@ namespace meshproc
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 			IndexListList,
 			HalfSpace,
+			Bool,
 
 			LAST
 		};
@@ -51,6 +52,14 @@ namespace meshproc
 		{
 			static constexpr const char* name = "UInt";
 			typedef uint32_t type;
+			static constexpr bool canSetNil = false;
+		};
+
+		template<>
+		struct ParamTypeInfo<ParamType::Bool>
+		{
+			static constexpr const char* name = "Bool";
+			typedef bool type;
 			static constexpr bool canSetNil = false;
 		};
 

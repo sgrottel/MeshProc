@@ -53,6 +53,19 @@ namespace
 	};
 
 	template<>
+	struct LuaParamMapping<ParamType::Bool>
+	{
+		static void PushVal(lua_State* lua, const bool& v)
+		{
+			lua_pushboolean(lua, v ? 1 : 0);
+		}
+		static bool GetVal(lua_State* lua, bool& tar)
+		{
+			return GetLuaBool(lua, 3, tar) == GetResult::Ok;
+		}
+	};
+
+	template<>
 	struct LuaParamMapping<ParamType::Float>
 	{
 		static void PushVal(lua_State* lua, const float& v)
