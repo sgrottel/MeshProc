@@ -96,6 +96,7 @@
     <ClCompile Include="commands\CommandRegistration.cpp" />
     <ClCompile Include="commands\compute\LinearColorMap.cpp" />
     <ClCompile Include="commands\compute\OpenBorder.cpp" />
+    <ClCompile Include="commands\compute\SplitByEdges.cpp" />
     <ClCompile Include="commands\compute\VertexEdgeDistance.cpp" />
     <ClCompile Include="commands\compute\VertexEdgeDistanceToCut.cpp" />
     <ClCompile Include="commands\compute\VertexNormals.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="lua\types\HalfSpaceType.cpp" />
     <ClCompile Include="lua\types\IndexListListType.cpp" />
     <ClCompile Include="lua\types\IndexListType.cpp" />
+    <ClCompile Include="lua\types\MeshListType.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
     <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
@@ -176,6 +178,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n
     <ClInclude Include="commands\CommandRegistration.h" />
     <ClInclude Include="commands\compute\LinearColorMap.h" />
     <ClInclude Include="commands\compute\OpenBorder.h" />
+    <ClInclude Include="commands\compute\SplitByEdges.h" />
     <ClInclude Include="commands\compute\VertexEdgeDistance.h" />
     <ClInclude Include="commands\compute\VertexEdgeDistanceToCut.h" />
     <ClInclude Include="commands\compute\VertexNormals.h" />
@@ -219,6 +222,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n
     <ClInclude Include="lua\types\HalfSpaceType.h" />
     <ClInclude Include="lua\types\IndexListListType.h" />
     <ClInclude Include="lua\types\IndexListType.h" />
+    <ClInclude Include="lua\types\MeshListType.h" />
     <ClInclude Include="lua\types\MeshType.h" />
     <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />
@@ -232,18 +236,18 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets')" />
     <Import Project="..\packages\lua.5.5.0\build\native\Lua.targets" Condition="Exists('..\packages\lua.5.5.0\build\native\Lua.targets')" />
     <Import Project="..\packages\glm.1.0.3\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.3\build\native\glm.targets')" />
-    <Import Project="..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets" Condition="Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" />
+    <Import Project="..\packages\SGrottel.SimpleLog.Cpp.3.3.2\build\native\SGrottel.SimpleLog.Cpp.targets" Condition="Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.2\build\native\SGrottel.SimpleLog.Cpp.targets')" />
+    <Import Project="..\packages\SGrottel.yaclap.0.4.1\build\native\SGrottel.yaclap.targets" Condition="Exists('..\packages\SGrottel.yaclap.0.4.1\build\native\SGrottel.yaclap.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.3.0\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
     <Error Condition="!Exists('..\packages\lua.5.5.0\build\native\Lua.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\lua.5.5.0\build\native\Lua.targets'))" />
     <Error Condition="!Exists('..\packages\glm.1.0.3\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.3\build\native\glm.targets'))" />
-    <Error Condition="!Exists('..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.yaclap.0.4.0\build\native\SGrottel.yaclap.targets'))" />
+    <Error Condition="!Exists('..\packages\SGrottel.SimpleLog.Cpp.3.3.2\build\native\SGrottel.SimpleLog.Cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.SimpleLog.Cpp.3.3.2\build\native\SGrottel.SimpleLog.Cpp.targets'))" />
+    <Error Condition="!Exists('..\packages\SGrottel.yaclap.0.4.1\build\native\SGrottel.yaclap.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SGrottel.yaclap.0.4.1\build\native\SGrottel.yaclap.targets'))" />
   </Target>
 </Project>

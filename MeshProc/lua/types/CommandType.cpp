@@ -10,7 +10,7 @@
 #include "IndexListType.h"
 #include "IndexListListType.h"
 #include "MeshType.h"
-//#include "MultiMeshType.h"
+#include "MeshListType.h"
 #include "SceneType.h"
 //#include "Shape2DType.h"
 #include "HalfSpaceType.h"
@@ -49,6 +49,19 @@ namespace
 		static bool GetVal(lua_State* lua, uint32_t& tar)
 		{
 			return GetLuaUint32(lua, 3, tar) == GetResult::Ok;
+		}
+	};
+
+	template<>
+	struct LuaParamMapping<ParamType::Bool>
+	{
+		static void PushVal(lua_State* lua, const bool& v)
+		{
+			lua_pushboolean(lua, v ? 1 : 0);
+		}
+		static bool GetVal(lua_State* lua, bool& tar)
+		{
+			return GetLuaBool(lua, 3, tar) == GetResult::Ok;
 		}
 	};
 
@@ -106,8 +119,8 @@ namespace
 	template<>
 	struct LuaParamMapping<ParamType::Mesh> : LuaWrappedParamMapping<MeshType, data::Mesh> {};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::MultiMesh> : LuaWrappedParamMapping<MultiMeshType, std::vector<std::shared_ptr<data::Mesh>>> {};
+	template<>
+	struct LuaParamMapping<ParamType::MeshList> : LuaWrappedParamMapping<MeshListType, std::vector<std::shared_ptr<data::Mesh>>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene>

@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageReference Include="glm" Version="1.0.3" />
     <PackageReference Include="lua" Version="5.5.0" />
-    <PackageReference Include="SGrottel.SimpleLog.Cpp" Version="3.3.1" />
+    <PackageReference Include="SGrottel.SimpleLog.Cpp" Version="3.3.2" />
     <PackageReference Include="SGrottel.yaclap" Version="0.4.1" />
   </ItemGroup>
 </Project>

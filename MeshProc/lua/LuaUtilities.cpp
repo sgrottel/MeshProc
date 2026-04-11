@@ -158,3 +158,26 @@ meshproc::lua::GetResult meshproc::lua::GetLuaFloat(lua_State* lua, int i, float
 
 	return GetResult::ErrorType;
 }
+
+meshproc::lua::GetResult meshproc::lua::GetLuaBool(lua_State* lua, int i, bool& tar)
+{
+	if (lua == nullptr)
+	{
+		return GetResult::ErrorState;
+	}
+
+	if (lua_isboolean(lua, i))
+	{
+		tar = lua_toboolean(lua, i) != 0;
+		return GetResult::Ok;
+	}
+
+	if (lua_isnil(lua, i))
+	{
+		tar = false;
+		return GetResult::Ok;
+	}
+
+	tar = true; // everything else is 'true' in lua
+	return GetResult::Ok;
+}

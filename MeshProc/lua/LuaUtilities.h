@@ -22,6 +22,7 @@ namespace meshproc
 
 		GetResult GetLuaUint32(lua_State* lua, int i, uint32_t& tar);
 		GetResult GetLuaFloat(lua_State* lua, int i, float& tar);
+		GetResult GetLuaBool(lua_State* lua, int i, bool& tar);
 
 	}
 }

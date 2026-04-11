@@ -31,12 +31,13 @@ namespace meshproc
 			Vec3ListList,
 			Mat4,
 			Mesh,
-//			MultiMesh,
+			MeshList,
 			Scene,
 //			Shape2D,
 			IndexList, // e.g. vertices, also edges/loops, or triangles
 			IndexListList,
 			HalfSpace,
+			Bool,
 
 			LAST
 		};
@@ -51,6 +52,14 @@ namespace meshproc
 		{
 			static constexpr const char* name = "UInt";
 			typedef uint32_t type;
+			static constexpr bool canSetNil = false;
+		};
+
+		template<>
+		struct ParamTypeInfo<ParamType::Bool>
+		{
+			static constexpr const char* name = "Bool";
+			typedef bool type;
 			static constexpr bool canSetNil = false;
 		};
 
@@ -105,14 +114,14 @@ namespace meshproc
 			static type NilVal() { return nullptr; }
 		};
 
-		//template<>
-		//struct ParamTypeInfo<ParamType::MultiMesh>
-		//{
-		//	static constexpr const char* name = "MultiMesh";
-		//	typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
+		template<>
+		struct ParamTypeInfo<ParamType::MeshList>
+		{
+			static constexpr const char* name = "MeshList";
+			typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
 
 		template<>
 		struct ParamTypeInfo<ParamType::Scene>
