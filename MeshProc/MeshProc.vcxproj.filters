@@ -216,6 +216,9 @@
     <ClCompile Include="commands\compute\VertexEdgeDistanceToCut.cpp">
       <Filter>commands\compute</Filter>
     </ClCompile>
+    <ClCompile Include="commands\compute\SplitByEdges.cpp">
+      <Filter>commands\compute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -401,6 +404,9 @@
       <Filter>commands\compute</Filter>
     </ClInclude>
     <ClInclude Include="commands\compute\VertexEdgeDistanceToCut.h">
+      <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="commands\compute\SplitByEdges.h">
       <Filter>commands\compute</Filter>
     </ClInclude>
   </ItemGroup>

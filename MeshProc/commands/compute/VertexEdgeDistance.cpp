@@ -111,7 +111,7 @@ bool compute::VertexEdgeDistance::Invoke()
 		}
 
 		triFront.clear();
-		for (uint32_t ti : tris)
+		for (size_t ti : tris)
 		{
 			const auto& t = m_mesh->triangles.at(ti);
 			const float v0 = m_dists->at(t[0]);
