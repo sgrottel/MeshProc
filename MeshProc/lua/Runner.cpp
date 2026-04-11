@@ -4,7 +4,6 @@
 #include "LuaResources.h"
 
 #include "LogFunctions.h"
-//#include "MultiMeshType.h"
 //#include "Shape2DType.h"
 #include "VersionCheck.h"
 
@@ -14,14 +13,14 @@
 #include "types/IndexListListType.h"
 #include "types/IndexListType.h"
 #include "types/SceneType.h"
+#include "types/MeshListType.h"
 #include "types/MeshType.h"
 #include "types/GlmVec3ListType.h"
 #include "types/GlmVec3ListListType.h"
 
 #define IMPL_COMPONENTS(FUNC) \
 	FUNC(LogFunctions) \
-/*	FUNC(MultiMeshType) \
-	FUNC(Shape2DType) */ \
+/*	FUNC(Shape2DType) */ \
 	FUNC(VersionCheck) \
 	FUNC(types, CommandType) \
 	FUNC(types, FloatListType) \
@@ -31,6 +30,7 @@
 	FUNC(types, IndexListType) \
 	FUNC(types, IndexListListType) \
 	FUNC(types, MeshType) \
+	FUNC(types, MeshListType) \
 	FUNC(types, SceneType)
 
 #include "commands/AbstractCommand.h"

@@ -139,6 +139,7 @@
     <ClCompile Include="lua\types\HalfSpaceType.cpp" />
     <ClCompile Include="lua\types\IndexListListType.cpp" />
     <ClCompile Include="lua\types\IndexListType.cpp" />
+    <ClCompile Include="lua\types\MeshListType.cpp" />
     <ClCompile Include="lua\types\MeshType.cpp" />
     <ClCompile Include="lua\types\SceneType.cpp" />
     <ClCompile Include="lua\VersionCheck.cpp" />
@@ -221,6 +222,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)extra/nuget_proxy/n
     <ClInclude Include="lua\types\HalfSpaceType.h" />
     <ClInclude Include="lua\types\IndexListListType.h" />
     <ClInclude Include="lua\types\IndexListType.h" />
+    <ClInclude Include="lua\types\MeshListType.h" />
     <ClInclude Include="lua\types\MeshType.h" />
     <ClInclude Include="lua\types\SceneType.h" />
     <ClInclude Include="lua\VersionCheck.h" />

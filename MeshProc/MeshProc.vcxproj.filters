@@ -219,6 +219,9 @@
     <ClCompile Include="commands\compute\SplitByEdges.cpp">
       <Filter>commands\compute</Filter>
     </ClCompile>
+    <ClCompile Include="lua\types\MeshListType.cpp">
+      <Filter>lua\types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="demo.lua" />
@@ -408,6 +411,9 @@
     </ClInclude>
     <ClInclude Include="commands\compute\SplitByEdges.h">
       <Filter>commands\compute</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\types\MeshListType.h">
+      <Filter>lua\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

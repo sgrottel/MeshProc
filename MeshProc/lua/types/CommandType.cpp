@@ -10,7 +10,7 @@
 #include "IndexListType.h"
 #include "IndexListListType.h"
 #include "MeshType.h"
-//#include "MultiMeshType.h"
+#include "MeshListType.h"
 #include "SceneType.h"
 //#include "Shape2DType.h"
 #include "HalfSpaceType.h"
@@ -106,8 +106,8 @@ namespace
 	template<>
 	struct LuaParamMapping<ParamType::Mesh> : LuaWrappedParamMapping<MeshType, data::Mesh> {};
 
-	//template<>
-	//struct LuaParamMapping<ParamType::MultiMesh> : LuaWrappedParamMapping<MultiMeshType, std::vector<std::shared_ptr<data::Mesh>>> {};
+	template<>
+	struct LuaParamMapping<ParamType::MeshList> : LuaWrappedParamMapping<MeshListType, std::vector<std::shared_ptr<data::Mesh>>> {};
 
 	template<>
 	struct LuaParamMapping<ParamType::Scene> : LuaWrappedParamMapping<SceneType, data::Scene>

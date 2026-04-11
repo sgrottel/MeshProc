@@ -20,7 +20,7 @@ SplitByEdges::SplitByEdges(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
 {
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
-	AddParamBinding<ParamMode::InOut, ParamType::Scene>("Scene", m_scene);
+	AddParamBinding<ParamMode::Out, ParamType::MeshList>("Segments", m_segments);
 	AddParamBinding<ParamMode::In, ParamType::Float>("Angle", m_angleDeg);
 }
 
@@ -31,10 +31,7 @@ bool SplitByEdges::Invoke()
 		Log().Error(L"'Mesh' not set");
 		return false;
 	}
-	if (!m_scene)
-	{
-		m_scene = std::make_shared<data::Scene>();
-	}
+	m_segments = std::make_shared<std::vector<std::shared_ptr<data::Mesh>>>();
 	const float angleRad = glm::radians(std::max<float>(1.0f, m_angleDeg));
 
 	std::vector<glm::vec3> fn;
@@ -151,7 +148,7 @@ bool SplitByEdges::Invoke()
 
 		finalizeVertices(*m, *m_mesh);
 
-		m_scene->m_meshes.push_back(std::make_pair(m, glm::mat4{ 1.0f }));
+		m_segments->push_back(m);
 		segCnt++;
 	}
 	Log().Detail("Mesh split into %d segments", segCnt);

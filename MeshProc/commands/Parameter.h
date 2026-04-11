@@ -31,7 +31,7 @@ namespace meshproc
 			Vec3ListList,
 			Mat4,
 			Mesh,
-//			MultiMesh,
+			MeshList,
 			Scene,
 //			Shape2D,
 			IndexList, // e.g. vertices, also edges/loops, or triangles
@@ -105,14 +105,14 @@ namespace meshproc
 			static type NilVal() { return nullptr; }
 		};
 
-		//template<>
-		//struct ParamTypeInfo<ParamType::MultiMesh>
-		//{
-		//	static constexpr const char* name = "MultiMesh";
-		//	typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
-		//	static constexpr bool canSetNil = true;
-		//	static type NilVal() { return nullptr; }
-		//};
+		template<>
+		struct ParamTypeInfo<ParamType::MeshList>
+		{
+			static constexpr const char* name = "MeshList";
+			typedef std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> type;
+			static constexpr bool canSetNil = true;
+			static type NilVal() { return nullptr; }
+		};
 
 		template<>
 		struct ParamTypeInfo<ParamType::Scene>

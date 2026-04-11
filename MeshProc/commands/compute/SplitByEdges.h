@@ -3,11 +3,11 @@
 
 #include "commands/AbstractCommand.h"
 #include "data/Mesh.h"
-#include "data/Scene.h"
 
 #include <glm/glm.hpp>
 
 #include <memory>
+#include <vector>
 
 namespace meshproc
 {
@@ -25,7 +25,7 @@ namespace meshproc
 
 			private:
 				const std::shared_ptr<data::Mesh> m_mesh{};
-				std::shared_ptr<data::Scene> m_scene{};
+				std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> m_segments{};
 				const float m_angleDeg { 30.0f };
 			};
 
