@@ -74,7 +74,7 @@ bool SplitByEdges::Invoke()
 			}
 			else
 			{
-				edgeAngle[ep.first] = 6.28; // about 2*pi
+				edgeAngle[ep.first] = 6.28f; // about 2*pi
 			}
 			if (!select) continue;
 			edges.insert(ep.first);
@@ -178,7 +178,7 @@ bool SplitByEdges::Invoke()
 				outline.clear();
 				for (auto const& t : smlSeg->triangles)
 				{
-					for (size_t ei = 0; ei < 3; ++ei)
+					for (uint32_t ei = 0; ei < 3; ++ei)
 					{
 						const data::HashableEdge he = t.HashableEdge(ei);
 						if (outline.contains(he))
@@ -217,7 +217,7 @@ bool SplitByEdges::Invoke()
 					bool found = false;
 					for (auto const& t : seg->triangles)
 					{
-						for (size_t ei = 0; ei < 3; ++ei)
+						for (uint32_t ei = 0; ei < 3; ++ei)
 						{
 							const data::HashableEdge he = t.HashableEdge(ei);
 							if (minHe == he)
