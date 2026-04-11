@@ -10,6 +10,7 @@
 #include <array>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 using namespace meshproc;
 using namespace meshproc::commands;
@@ -41,8 +42,10 @@ bool SplitByEdges::Invoke()
 	std::transform(m_mesh->triangles.begin(), m_mesh->triangles.end(), fn.begin(), [&v = m_mesh->vertices](data::Triangle& t) { return t.CalcNormal(v); });
 
 	std::unordered_set<data::HashableEdge> edges;
+	std::unordered_map<data::HashableEdge, std::array<uint32_t, 2>> ett;
 	{
 		constexpr std::array<glm::vec3, 2> emptyNormals{ glm::vec3{ 0.0f }, glm::vec3{ 0.0f } };
+		constexpr std::array<uint32_t, 2> emptyIndices{ -1, -1 };
 		std::unordered_map<data::HashableEdge, std::array<glm::vec3, 2>> en;
 		for (size_t ti = 0; ti < m_mesh->triangles.size(); ++ti)
 		{
@@ -53,6 +56,8 @@ bool SplitByEdges::Invoke()
 				const data::HashableEdge he = t.HashableEdge(ei);
 				auto enip = en.try_emplace(he, emptyNormals);
 				enip.first->second.at(enip.second ? 0 : 1) = tn;
+				auto ettip = ett.try_emplace(he, emptyIndices);
+				ettip.first->second.at(ettip.second ? 0 : 1) = static_cast<uint32_t>(ti);
 			}
 		}
 		Log().Detail("Total of %d edges", en.size());
@@ -72,42 +77,84 @@ bool SplitByEdges::Invoke()
 	}
 	Log().Detail("Selected %d edges above angle threshold", edges.size());
 
-	std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
-	m->triangles.reserve(edges.size() * 2);
-	for (const auto& t : m_mesh->triangles)
+	std::unordered_set<size_t> freeTI;
+	std::unordered_set<size_t> segmentTI;
+	std::vector<size_t> addTI;
+	freeTI.reserve(m_mesh->triangles.size());
+	segmentTI.reserve(m_mesh->triangles.size() / 10);
+	for (size_t ti = 0; ti < m_mesh->triangles.size(); ++ti)
 	{
-		const bool sel = edges.contains(t.HashableEdge(0))
-			|| edges.contains(t.HashableEdge(1))
-			|| edges.contains(t.HashableEdge(2));
-		if (sel)
-		{
-			m->triangles.push_back(t);
-		}
+		freeTI.insert(ti);
 	}
 
-	std::unordered_map<uint32_t, uint32_t> vmap;
-	vmap.reserve(m->triangles.size());
-	for (const auto& t : m->triangles)
+	auto const finalizeVertices = [](data::Mesh& tar, const data::Mesh& src)
 	{
-		for (size_t i = 0; i < 3; ++i)
+		std::unordered_map<uint32_t, uint32_t> vmap;
+		vmap.reserve(tar.triangles.size());
+		for (const auto& t : tar.triangles)
 		{
-			vmap.try_emplace(t[i], vmap.size());
+			for (size_t i = 0; i < 3; ++i)
+			{
+				vmap.try_emplace(t[i], static_cast<uint32_t>(vmap.size()));
+			}
 		}
-	}
-	m->vertices.resize(vmap.size());
-	for (auto& t : m->triangles)
-	{
-		for (size_t i = 0; i < 3; ++i)
+		tar.vertices.resize(vmap.size());
+		for (auto& t : tar.triangles)
 		{
-			t[i] = vmap.at(t[i]);
+			for (size_t i = 0; i < 3; ++i)
+			{
+				t[i] = vmap.at(t[i]);
+			}
 		}
-	}
-	for (auto& vi : vmap)
-	{
-		m->vertices.at(vi.second) = m_mesh->vertices.at(vi.first);
-	}
+		for (auto& vi : vmap)
+		{
+			tar.vertices.at(vi.second) = src.vertices.at(vi.first);
+		}
+	};
 
-	m_scene->m_meshes.push_back(std::make_pair(m, glm::mat4{1.0f}));
+	size_t segCnt = 0;
+
+	while (!freeTI.empty())
+	{
+		segmentTI.clear();
+		size_t ti = *freeTI.begin();
+		freeTI.erase(ti);
+		addTI.push_back(ti);
+
+		while (!addTI.empty())
+		{
+			ti = addTI.back();
+			addTI.pop_back();
+			segmentTI.insert(ti);
+
+			for (uint32_t ei = 0; ei < 3; ++ei)
+			{
+				const auto& he = m_mesh->triangles.at(ti).HashableEdge(ei);
+				if (edges.contains(he)) continue;
+
+				const auto& tidxx = ett.at(he);
+				uint32_t tj = tidxx.at((tidxx.at(0) == ti) ? 1 : 0);
+				if (freeTI.contains(tj))
+				{
+					freeTI.erase(tj);
+					addTI.push_back(tj);
+				}
+			}
+		}
+
+		std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
+		m->triangles.reserve(segmentTI.size());
+		for (auto ti : segmentTI)
+		{
+			m->triangles.push_back(m_mesh->triangles.at(ti));
+		}
+
+		finalizeVertices(*m, *m_mesh);
+
+		m_scene->m_meshes.push_back(std::make_pair(m, glm::mat4{ 1.0f }));
+		segCnt++;
+	}
+	Log().Detail("Mesh split into %d segments", segCnt);
 
 	return true;
 }
