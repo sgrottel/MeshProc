@@ -27,6 +27,7 @@ namespace meshproc
 				const std::shared_ptr<data::Mesh> m_mesh{};
 				std::shared_ptr<std::vector<std::shared_ptr<data::Mesh>>> m_segments{};
 				const float m_angleDeg { 30.0f };
+				const uint32_t m_smallSegmentConsolidation { 0 };
 			};
 
 		}

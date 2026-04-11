@@ -22,6 +22,8 @@ SplitByEdges::SplitByEdges(const sgrottel::ISimpleLog& log)
 	AddParamBinding<ParamMode::In, ParamType::Mesh>("Mesh", m_mesh);
 	AddParamBinding<ParamMode::Out, ParamType::MeshList>("Segments", m_segments);
 	AddParamBinding<ParamMode::In, ParamType::Float>("Angle", m_angleDeg);
+	// if larger 0, segments with this amount of triangles will be joint with the neighboring segment over the edge with the smallest angle
+	AddParamBinding<ParamMode::In, ParamType::UInt32>("SmallSegmentConsolidation", m_smallSegmentConsolidation);
 }
 
 bool SplitByEdges::Invoke()
@@ -40,6 +42,7 @@ bool SplitByEdges::Invoke()
 
 	std::unordered_set<data::HashableEdge> edges;
 	std::unordered_map<data::HashableEdge, std::array<uint32_t, 2>> ett;
+	std::unordered_map<data::HashableEdge, float> edgeAngle;
 	{
 		constexpr std::array<glm::vec3, 2> emptyNormals{ glm::vec3{ 0.0f }, glm::vec3{ 0.0f } };
 		constexpr std::array<uint32_t, 2> emptyIndices{ -1, -1 };
@@ -67,6 +70,11 @@ bool SplitByEdges::Invoke()
 			{
 				float angle = glm::angle(ep.second.at(0), n2);
 				select = (angle >= angleRad);
+				edgeAngle[ep.first] = angle;
+			}
+			else
+			{
+				edgeAngle[ep.first] = 6.28; // about 2*pi
 			}
 			if (!select) continue;
 			edges.insert(ep.first);
@@ -109,8 +117,6 @@ bool SplitByEdges::Invoke()
 		}
 	};
 
-	size_t segCnt = 0;
-
 	while (!freeTI.empty())
 	{
 		segmentTI.clear();
@@ -146,12 +152,107 @@ bool SplitByEdges::Invoke()
 			m->triangles.push_back(m_mesh->triangles.at(ti));
 		}
 
-		finalizeVertices(*m, *m_mesh);
-
 		m_segments->push_back(m);
-		segCnt++;
 	}
-	Log().Detail("Mesh split into %d segments", segCnt);
+
+	if (m_smallSegmentConsolidation > 0)
+	{
+		std::vector<std::shared_ptr<data::Mesh>> smlSegs;
+		for (auto m : *m_segments)
+		{
+			if (m->triangles.size() <= m_smallSegmentConsolidation)
+			{
+				smlSegs.push_back(m);
+			}
+		}
+
+		if (smlSegs.size() > 0)
+		{
+			Log().Detail("After initial segmentation, %d / %d segments are too small and will be merged", smlSegs.size(), m_segments->size());
+			std::unordered_set<data::HashableEdge> outline;
+
+			for (auto smlSeg : smlSegs)
+			{
+				m_segments->erase(std::find(m_segments->begin(), m_segments->end(), smlSeg));
+
+				outline.clear();
+				for (auto const& t : smlSeg->triangles)
+				{
+					for (size_t ei = 0; ei < 3; ++ei)
+					{
+						const data::HashableEdge he = t.HashableEdge(ei);
+						if (outline.contains(he))
+						{
+							outline.erase(he);
+						}
+						else
+						{
+							outline.insert(he);
+						}
+					}
+				}
+
+				float minAngle = 7;
+				data::HashableEdge minHe{ 0, 0 };
+				for (auto const& he : outline)
+				{
+					const float ea = edgeAngle.at(he);
+					if (ea < minAngle)
+					{
+						minAngle = ea;
+						minHe = he;
+					}
+				}
+
+				if (minHe.i0 == minHe.i1)
+				{
+					// no connecting outline => segment is isolated => keep
+					m_segments->push_back(smlSeg);
+					continue;
+				}
+
+				for (auto& seg : *m_segments)
+				{
+
+					bool found = false;
+					for (auto const& t : seg->triangles)
+					{
+						for (size_t ei = 0; ei < 3; ++ei)
+						{
+							const data::HashableEdge he = t.HashableEdge(ei);
+							if (minHe == he)
+							{
+								found = true;
+								break;
+							}
+						}
+						if (found)
+						{
+							break;
+						}
+					}
+					if (found)
+					{
+						seg->triangles.reserve(seg->triangles.size() + smlSeg->triangles.size());
+						for (auto const& t : smlSeg->triangles)
+						{
+							seg->triangles.push_back(t);
+						}
+						break;
+					}
+				}
+
+			}
+
+		}
+	}
+
+	for(auto m : *m_segments)
+	{
+		finalizeVertices(*m, *m_mesh);
+	}
+
+	Log().Detail("Mesh split into %d segments", m_segments->size());
 
 	return true;
 }
