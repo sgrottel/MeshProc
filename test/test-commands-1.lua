@@ -5,9 +5,9 @@
 -- run demo.lua -v -arg sizex=3 -arg hello
 --
 
--- compatible with MeshProc v0.5.x
-meshproc.Version.assert_or_newer(0, 5, 0)
-meshproc.Version.assert_older_than(0, 6, 0)
+-- compatible with MeshProc v0.6.x
+meshproc.Version.assert_or_newer(0, 6, 0)
+meshproc.Version.assert_older_than(0, 7, 0)
 log.detail("MeshProc v"..tostring(meshproc.Version.get()).." ["..tostring(meshproc.Version.get()[1]).."."..tostring(meshproc.Version.get()[2]).."]")
 math.randomseed(12345)
 
