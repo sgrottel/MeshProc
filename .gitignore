@@ -18,3 +18,4 @@ test/test-selection.obj
 test/test-VertexEdgeDistanceToCut.obj
 /build/**
 /out/**
+out.obj
