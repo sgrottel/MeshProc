@@ -1,7 +1,16 @@
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/VersionInfo.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/VersionInfo.h
+    @ONLY
+)
 # Create the executable target
 add_executable(MeshProc
     MeshProc.cpp
+    # version info
+    VersionInfo.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/VersionInfo.h
+    VersionInfo.rc
 )
 
 # Modern compile features
@@ -13,6 +22,11 @@ if (MSVC)
 else()
     target_compile_options(MeshProc PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+target_include_directories(MeshProc
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/generated
+)
 
 # If you later add include dirs or libraries:
 # target_include_directories(myapp PRIVATE include)

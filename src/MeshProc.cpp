@@ -6,6 +6,7 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 */
+#include "VersionInfo.h"
 
 int wmain(int argc, wchar_t **argv)
 {

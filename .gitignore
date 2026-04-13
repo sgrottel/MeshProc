@@ -17,3 +17,4 @@ MeshProc/out.obj
 test/test-selection.obj
 test/test-VertexEdgeDistanceToCut.obj
 /build/**
+/out/**
