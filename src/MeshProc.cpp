@@ -1,16 +1,15 @@
 ﻿#include "CmdLineArgs.h"
-/*
+
 #include "commands/CommandFactory.h"
 #include "commands/CommandRegistration.h"
-#include "lua/Runner.h"
+//#include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
-*/
+
 #include "VersionInfo.h"
 
 int wmain(int argc, wchar_t **argv)
 {
-/*
 	using meshproc::CmdLineArgs;
 	using meshproc::CliCommand;
 
@@ -33,6 +32,7 @@ int wmain(int argc, wchar_t **argv)
 	{
 	case CliCommand::RunScript:
 	{
+/*
 		meshproc::lua::Runner lua{ log, cmdFactory };
 		if (!lua.Init()) break;
 		if (!lua.RegisterCommands()) break;
@@ -41,7 +41,7 @@ int wmain(int argc, wchar_t **argv)
 		if (!lua.LoadScript(cmdLine.m_script)) break;
 		if (!lua.SetArgs(cmdLine.m_scriptArgs)) break;
 		if (!lua.RunScript()) break;
-
+*/
 		log.Message("done.");
 	}
 	break;
@@ -56,6 +56,6 @@ int wmain(int argc, wchar_t **argv)
 		log.Critical("CLI command %d not implemented", cmdLine.m_command);
 		break;
 	}
-*/
+
 	return 0;
 }
