@@ -1,12 +1,15 @@
 ﻿#include "CmdLineArgs.h"
+/*
 #include "commands/CommandFactory.h"
 #include "commands/CommandRegistration.h"
 #include "lua/Runner.h"
 
 #include <SimpleLog/SimpleLog.hpp>
+*/
 
 int wmain(int argc, wchar_t **argv)
 {
+/*
 	using meshproc::CmdLineArgs;
 	using meshproc::CliCommand;
 
@@ -52,6 +55,6 @@ int wmain(int argc, wchar_t **argv)
 		log.Critical("CLI command %d not implemented", cmdLine.m_command);
 		break;
 	}
-
+*/
 	return 0;
 }

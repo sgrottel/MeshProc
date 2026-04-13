@@ -49,6 +49,15 @@ Inspired by
 - [OpenSCAD -- https://github.com/openscad/openscad](https://github.com/openscad/openscad)
 - [VCGlib -- https://github.com/cnr-isti-vclab/vcglib](https://github.com/cnr-isti-vclab/vcglib)
 
+## Build (WIP)
+This project uses CMAKE.
+
+```pwsh
+cd Repo-Checkout
+cmake -S . -B build -G Ninja
+cmake --build build
+```
+
 ## License
 This project is freely available as open source under the terms of the [Apache License, Version 2.0](LICENSE)
 
