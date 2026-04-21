@@ -1,0 +1,18 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "MeshProc.exe (src\\MeshProc.exe)",
+      "name": "MeshProc.exe (src\\MeshProc.exe)",
+      "currentDir": "${workspaceRoot}",
+      "args": [
+        "run",
+        "demo.lua",
+        "-v"
+      ]
+    }
+  ]
+}
