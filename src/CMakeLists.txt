@@ -181,6 +181,13 @@ target_link_libraries(MeshProc
         CGAL::CGAL
 )
 
-# If you later add include dirs or libraries:
-# target_include_directories(myapp PRIVATE include)
-# target_link_libraries(myapp PRIVATE mylib)
+# Required for TARGET_RUNTIME_DLLS on MSVC
+set_property(TARGET MeshProc PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:MeshProc>)
+
+set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+file(GLOB VCPKG_DLLS "${VCPKG_BIN_DIR}/*.dll")
+if (VCPKG_DLLS)
+    add_custom_command(TARGET MeshProc POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${VCPKG_DLLS} $<TARGET_FILE_DIR:MeshProc>
+    )
+endif()

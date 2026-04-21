@@ -30,8 +30,9 @@ add_compile_options(/Zc:__cplusplus)
 set(NUGET_PACKAGES_DIR "${CMAKE_SOURCE_DIR}/packages")
 
 # vcpkg
+set(VCPKG_TARGET_TRIPLET "x64-windows")
 list(APPEND CMAKE_PREFIX_PATH
-    "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows"
+    "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}"
 )
 
 # custom find module scripts
