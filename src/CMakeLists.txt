@@ -104,8 +104,8 @@ add_executable(MeshProc
     commands/compute/VertexNormals.h
     commands/edit/CloseLoopWithPin.cpp
     commands/edit/CloseLoopWithPin.h
-    # commands/edit/CutHalfSpace.cpp
-    # commands/edit/CutHalfSpace.h
+    commands/edit/CutHalfSpace.cpp
+    commands/edit/CutHalfSpace.h
     commands/edit/DisplacementNoise.cpp
     commands/edit/DisplacementNoise.h
     commands/edit/Subdivision.cpp
@@ -129,22 +129,22 @@ add_executable(MeshProc
     commands/io/StlReader.cpp
     commands/io/StlReader.h
     commands/io/StlWriter.cpp
-    commands/io/StlWriter.h    
+    commands/io/StlWriter.h
     # 3rd Party
-    3rd-party/xyz_math/xyz_math.lua    
-    3rd-party/xyz_math/README.md    
+    3rd-party/xyz_math/xyz_math.lua
+    3rd-party/xyz_math/README.md
 )
 
 set_source_files_properties(
     # 3rd Party
-    3rd-party/xyz_math/xyz_math.lua    
-    3rd-party/xyz_math/README.md    
+    3rd-party/xyz_math/xyz_math.lua
+    3rd-party/xyz_math/README.md
     PROPERTIES HEADER_FILE_ONLY TRUE
 )
 source_group("/3rd-party/xyz_math" FILES
     # 3rd Party
-    3rd-party/xyz_math/xyz_math.lua    
-    3rd-party/xyz_math/README.md    
+    3rd-party/xyz_math/xyz_math.lua
+    3rd-party/xyz_math/README.md
 )
 
 find_package(SGrottelSimpleLog REQUIRED)
@@ -152,9 +152,11 @@ find_package(SGrottelYaclap REQUIRED)
 find_package(GLM REQUIRED)
 set(LuaToolset "v143")
 find_package(Lua REQUIRED)
+find_package(CGAL CONFIG REQUIRED)
 
 # Modern compile features
 target_compile_features(MeshProc PRIVATE cxx_std_20)
+target_compile_options(MeshProc PRIVATE /std:c++20 /Zc:__cplusplus)
 
 # Recommended warnings (portable)
 if (MSVC)
@@ -163,7 +165,7 @@ else()
     target_compile_options(MeshProc PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-target_compile_definitions(MeshProc PRIVATE UNICODE _UNICODE)
+target_compile_definitions(MeshProc PRIVATE UNICODE _UNICODE NOMINMAX WIN32_LEAN_AND_MEAN VC_EXTRALEAN)
 
 target_include_directories(MeshProc
     PRIVATE
@@ -176,6 +178,7 @@ target_link_libraries(MeshProc
         SGrottelYaclap
         GLM
         Lua::Lua
+        CGAL::CGAL
 )
 
 # If you later add include dirs or libraries:

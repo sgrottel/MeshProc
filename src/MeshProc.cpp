@@ -8,6 +8,10 @@
 
 #include "VersionInfo.h"
 
+#if __cplusplus < 202002L
+#error "Requires C++20 or newer"
+#endif
+
 int wmain(int argc, wchar_t **argv)
 {
 	using meshproc::CmdLineArgs;

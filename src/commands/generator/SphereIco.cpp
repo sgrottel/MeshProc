@@ -35,9 +35,9 @@ bool generator::SphereIco::Invoke()
 
 		for (data::Triangle const& t : mesh->triangles)
 		{
-			for (int i = 0; i < 3; ++i)
+			for (int j = 0; j < 3; ++j)
 			{
-				auto e{ t.HashableEdge(i) };
+				auto e{ t.HashableEdge(j) };
 				if (edges.find(e) == edges.end())
 				{
 					edges.insert({ e, 0 });

@@ -54,6 +54,7 @@ This project uses CMAKE.
 
 ```pwsh
 cd Repo-Checkout
+.\restore-dependencies.ps1
 cmake -S . -B build -G Ninja
 cmake --build build
 ```

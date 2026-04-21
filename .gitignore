@@ -19,3 +19,4 @@ test/test-VertexEdgeDistanceToCut.obj
 /build/**
 /out/**
 out.obj
+vcpkg_installed

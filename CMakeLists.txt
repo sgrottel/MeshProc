@@ -20,23 +20,19 @@ project(MeshProc
     LANGUAGES CXX
 )
 
-# restore nuget
+# cpp 20
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+add_compile_options(/Zc:__cplusplus)
+
+# nuget
 set(NUGET_PACKAGES_DIR "${CMAKE_SOURCE_DIR}/packages")
-## file(GLOB OLD_SIMPLELOG_DIRS
-##     "${NUGET_PACKAGES_DIR}/SGrottel.SimpleLog.Cpp*"
-## )
-## foreach(dir ${OLD_SIMPLELOG_DIRS})
-##     file(REMOVE_RECURSE "${dir}")
-## endforeach()
-execute_process(
-    COMMAND nuget restore "${CMAKE_SOURCE_DIR}/packages.config"
-            -PackagesDirectory "${NUGET_PACKAGES_DIR}"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    RESULT_VARIABLE NUGET_RESTORE_RESULT
+
+# vcpkg
+list(APPEND CMAKE_PREFIX_PATH
+    "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows"
 )
-if(NUGET_RESTORE_RESULT)
-    message(FATAL_ERROR "NuGet restore failed")
-endif()
 
 # custom find module scripts
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

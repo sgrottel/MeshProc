@@ -34,6 +34,8 @@ namespace meshproc
 				return i0 == i || i1 == i;
 			}
 
+#pragma warning(push)
+#pragma warning(disable: 4201)
 			union {
 				uint32_t m_idx[2];
 				struct {
@@ -46,6 +48,7 @@ namespace meshproc
 					uint32_t x, y;
 				};
 			};
+#pragma warning(pop)
 		};
 
 		static_assert(sizeof(HashableEdge) == sizeof(uint32_t) * 2);
