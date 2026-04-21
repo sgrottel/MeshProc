@@ -56,5 +56,5 @@ bool IndexListType::LuaGetElement(lua_State* lua, int i, uint32_t& outVal)
 
 uint32_t IndexListType::GetInvalidValue()
 {
-	return -1;
+	return std::numeric_limits<uint32_t>::max();
 }

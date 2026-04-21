@@ -51,7 +51,7 @@ void MeshType::VertexListTraits::OnInserted(lua_State* lua, int idx, listptr_t l
 
 }
 
-void MeshType::VertexListTraits::OnRemoved(lua_State* lua, int idx, listptr_t list, uint32_t idxZeroBase)
+void MeshType::VertexListTraits::OnRemoved(lua_State* lua, int idx, [[maybe_unused]] listptr_t list, uint32_t idxZeroBase)
 {
 	luaL_checkudata(lua, idx, MeshType::Vertex::LUA_TYPE_NAME);
 	lua_getuservalue(lua, idx);
@@ -72,7 +72,7 @@ void MeshType::VertexListTraits::OnRemoved(lua_State* lua, int idx, listptr_t li
 	}
 }
 
-void MeshType::VertexListTraits::OnResized(lua_State* lua, int idx, listptr_t list, uint32_t newsize, uint32_t oldsize)
+void MeshType::VertexListTraits::OnResized(lua_State* lua, int idx, [[maybe_unused]] listptr_t list, uint32_t newsize, uint32_t oldsize)
 {
 	if (newsize >= oldsize) return;
 
@@ -89,7 +89,7 @@ void MeshType::VertexListTraits::OnResized(lua_State* lua, int idx, listptr_t li
 		});
 }
 
-void MeshType::VertexListTraits::OnManyRemoved(lua_State* lua, int idx, listptr_t /*list*/, std::vector<uint32_t>& idxListZeroBaseSortedAsc)
+void MeshType::VertexListTraits::OnManyRemoved(lua_State* lua, int idx, [[maybe_unused]] listptr_t list, std::vector<uint32_t>& idxListZeroBaseSortedAsc)
 {
 	if (idxListZeroBaseSortedAsc.empty()) return;
 

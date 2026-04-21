@@ -95,10 +95,6 @@ bool GlmMat4Type::TryGet(lua_State* lua, int idx, glm::mat4& tar)
 		return true;
 
 	}
-	else
-	{
-		return luaL_error(lua, "Expected XMat4, but value has wrong size");
-	}
 
-	return false;
+	return luaL_error(lua, "Expected XMat4, but value has wrong size");
 }

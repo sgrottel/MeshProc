@@ -24,7 +24,7 @@ namespace
 				float x1, y1, z1;
 				float x2, y2, z2;
 				float x3, y3, z3;
-			};
+			} c;
 			glm::vec3 v[3];
 		};
 		uint16_t attr;
@@ -91,15 +91,15 @@ bool StlReader::Invoke()
 		for (size_t i = 0; i < readCnt; ++i)
 		{
 			StlTriData const& t = buf[i];
-			assert(t.v[0].x == t.x1);
-			assert(t.v[0].y == t.y1);
-			assert(t.v[0].z == t.z1);
-			assert(t.v[1].x == t.x2);
-			assert(t.v[1].y == t.y2);
-			assert(t.v[1].z == t.z2);
-			assert(t.v[2].x == t.x3);
-			assert(t.v[2].y == t.y3);
-			assert(t.v[2].z == t.z3);
+			assert(t.v[0].x == t.c.x1);
+			assert(t.v[0].y == t.c.y1);
+			assert(t.v[0].z == t.c.z1);
+			assert(t.v[1].x == t.c.x2);
+			assert(t.v[1].y == t.c.y2);
+			assert(t.v[1].z == t.c.z2);
+			assert(t.v[2].x == t.c.x3);
+			assert(t.v[2].y == t.c.y3);
+			assert(t.v[2].z == t.c.z3);
 
 			mesh->triangles.push_back({});
 

@@ -67,7 +67,7 @@ namespace
 	bool CallRegisterCommandHelper(meshproc::commands::CommandFactory& factory);
 	
 	template<>
-	bool CallRegisterCommandHelper<-1>(meshproc::commands::CommandFactory& factory)
+	bool CallRegisterCommandHelper<-1>([[maybe_unused]] meshproc::commands::CommandFactory& factory)
 	{
 		return true;
 	}

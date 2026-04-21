@@ -9,11 +9,14 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
+#pragma warning(push)
+#pragma warning(disable : 4702)
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
+#pragma warning(pop)
 
 #include <algorithm>
 #include <functional>
@@ -175,7 +178,7 @@ bool CutHalfSpace::Invoke()
 					{
 						if (m_mesh->vertices.at(nvI) == nv)
 						{
-							nvIdx = nvI;
+							nvIdx = static_cast<uint32_t>(nvI);
 							break;
 						}
 					}

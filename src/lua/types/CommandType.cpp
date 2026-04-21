@@ -230,7 +230,7 @@ namespace
 	template<ParamType PT>
 	struct NilValSetter<false, PT>
 	{
-		static inline void SetNil(ParamTypeInfo_t<PT>& tar)
+		static inline void SetNil(ParamTypeInfo_t<PT>& /*tar*/)
 		{
 			// intentionally empty
 		}

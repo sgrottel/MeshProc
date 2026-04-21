@@ -45,7 +45,9 @@ bool SplitByEdges::Invoke()
 	std::unordered_map<data::HashableEdge, float> edgeAngle;
 	{
 		constexpr std::array<glm::vec3, 2> emptyNormals{ glm::vec3{ 0.0f }, glm::vec3{ 0.0f } };
-		constexpr std::array<uint32_t, 2> emptyIndices{ -1, -1 };
+		constexpr std::array<uint32_t, 2> emptyIndices{
+			std::numeric_limits<uint32_t>::max(),
+			std::numeric_limits<uint32_t>::max() };
 		std::unordered_map<data::HashableEdge, std::array<glm::vec3, 2>> en;
 		for (size_t ti = 0; ti < m_mesh->triangles.size(); ++ti)
 		{
@@ -147,9 +149,9 @@ bool SplitByEdges::Invoke()
 
 		std::shared_ptr<data::Mesh> m = std::make_shared<data::Mesh>();
 		m->triangles.reserve(segmentTI.size());
-		for (auto ti : segmentTI)
+		for (auto ti2 : segmentTI)
 		{
-			m->triangles.push_back(m_mesh->triangles.at(ti));
+			m->triangles.push_back(m_mesh->triangles.at(ti2));
 		}
 
 		m_segments->push_back(m);
