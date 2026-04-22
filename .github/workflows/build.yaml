@@ -29,7 +29,7 @@ jobs:
 
     strategy:
       matrix:
-        BUILD_TYPE: [Debug, Release]
+        BUILD_TYPE: [Debug, Release, RelWithDebInfo]
 
     steps:
     - uses: actions/checkout@v6
@@ -40,7 +40,7 @@ jobs:
       shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        $vf = get-content "MeshProc\VersionInfo.h" -Raw
+        $vf = get-content "src\VersionInfo.h" -Raw
 
         $vf -match '\n#define\s+MESHPROC_VER_MAJOR\s+(\d+)\s*\n' | Out-Null
         $major = $Matches[1]
@@ -51,7 +51,7 @@ jobs:
 
         $nvf = $vf -replace '(\n#define\s+MESHPROC_VER_BUILD\s+)(\d+)(\s*\n)',"`${1}$env:GITHUB_RUN_NUMBER`$3"
 
-        set-content "MeshProc\VersionInfo.h" $nvf -force -nonewline
+        set-content "src\VersionInfo.h" $nvf -force -nonewline
 
         $version = New-Object System.Version @( $major, $minor, $patch, $env:GITHUB_RUN_NUMBER )
         Write-Host "Version number: $version"
@@ -181,10 +181,9 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw }
 
     - name: Upload Artifacts
-      if: ${{ matrix.BUILD_TYPE == 'Release' }}
       uses: actions/upload-artifact@v7
       with:
-        name: MeshProc-${{env.FULL_VERSION_NUMBER}}
+        name: MeshProc-${{env.FULL_VERSION_NUMBER}}-${{matrix.BUILD_TYPE}}
         path: |
           build/src/*.exe
           build/src/*.dll
