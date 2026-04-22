@@ -37,12 +37,15 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Set up MSVC Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1        
+
     - name: Build vcpkg_cache_key
       id: build-vcpkg_cache_key
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
-        $toolset = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\*\*\VC\Tools\MSVC" |
+        $toolset = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\*\*\VC\Tools\MSVC\*" |
             Sort-Object Name -Descending |
             Select-Object -First 1 |
             Select-Object -ExpandProperty Name |
@@ -82,8 +85,8 @@ jobs:
     - name: Configure CMake
       run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build `
         -G Ninja `
-        -DCMAKE_C_COMPILER=cl.exe `
-        -DCMAKE_CXX_COMPILER=cl.exe `
+        -DCMAKE_C_COMPILER=cl `
+        -DCMAKE_CXX_COMPILER=cl `
         -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }} `
         -DMESHPROC_VERSION_BUILD=${{ github.run_number }}
 
