@@ -8,7 +8,7 @@
 #
 # After build, a small smoke test is run, testing generation and saving of a simple cube geometry (cf. test subdirectory)
 #
-# The build artifacts of "Release" are stored as pipeline artifacts
+# The built binaries are stored as pipeline artifacts
 #
 
 name: Build MeshProc
@@ -45,14 +45,26 @@ jobs:
         $toolset = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\*\*\VC\Tools\MSVC" |
             Sort-Object Name -Descending |
             Select-Object -First 1 |
-            Select-Object -ExpandProperty Name
+            Select-Object -ExpandProperty Name |
+            Out-String -NoNewLine
+        Write-Host "Toolset = $toolset"
+
         $winsdk = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" |
             Sort-Object Name -Descending |
             Select-Object -First 1 |
-            Select-Object -ExpandProperty Name
-        $vcpkg_cache_key = "${{hashFiles('vcpkg.json')}}_${{hashFiles('vcpkg/**')}}_$toolset_$winsdk"
+            Select-Object -ExpandProperty Name |
+            Out-String -NoNewLine
+        Write-Host "WinSdk = $winsdk"
 
+        $vcpkgJson = "${{hashFiles('vcpkg.json')}}"
+        Write-Host "VcpkgJson = $vcpkgJson"
+
+        $vcpkgFiles = "${{hashFiles('vcpkg/**')}}"
+        Write-Host "VcpkgFiles = $vcpkgFiles"
+
+        $vcpkg_cache_key = "$($vcpkgJson)_$($vcpkgFiles)_$($toolset)_$($winsdk)"
         Write-Host "vcpkg_cache_key = $vcpkg_cache_key"
+
         "vcpkg_cache_key=$vcpkg_cache_key" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Cache vcpkg packages
@@ -68,7 +80,12 @@ jobs:
         .\restore-dependencies.ps1
 
     - name: Configure CMake
-      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -G Ninja -DMESHPROC_VERSION_BUILD=${{github.run_number}}
+      run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build `
+        -G Ninja `
+        -DCMAKE_C_COMPILER=cl.exe `
+        -DCMAKE_CXX_COMPILER=cl.exe `
+        -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }} `
+        -DMESHPROC_VERSION_BUILD=${{ github.run_number }}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
