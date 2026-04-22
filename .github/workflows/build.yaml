@@ -36,27 +36,27 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Inject build number
-      shell: pwsh
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        $vf = get-content "src\VersionInfo.h" -Raw
+    # - name: Inject build number
+    #   shell: pwsh
+    #   working-directory: ${{env.GITHUB_WORKSPACE}}
+    #   run: |
+    #     $vf = get-content "src\VersionInfo.h" -Raw
 
-        $vf -match '\n#define\s+MESHPROC_VER_MAJOR\s+(\d+)\s*\n' | Out-Null
-        $major = $Matches[1]
-        $vf -match '\n#define\s+MESHPROC_VER_MINOR\s+(\d+)\s*\n' | Out-Null
-        $minor = $Matches[1]
-        $vf -match '\n#define\s+MESHPROC_VER_PATCH\s+(\d+)\s*\n' | Out-Null
-        $patch = $Matches[1]
+    #     $vf -match '\n#define\s+MESHPROC_VER_MAJOR\s+(\d+)\s*\n' | Out-Null
+    #     $major = $Matches[1]
+    #     $vf -match '\n#define\s+MESHPROC_VER_MINOR\s+(\d+)\s*\n' | Out-Null
+    #     $minor = $Matches[1]
+    #     $vf -match '\n#define\s+MESHPROC_VER_PATCH\s+(\d+)\s*\n' | Out-Null
+    #     $patch = $Matches[1]
 
-        $nvf = $vf -replace '(\n#define\s+MESHPROC_VER_BUILD\s+)(\d+)(\s*\n)',"`${1}$env:GITHUB_RUN_NUMBER`$3"
+    #     $nvf = $vf -replace '(\n#define\s+MESHPROC_VER_BUILD\s+)(\d+)(\s*\n)',"`${1}$env:GITHUB_RUN_NUMBER`$3"
 
-        set-content "src\VersionInfo.h" $nvf -force -nonewline
+    #     set-content "src\VersionInfo.h" $nvf -force -nonewline
 
-        $version = New-Object System.Version @( $major, $minor, $patch, $env:GITHUB_RUN_NUMBER )
-        Write-Host "Version number: $version"
+    #     $version = New-Object System.Version @( $major, $minor, $patch, $env:GITHUB_RUN_NUMBER )
+    #     Write-Host "Version number: $version"
 
-        Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
+    #     Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
 
     - name: Restore dependencies
       shell: pwsh
@@ -65,10 +65,18 @@ jobs:
         .\restore-dependencies.ps1
 
     - name: Configure CMake
-      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -G Ninja
+      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -G Ninja -DMESHPROC_VERSION_BUILD=${{env:GITHUB_RUN_NUMBER}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
+
+    - name: Check Version Info
+      shell: pwsh
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        $version = (Get-Item .\build\src\MeshProc.exe).VersionInfo.FileVersion
+        Write-Host "Version number: $version"
+        Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
 
     # - name: Add MSBuild to PATH
     #   uses: microsoft/setup-msbuild@v3
