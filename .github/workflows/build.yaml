@@ -1,5 +1,5 @@
 #
-# Workflow to build MeshProc via MSBuild
+# Workflow to build MeshProc
 #
 # Github run number is injected as build number value into the version number
 #
@@ -8,7 +8,7 @@
 #
 # After build, a small smoke test is run, testing generation and saving of a simple cube geometry (cf. test subdirectory)
 #
-# The build artifacts of "Release" are stored as pipeline artifacts
+# The built binaries are stored as pipeline artifacts
 #
 
 name: Build MeshProc
@@ -20,9 +20,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-env:
-  SOLUTION_FILE_PATH: .
-
 permissions:
   contents: read
 
@@ -31,152 +28,94 @@ jobs:
     runs-on: windows-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        configuration: [Debug, Release]
+        BUILD_TYPE: [Debug, Release, RelWithDebInfo]
 
     steps:
     - uses: actions/checkout@v6
       with:
         submodules: recursive
 
-    - name: Inject build number
-      shell: pwsh
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        $vf = get-content "MeshProc\VersionInfo.h" -Raw
-
-        $vf -match '\n#define\s+MESHPROC_VER_MAJOR\s+(\d+)\s*\n' | Out-Null
-        $major = $Matches[1]
-        $vf -match '\n#define\s+MESHPROC_VER_MINOR\s+(\d+)\s*\n' | Out-Null
-        $minor = $Matches[1]
-        $vf -match '\n#define\s+MESHPROC_VER_PATCH\s+(\d+)\s*\n' | Out-Null
-        $patch = $Matches[1]
-
-        $nvf = $vf -replace '(\n#define\s+MESHPROC_VER_BUILD\s+)(\d+)(\s*\n)',"`${1}$env:GITHUB_RUN_NUMBER`$3"
-
-        set-content "MeshProc\VersionInfo.h" $nvf -force -nonewline
-
-        $version = New-Object System.Version @( $major, $minor, $patch, $env:GITHUB_RUN_NUMBER )
-        Write-Host "Version number: $version"
-
-        Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
-
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v3
+    - name: Set up MSVC Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1        
 
     - name: Build vcpkg_cache_key
       id: build-vcpkg_cache_key
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
-        $vcpkg_gh = &{ cd vcpkg; git rev-parse HEAD; cd .. }
+        $toolset = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\*\*\VC\Tools\MSVC\*" |
+            Sort-Object Name -Descending |
+            Select-Object -First 1 |
+            Select-Object -ExpandProperty Name |
+            Out-String -NoNewLine
+        Write-Host "Toolset = $toolset"
 
-        $vcpkg_manifest = (Get-FileHash -Algorithm MD5 .\MeshProc\vcpkg.json).Hash
+        $winsdk = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" |
+            Sort-Object Name -Descending |
+            Select-Object -First 1 |
+            Select-Object -ExpandProperty Name |
+            Out-String -NoNewLine
+        Write-Host "WinSdk = $winsdk"
 
-        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $vcpkgJson = "${{hashFiles('vcpkg.json')}}"
+        Write-Host "VcpkgJson = $vcpkgJson"
 
-        # Find latest VS with C++ tools installed
-        $installationPath = & $vswhere `
-          -latest `
-          -products * `
-          -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
-          -property installationPath
+        $vcpkgFiles = "${{hashFiles('vcpkg/**')}}"
+        Write-Host "VcpkgFiles = $vcpkgFiles"
 
-        if (-not $installationPath) {
-          throw "No Visual Studio with C++ tools found."
-        }
-
-        # Go to the MSVC tools directory
-        $msvcRoot = Join-Path $installationPath "VC\Tools\MSVC"
-
-        # Pick the highest version folder
-        $msvcVersionDir = Get-ChildItem $msvcRoot -Directory |
-          Sort-Object Name -Descending |
-          Select-Object -First 1
-
-        if (-not $msvcVersionDir) {
-          throw "No MSVC toolset directory found under $msvcRoot"
-        }
-
-        # Compute full cl.exe path (Hostx64/x64)
-        $clPath = Join-Path $msvcVersionDir.FullName "bin\Hostx64\x64\cl.exe"
-
-        if (-not (Test-Path $clPath)) {
-          throw "cl.exe not found at expected path: $clPath"
-        }
-
-        $toolchain = & "$clPath" 2>&1 | Select-String "Version" | ForEach-Object { $_.ToString().Trim() }
-        Write-Host "Toolchain: $toolchain"
-        $toolchain_hash = ([System.Security.Cryptography.MD5]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($toolchain)) | ForEach-Object { $_.ToString("x2") }) -join ""
-
-        $vcpkg_cache_key = "$($vcpkg_gh)-$($vcpkg_manifest)-$($toolchain_hash)"
-
+        $vcpkg_cache_key = "$($vcpkgJson)_$($vcpkgFiles)_$($toolset)_$($winsdk)"
         Write-Host "vcpkg_cache_key = $vcpkg_cache_key"
+
         "vcpkg_cache_key=$vcpkg_cache_key" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-    - name: Setup vcpkg
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      shell: pwsh
-      run: |
-        cd vcpkg
-        .\bootstrap-vcpkg.bat
-        cd ..
-
     - name: Cache vcpkg packages
-      id: cache_vcpkg_packages
       uses: actions/cache@v5
       with:
-        path: MeshProc/vcpkg_installed
+        path: vcpkg_installed
         key: meshproc_vcpkg_installed_${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
 
-    - name: Install vcpkg packages
-      if: steps.cache_vcpkg_packages.outputs.cache-hit != 'true'
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      shell: pwsh
-      run: |
-        cd MeshProc
-        ..\vcpkg\vcpkg.exe install --vcpkg-root ..\vcpkg\ --triplet x64-windows --clean-after-build
-        cd ..
-
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
-    - name: Check nuget package references
+    - name: Restore dependencies
       shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        ./extra/nuget_proxy/m2n.ps1      
+        .\restore-dependencies.ps1
+
+    - name: Configure CMake
+      run: cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build `
+        -G Ninja `
+        -DCMAKE_C_COMPILER=cl `
+        -DCMAKE_CXX_COMPILER=cl `
+        -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }} `
+        -DMESHPROC_VERSION_BUILD=${{ github.run_number }}
 
     - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
+
+    - name: Check Version Info
+      shell: pwsh
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      env:
-        VCPKG_ROOT: ${{ github.workspace }}\vcpkg
-      run: >
-        msbuild ${{env.SOLUTION_FILE_PATH}}
-        /m
-        /p:Configuration=${{matrix.configuration}}
-        /p:VcpkgEnableManifest=false
-        /p:VcpkgInstalledDir=${{ github.workspace }}\MeshProc\vcpkg_installed
-      # Note:
-      # "/p:VcpkgEnableManifest=false" is needed because otherwise msbuild is building the depencenies _again_
-      # even if the previous step just installed them. The respective warning note during build can be ignored.
+      run: |
+        $version = (Get-Item .\build\src\MeshProc.exe).VersionInfo.FileVersion
+        Write-Host "Version number: $version"
+        Write-Output "FULL_VERSION_NUMBER=$version" >> $env:GITHUB_ENV
 
     - name: 🧪 Smoke Test
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
-        $exe = "bin\x64\${{matrix.configuration}}\MeshProc.exe"
+        $exe = "${{github.workspace}}\build\src\MeshProc.exe"
 
-        & '.\test\run-all.ps1' -exe:$exe -Verbose
+        & '${{github.workspace}}\test\run-all.ps1' -exe:$exe -Verbose
         if ($LASTEXITCODE -ne 0) { throw }
 
     - name: Upload Artifacts
-      if: ${{ matrix.configuration == 'Release' }}
       uses: actions/upload-artifact@v7
       with:
-        name: MeshProc-${{env.FULL_VERSION_NUMBER}}
+        name: MeshProc-${{env.FULL_VERSION_NUMBER}}-${{matrix.BUILD_TYPE}}
         path: |
-          bin/x64/${{matrix.configuration}}
+          build/src/*.exe
+          build/src/*.dll
           !**/*.pdb
         if-no-files-found: error

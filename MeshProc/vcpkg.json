@@ -1,6 +1,0 @@
-{
-  "dependencies": [
-    "cgal",
-    "flann"
-  ]
-}

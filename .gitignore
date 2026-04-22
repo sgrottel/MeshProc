@@ -16,3 +16,7 @@ test/test-commands-1.obj
 MeshProc/out.obj
 test/test-selection.obj
 test/test-VertexEdgeDistanceToCut.obj
+/build/**
+/out/**
+out.obj
+vcpkg_installed
