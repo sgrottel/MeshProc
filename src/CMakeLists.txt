@@ -146,6 +146,10 @@ source_group("/3rd-party/xyz_math" FILES
     3rd-party/xyz_math/xyz_math.lua
     3rd-party/xyz_math/README.md
 )
+source_group("/commands" FILES
+    # 3rd Party
+    commands/CommandRegistration.inc
+)
 
 find_package(SGrottelSimpleLog REQUIRED)
 find_package(SGrottelYaclap REQUIRED)
