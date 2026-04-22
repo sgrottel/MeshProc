@@ -105,9 +105,9 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: pwsh
       run: |
-        $exe = "${{env.GITHUB_WORKSPACE}}\build\src\MeshProc.exe"
+        $exe = "${{github.workspace}}\build\src\MeshProc.exe"
 
-        & '${{env.GITHUB_WORKSPACE}}\test\run-all.ps1' -exe:$exe -Verbose
+        & '${{github.workspace}}\test\run-all.ps1' -exe:$exe -Verbose
         if ($LASTEXITCODE -ne 0) { throw }
 
     - name: Upload Artifacts
