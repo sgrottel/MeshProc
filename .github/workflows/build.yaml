@@ -65,7 +65,7 @@ jobs:
         .\restore-dependencies.ps1
 
     - name: Configure CMake
-      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -G Ninja -DMESHPROC_VERSION_BUILD=${{env:GITHUB_RUN_NUMBER}}
+      run: cmake -S ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -G Ninja -DMESHPROC_VERSION_BUILD=${{env.GITHUB_RUN_NUMBER}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{matrix.BUILD_TYPE}}
