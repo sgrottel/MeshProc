@@ -108,6 +108,10 @@ add_executable(MeshProc
     commands/edit/CutHalfSpace.h
     commands/edit/DisplacementNoise.cpp
     commands/edit/DisplacementNoise.h
+    commands/edit/InvertVertexSelection.cpp
+    commands/edit/InvertVertexSelection.h
+    commands/edit/SelectConnectedComponentVertices.cpp
+    commands/edit/SelectConnectedComponentVertices.h
     commands/edit/Subdivision.cpp
     commands/edit/Subdivision.h
     commands/generator/Cuboid.cpp

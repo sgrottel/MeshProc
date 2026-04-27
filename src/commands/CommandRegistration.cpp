@@ -27,6 +27,10 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, CloseLoopWithPin
 #include "CommandRegistration.inc"
+#define COMMAND_PATH edit, InvertVertexSelection
+#include "CommandRegistration.inc"
+#define COMMAND_PATH edit, SelectConnectedComponentVertices
+#include "CommandRegistration.inc"
 #define COMMAND_PATH edit, CutHalfSpace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, DisplacementNoise
