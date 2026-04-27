@@ -148,6 +148,7 @@ bool CutHalfSpace::Invoke()
 
 	// cut border (hashable)edges and generate new triangles and vertices
 	std::unordered_map<data::HashableEdge, uint32_t> newVert;
+/*
 	std::unordered_set<uint32_t> triVerts;
 	triVerts.reserve(6);
 	for (data::Triangle const& t : border)
@@ -286,44 +287,13 @@ bool CutHalfSpace::Invoke()
 			Log().Warning("Triangle unexpectedly cut into %d pieces", static_cast<int>(triVerts.size()));
 		}
 	}
-
-	// remove all unused vertices
-	std::vector<uint32_t> newIdx(m_mesh->vertices.size(), 0xffffffff);
-	for (auto const& t : m_mesh->triangles)
-	{
-		for (size_t i = 0; i < 3; ++i)
-		{
-			newIdx.at(t[i]) = 0;
-		}
-	}
-	uint32_t idx = 0;
-	for (uint32_t& i : newIdx)
-	{
-		if (i == 0)
-		{
-			i = idx++;
-		}
-	}
-	std::vector<glm::vec3> nv(idx);
-	for (size_t i = 0; i < m_mesh->vertices.size(); ++i)
-	{
-		if (newIdx.at(i) == 0xffffffff) continue;
-		nv.at(newIdx[i]) = m_mesh->vertices.at(i);
-	}
-	std::swap(m_mesh->vertices, nv);
-	for (auto& t : m_mesh->triangles)
-	{
-		for (size_t i = 0; i < 3; ++i)
-		{
-			t[i] = newIdx.at(t[i]);
-			assert(t[i] < 0xffffffff);
-		}
-	}
+*/
+	m_mesh->RemoveIsolatedVertices();
 
 	// finally collect open edges and build closed plane surface
 	const std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
 	utilities::LoopsFromEdges(openEdges, m_openLoops, Log());
-
+/*
 	float minX = 0.0f;
 	auto [projX, projY] = m_halfSpace->Make2DCoordSys();
 	std::unordered_map<uint32_t, glm::vec2> pt2d;
@@ -406,6 +376,6 @@ bool CutHalfSpace::Invoke()
 			m_mesh->triangles.push_back(t);
 		}
 	}
-
+	*/
 	return true;
 }
