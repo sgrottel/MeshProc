@@ -59,6 +59,17 @@ cmake -S . -B build -G Ninja
 cmake --build build
 ```
 
+## Development Loop with Visual Studio
+Editing the debug command line in Visual Studio, when opening the checkout folder as cmake project, is configured via the file `.vs\launch.vs.json`.
+This file is checked in into the repository with default values, allowing for a fast start-up: checkout, open, "F5".
+
+During local development, you will change this file to start the command lines you need to.
+Therefore, it is recommended to skip changes in this file locally by configuring git accordingly:
+
+```pwsh
+git update-index --skip-worktree .vs\launch.vs.json
+```
+
 ## License
 This project is freely available as open source under the terms of the [Apache License, Version 2.0](LICENSE)
 
