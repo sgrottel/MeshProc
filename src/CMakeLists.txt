@@ -122,6 +122,8 @@ add_executable(MeshProc
     commands/generator/Octahedron.h
     commands/generator/SphereIco.cpp
     commands/generator/SphereIco.h
+    commands/io/Model3mfReader.cpp
+    commands/io/Model3mfReader.h
     commands/io/ObjReader.cpp
     commands/io/ObjReader.h
     commands/io/ObjWriter.cpp
