@@ -4,53 +4,11 @@
 
 #include <lib3mf_implicit.hpp>
 
-#include <iostream>
-
-// #include <fstream>
-// #include <string>
-// #include <string_view>
-// #include <sstream>
+#include <filesystem>
 
 using namespace meshproc;
 using namespace meshproc::commands;
 using namespace meshproc::commands::io;
-
-// namespace
-// {
-
-// 	__forceinline bool ParseVertexFloat(std::string_view::const_iterator& i, std::string_view::const_iterator end, float& v)
-// 	{
-// 		while (i != end && std::isspace(*i)) i++;
-// 		std::string_view::const_iterator b{ i };
-// 		while (i != end && (std::isdigit(*i) || *i == '.' || *i == '-')) i++;
-// 		if (b != i)
-// 		{
-// 			std::string s{ b, i };
-// 			v = static_cast<float>(std::atof(s.c_str()));
-// 			return true;
-// 		}
-// 		return false;
-// 	}
-
-// 	__forceinline bool ParseFaceUInt(std::string_view::const_iterator& i, std::string_view::const_iterator end, uint32_t& v)
-// 	{
-// 		while (i != end && std::isspace(*i)) i++;
-// 		std::string_view::const_iterator b{ i };
-// 		while (i != end && std::isdigit(*i)) i++;
-// 		std::string_view::const_iterator be{ i };
-// 		while (i != end && !std::isspace(*i)) i++;
-
-// 		if (b != be)
-// 		{
-// 			std::string s{ b, be };
-// 			v = static_cast<uint32_t>(std::atoi(s.c_str()));
-// 			return true;
-// 		}
-// 		return false;
-// 	}
-
-// }
-
 
 Model3mfReader::Model3mfReader(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
@@ -61,108 +19,75 @@ Model3mfReader::Model3mfReader(const sgrottel::ISimpleLog& log)
 
 bool Model3mfReader::Invoke()
 {
-    // see also:
-    // https://github.com/3MFConsortium/lib3mf/blob/master/SDK/Examples/CppDynamic/Source/ExtractInfo.cpp
-    //
-    Lib3MF::PWrapper wrapper = Lib3MF::CWrapper::loadLibrary();
-    Lib3MF::PModel model = wrapper->CreateModel();
+	// only loading via a global file name seem to work, so...
+	if (m_path.empty())
+	{
+		Log().Error("Path not set");
+		return false;
+	}
+	std::filesystem::path filePath = std::filesystem::absolute(m_path);
+	if (!std::filesystem::is_regular_file(filePath))
+	{
+		Log().Error("Path not set to a normal file");
+		return false;
+	}
 
-    Lib3MF::PReader reader = model->QueryReader("3mf");
-    reader->ReadFromFile(m_path);
+	// see also:
+	// https://github.com/3MFConsortium/lib3mf/blob/master/SDK/Examples/CppDynamic/Source/ExtractInfo.cpp
+	//
+	Lib3MF::PWrapper wrapper = Lib3MF::CWrapper::loadLibrary();
+	Lib3MF::PModel model = wrapper->CreateModel();
 
-    // Iterate objects
-    for (auto object : model->GetObjects()) {
-        std::cout << "Object: " << object->GetName() << "\n";
+	Lib3MF::PReader reader = model->QueryReader("3mf");
 
-        if (object->IsMeshObject()) {
-            auto mesh = object->GetMeshObject();
-            std::cout << "Vertices: " << mesh->GetVertexCount() << "\n";
-            std::cout << "Triangles: " << mesh->GetTriangleCount() << "\n";
-        }
-    }
+	Log().Message(L"Reading 3MF: %s", filePath.generic_wstring().c_str());
 
-    return false;
+	reader->ReadFromFile(std::string(reinterpret_cast<const char*>(filePath.generic_u8string().c_str())));
 
-	// std::ifstream file{ m_path, std::ios::in };
-	// if (!file.is_open())
-	// {
-	// 	Log().Error("Failed to open file");
-	// 	return false;
-	// }
+	auto mesh = std::make_shared<data::Mesh>();
 
-	// Log().Message(L"Reading OBJ: %s", m_path.c_str());
+	int meshCnt = 0;
+	auto objI = model->GetObjects();
+	while (objI->MoveNext())
+	{
+		const auto object = objI->GetCurrentObject();
+		if (object->IsMeshObject())
+		{
+			std::string objName = object->GetName();
+			Log().Detail("  reading object %d \"%s\"", ++meshCnt, objName.c_str());
 
-	// auto mesh = std::make_shared<data::Mesh>();
+			const Lib3MF::PMeshObject meshObj = model->GetMeshObjectByID(object->GetResourceID());
 
-	// std::string lineBuf;
-	// while (std::getline(file, lineBuf))
-	// {
-	// 	std::string_view line{ lineBuf };
-	// 	while (!line.empty() && std::isspace(line.front()))
-	// 	{
-	// 		line = line.substr(1);
-	// 	}
-	// 	if (line.empty()) continue;
-	// 	if (line.front() == '#') continue;
+			uint32_t vOff = static_cast<uint32_t>(mesh->vertices.size());
+			uint32_t tOff = static_cast<uint32_t>(mesh->triangles.size());
 
-	// 	if (line.starts_with("v "))
-	// 	{
-	// 		std::string_view::const_iterator i = line.begin() + 2;
-	// 		std::string_view::const_iterator e = line.end();
-	// 		float x, y, z;
-	// 		if (!ParseVertexFloat(i, e, x))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
-	// 		if (!ParseVertexFloat(i, e, y))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
-	// 		if (!ParseVertexFloat(i, e, z))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
+			uint32_t vCnt = meshObj->GetVertexCount();
+			mesh->vertices.resize(vOff + vCnt);
+			for (uint32_t i = 0; i < vCnt; ++i)
+			{
+				const auto pos = meshObj->GetVertex(i);
+				mesh->vertices.at(vOff + i) = glm::vec3{ pos.m_Coordinates[0], pos.m_Coordinates[1], pos.m_Coordinates[2] };
+			}
 
-	// 		mesh->vertices.push_back({ x, y, z });
-	// 	}
+			uint32_t tCnt = meshObj->GetTriangleCount();
+			mesh->triangles.resize(tOff + tCnt);
+			for (uint32_t i = 0; i < tCnt; ++i)
+			{
+				const auto tri = meshObj->GetTriangle(i);
+				mesh->triangles.at(tOff + i) = data::Triangle{
+					tri.m_Indices[0] + vOff,
+					tri.m_Indices[1] + vOff,
+					tri.m_Indices[2] + vOff
+				};
+			}
+		}
+	}
 
-	// 	if (line.starts_with("f "))
-	// 	{
-	// 		std::string_view::const_iterator i = line.begin() + 2;
-	// 		std::string_view::const_iterator e = line.end();
-	// 		uint32_t v0, v1, v2;
-	// 		if (!ParseFaceUInt(i, e, v0))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
-	// 		if (!ParseFaceUInt(i, e, v1))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
-	// 		if (!ParseFaceUInt(i, e, v2))
-	// 		{
-	// 			Log().Error("Failed to parse vertex float");
-	// 			continue;
-	// 		}
+	if (!mesh->IsValid())
+	{
+		Log().Error("Loaded mesh is not valid");
+	}
 
-	// 		mesh->triangles.push_back({ v0 - 1, v1 - 1, v2 - 1 });
-	// 	}
-
-	// }
-
-	// mesh->vertices.shrink_to_fit();
-	// mesh->triangles.shrink_to_fit();
-
-	// if (!mesh->IsValid())
-	// {
-	// 	Log().Error("Loaded mesh is not valid");
-	// }
-
-	// m_mesh = mesh;
-	// return true;
+	m_mesh = mesh;
+	return true;
 }
