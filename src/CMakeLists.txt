@@ -161,6 +161,7 @@ find_package(GLM REQUIRED)
 set(LuaToolset "v143")
 find_package(Lua REQUIRED)
 find_package(CGAL CONFIG REQUIRED)
+find_package(lib3mf CONFIG REQUIRED)
 
 # Modern compile features
 target_compile_features(MeshProc PRIVATE cxx_std_20)
@@ -187,6 +188,7 @@ target_link_libraries(MeshProc
         GLM
         Lua::Lua
         CGAL::CGAL
+        lib3mf::lib3mf
 )
 
 # Required for TARGET_RUNTIME_DLLS on MSVC
