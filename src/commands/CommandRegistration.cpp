@@ -45,6 +45,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH generator, SphereIco
 #include "CommandRegistration.inc"
+#define COMMAND_PATH io, Model3mfReader
+#include "CommandRegistration.inc"
 #define COMMAND_PATH io, ObjReader
 #include "CommandRegistration.inc"
 #define COMMAND_PATH io, ObjWriter
