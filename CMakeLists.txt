@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.20)
 # version information
 set(MESHPROC_VERSION_MAJOR 0)
 set(MESHPROC_VERSION_MINOR 6)
-set(MESHPROC_VERSION_PATCH 0)
+set(MESHPROC_VERSION_PATCH 1)
 set(MESHPROC_VERSION_YEARSTR "2025-2026")
 # build number to be set by CI
 set(MESHPROC_VERSION_BUILD 0 CACHE STRING "Build number")

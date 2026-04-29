@@ -122,6 +122,8 @@ add_executable(MeshProc
     commands/generator/Octahedron.h
     commands/generator/SphereIco.cpp
     commands/generator/SphereIco.h
+    commands/io/Model3mfReader.cpp
+    commands/io/Model3mfReader.h
     commands/io/ObjReader.cpp
     commands/io/ObjReader.h
     commands/io/ObjWriter.cpp
@@ -156,11 +158,28 @@ source_group("/commands" FILES
 )
 
 find_package(SGrottelSimpleLog REQUIRED)
+
 find_package(SGrottelYaclap REQUIRED)
+
 find_package(GLM REQUIRED)
+
 set(LuaToolset "v143")
 find_package(Lua REQUIRED)
+
 find_package(CGAL CONFIG REQUIRED)
+
+find_package(lib3mf CONFIG REQUIRED)
+# lib3mf injects a /W3, which clashes with my project setting /W4
+# so, I remove it
+get_target_property(L3MF_OPTS_BEFORE lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
+# message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (before) = '${L3MF_OPTS_BEFORE}'")
+if (L3MF_OPTS_BEFORE)
+    set(L3MF_OPTS_CLEAN "${L3MF_OPTS_BEFORE}")
+    list(FILTER L3MF_OPTS_CLEAN EXCLUDE REGEX "/W[0-4]") # Removes all /W[0-4] flags (including /W3)
+    set_target_properties(lib3mf::lib3mf PROPERTIES INTERFACE_COMPILE_OPTIONS "${L3MF_OPTS_CLEAN}")
+endif()
+# get_target_property(L3MF_OPTS_AFTER lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
+# message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (after) = '${L3MF_OPTS_AFTER}'")
 
 # Modern compile features
 target_compile_features(MeshProc PRIVATE cxx_std_20)
@@ -187,6 +206,7 @@ target_link_libraries(MeshProc
         GLM
         Lua::Lua
         CGAL::CGAL
+        lib3mf::lib3mf
 )
 
 # Required for TARGET_RUNTIME_DLLS on MSVC
