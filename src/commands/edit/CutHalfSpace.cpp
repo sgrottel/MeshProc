@@ -217,8 +217,43 @@ bool CutHalfSpace::Invoke()
 	m_mesh->RemoveIsolatedVertices();
 
 	// finally collect open edges and build closed plane surface
-	const std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
+	std::unordered_set<data::HashableEdge> openEdges = m_mesh->CollectOpenEdges();
 	utilities::LoopsFromEdges(openEdges, m_openLoops, Log());
+
+	{ // only keep loops that are entirely within the cutting plane
+		size_t sizeBefore = m_openLoops->size();
+		for (int32_t li = static_cast<int32_t>(m_openLoops->size()) - 1; li >= 0; --li)
+		{
+			bool inPlane = true;
+			for (uint32_t vi : *m_openLoops->at(li))
+			{
+				float d = std::abs(m_halfSpace->Dist(m_mesh->vertices.at(vi)));
+				if (d > 0.001f)
+				{
+					inPlane = false;
+					break;
+				}
+			}
+
+			if (!inPlane)
+			{
+				m_openLoops->erase(m_openLoops->begin() + li);
+			}
+		}
+		if (sizeBefore != m_openLoops->size())
+		{
+			openEdges.clear();
+			for (auto loop : *m_openLoops)
+			{
+				uint32_t prev = loop->back();
+				for (uint32_t vi : *loop)
+				{
+					openEdges.insert(data::HashableEdge{ prev, vi });
+					prev = vi;
+				}
+			}
+		}
+	}
 
 	float minX = 0.0f;
 	auto [projX, projY] = m_halfSpace->Make2DCoordSys();
