@@ -20,3 +20,4 @@ test/test-VertexEdgeDistanceToCut.obj
 /out/**
 out.obj
 vcpkg_installed
+extra/PlySelectorReceiver/obj
