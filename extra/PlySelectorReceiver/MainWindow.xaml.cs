@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -50,9 +51,45 @@ namespace PlySelectorReceiver
 		{
 			if ((uint)msg == SgrPlySelectorExport)
 			{
-				SelectionData no = new();
-				selections.Add(no);
-				ReceivedSelectionsList.SelectedItem = no;
+				if (!Clipboard.ContainsText())
+				{
+					StatusText.Text = "Error: PlySelector Export signaled, but clipboard had no text";
+					return IntPtr.Zero;
+				}
+
+				string text = Clipboard.GetText();
+				if (string.IsNullOrEmpty(text))
+				{
+					StatusText.Text = "Error: PlySelector Export signaled, but sent text was empty";
+					return IntPtr.Zero;
+				}
+
+				SelectionData? newData;
+				try
+				{
+					newData = JsonSerializer.Deserialize<SelectionData>(text);
+					if (newData == null)
+					{
+						StatusText.Text = "Error: PlySelector Export signaled, but failed to parse sent json";
+						return IntPtr.Zero;
+					}
+				}
+				catch (Exception ex)
+				{
+					StatusText.Text = $"Error: PlySelector Export signaled, but failed to parse sent json; {ex}";
+					return IntPtr.Zero;
+				}
+
+				if (!newData.IsValid())
+				{
+					StatusText.Text = $"Error: PlySelector Export, but new data is not valid";
+					return IntPtr.Zero;
+				}
+
+				selections.Add(newData);
+				ReceivedSelectionsList.SelectedItem = newData;
+				StatusText.Text = "Selection received";
+				Compile(newData);
 
 				handled = true;
 			}
@@ -77,10 +114,13 @@ namespace PlySelectorReceiver
 			{
 				SelectionData? sel = si as SelectionData;
 				if (sel == null) continue;
-
-
-
+				Compile(sel);
 			}
+		}
+
+		private void Compile(SelectionData sel)
+		{
+			// throw new NotImplementedException();
 		}
 
 		private void ButtonCopyResultsText_Click(object sender, RoutedEventArgs e)
@@ -89,6 +129,14 @@ namespace PlySelectorReceiver
 				(ResultsText.SelectionLength > 0)
 				? ResultsText.SelectedText
 				: ResultsText.Text);
+			StatusText.Text = "Results text copied to clipboard";
+		}
+
+		private void ContentControlStatusText_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			StatusText.TextWrapping =
+				(StatusText.TextWrapping == TextWrapping.NoWrap)
+				? TextWrapping.Wrap : TextWrapping.NoWrap;
 		}
 	}
 }
