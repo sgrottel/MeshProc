@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:PlySelectorReceiver"
 		mc:Ignorable="d"
-		Title="PlySelectorReceiver" Height="450" Width="800">
+		Title="PlySelectorReceiver" Height="450" Width="800" Closing="Window_Closing" Loaded="Window_Loaded">
 
 	<Grid>
 		<Grid.RowDefinitions>
@@ -36,11 +36,14 @@
 
 			<StackPanel Orientation="Horizontal" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 				<Button Margin="2" Click="ButtonClearReceivedSelectionsList_Click">Clear</Button>
+				<Button Margin="2" Click="ButtonReloadLastSelections_Click">Reload last</Button>
+				<Button Margin="2" Click="ButtonLoadSelectionsData_Click" >Load</Button>
+				<Button Margin="2" Click="ButtonSaveSelectionsData_Click" >Save</Button>
+				<Button Margin="2" Click="ButtonDeleteSelectedSelections_Click">Delete</Button>
 				<Button Margin="2" Click="ButtonCompileSelectedReceivedSelection_Click">Compile</Button>
 			</StackPanel>
 
-			<ListBox Grid.Row="1" x:Name="ReceivedSelectionsList">
-			</ListBox>
+			<ListBox Grid.Row="1" x:Name="ReceivedSelectionsList" SelectionMode="Extended" />
 
 		</Grid>
 
@@ -59,9 +62,7 @@
 			<TextBox x:Name="ResultsText"
 					Grid.Row="1"
 					VerticalScrollBarVisibility="Visible"
-					HorizontalScrollBarVisibility="Visible">
-			</TextBox>
-
+					HorizontalScrollBarVisibility="Visible"/>
 		</Grid>
 
 		<ContentControl Grid.Row="3" Grid.ColumnSpan="3" MouseDoubleClick="ContentControlStatusText_MouseDoubleClick">

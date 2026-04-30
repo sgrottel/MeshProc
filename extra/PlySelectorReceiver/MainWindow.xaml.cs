@@ -1,17 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PlySelectorReceiver
 {
@@ -26,7 +21,6 @@ namespace PlySelectorReceiver
 		public MainWindow()
 		{
 			InitializeComponent();
-
 			ReceivedSelectionsList.ItemsSource = selections;
 		}
 
@@ -138,5 +132,101 @@ namespace PlySelectorReceiver
 				(StatusText.TextWrapping == TextWrapping.NoWrap)
 				? TextWrapping.Wrap : TextWrapping.NoWrap;
 		}
+
+		private string SelectionDataFile { get; } = System.IO.Path.Join(AppContext.BaseDirectory, "selection_data.json");
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			File.WriteAllText(
+				path: SelectionDataFile,
+				contents: JsonSerializer.Serialize(selections.ToArray()),
+				encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			ButtonReloadLastSelections_Click(sender, e);
+		}
+
+		private void ButtonReloadLastSelections_Click(object sender, RoutedEventArgs e)
+		{
+			if (File.Exists(SelectionDataFile))
+			{
+				try
+				{
+					LoadSelectionData(SelectionDataFile);
+				}
+				catch (Exception ex)
+				{
+					StatusText.Text = $"'selection_data.json' file exists but cannot be loaded; {ex}";
+				}
+			}
+		}
+
+		private void LoadSelectionData(string filename)
+		{
+			SelectionData[]? selectionData = JsonSerializer.Deserialize<SelectionData[]>(File.ReadAllText(filename));
+			if (selectionData == null)
+			{
+				throw new InvalidOperationException("Deserializing returned null");
+			}
+			selections.Clear();
+			foreach (var s in selectionData)
+			{
+				selections.Add(s);
+			}
+		}
+
+		private void ButtonDeleteSelectedSelections_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (SelectionData sel in ReceivedSelectionsList.SelectedItems.Cast<SelectionData>().ToArray())
+			{
+				selections.Remove(sel);
+			}
+		}
+
+		private void ButtonLoadSelectionsData_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog()
+			{
+				Filter = "Json files (*.json)|*.json|All files (*.*)|*.*"
+			};
+			if (openFileDialog.ShowDialog() == true)
+			{
+				try
+				{
+					LoadSelectionData(openFileDialog.FileName);
+					StatusText.Text = $"Loaded data from: {openFileDialog.FileName}";
+				}
+				catch (Exception ex)
+				{
+					StatusText.Text = $"Failed to load data from \"{openFileDialog.FileName}\": {ex}";
+				}
+			}
+		}
+
+		private void ButtonSaveSelectionsData_Click(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog()
+			{
+				Filter = "Json file (*.json)|*.json"
+			};
+			if (saveFileDialog.ShowDialog() == true)
+			{
+				try
+				{
+					File.WriteAllText(
+						path: saveFileDialog.FileName,
+						contents: JsonSerializer.Serialize(selections.ToArray()),
+						encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+					StatusText.Text = $"Saved data to: {saveFileDialog.FileName}";
+				}
+				catch(Exception ex)
+				{
+					StatusText.Text = $"Failed to save data to \"{saveFileDialog.FileName}\": {ex}";
+				}
+			}
+		}
+
 	}
 }
