@@ -106,6 +106,8 @@ add_executable(MeshProc
     commands/edit/CloseLoopWithPin.h
     commands/edit/CutHalfSpace.cpp
     commands/edit/CutHalfSpace.h
+    commands/edit/CutPlaneLoop.cpp
+    commands/edit/CutPlaneLoop.h
     commands/edit/DisplacementNoise.cpp
     commands/edit/DisplacementNoise.h
     commands/edit/InvertVertexSelection.cpp
