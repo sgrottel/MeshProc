@@ -10,11 +10,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
-//#include <algorithm>
-//#include <functional>
 #include <unordered_map>
 #include <unordered_set>
-//#include <vector>
+#include <vector>
 
 using namespace meshproc;
 using namespace meshproc::commands;
@@ -327,9 +325,95 @@ bool CutPlaneLoop::Invoke()
 		}
 	}
 
-	// TODO
+	// cut triangles
+	for (uint32_t ti : tris)
+	{
+		data::Triangle t = m_mesh->triangles.at(ti);
+		const float d[3] = { dist.at(t[0]), dist.at(t[1]), dist.at(t[2]) };
+		const bool hasNeg = d[0] < 0.0f || d[1] < 0.0f || d[2] < 0.0f;
+		const bool hasNul = d[0] == 0.0f || d[1] == 0.0f || d[2] == 0.0f;
+		const bool hasPos = d[0] > 0.0f || d[1] > 0.0f || d[2] > 0.0f;
 
+		if (hasPos && !hasNeg)
+		{
+			// touching, keep as is
+			m_mesh->triangles.push_back(t);
+			continue;
+		}
+		if (!hasPos && hasNeg)
+		{
+			// touching from neg, change touching vertices, then keep
+			for (uint32_t i = 0; i < 3; ++i)
+			{
+				if (d[i] == 0.0f)
+				{
+					t[i] = toNegLoopVert.at(t[i]);
+				}
+			}
+			m_mesh->triangles.push_back(t);
+			continue;
+		}
 
+		// tri is really to be split
+		std::vector<uint32_t> posLoop;
+		posLoop.reserve(4);
+		std::vector<uint32_t> negLoop;
+		negLoop.reserve(4);
+		for (uint32_t i = 0; i < 3; ++i)
+		{
+			if (d[i] == 0.0f)
+			{
+				posLoop.push_back(t[i]);
+				negLoop.push_back(toNegLoopVert.at(t[i]));
+				continue;
+			}
+			if (d[i] < 0.0f)
+			{
+				negLoop.push_back(t[i]);
+			}
+			if (d[i] > 0.0f)
+			{
+				posLoop.push_back(t[i]);
+			}
+			const auto cutVertIt = newVert.find(data::HashableEdge{ t[i], t[(i + 1) % 3] });
+			if (cutVertIt == newVert.end())
+			{
+				continue;
+			}
+			posLoop.push_back(cutVertIt->second);
+			negLoop.push_back(toNegLoopVert.at(cutVertIt->second));
+		}
+
+		if (posLoop.size() == 3)
+		{
+			m_mesh->triangles.push_back(data::Triangle{ posLoop[0], posLoop[1], posLoop[2] });
+		}
+		else if (posLoop.size() == 4)
+		{
+			m_mesh->triangles.push_back(data::Triangle{ posLoop[0], posLoop[1], posLoop[2] });
+			m_mesh->triangles.push_back(data::Triangle{ posLoop[2], posLoop[3], posLoop[0] });
+		}
+		else
+		{
+			Log().Warning("Triangle unexpectedly cut into %d pieces in pos halfspace", static_cast<int>(posLoop.size()));
+		}
+
+		if (negLoop.size() == 3)
+		{
+			m_mesh->triangles.push_back(data::Triangle{ negLoop[0], negLoop[1], negLoop[2] });
+		}
+		else if (negLoop.size() == 4)
+		{
+			m_mesh->triangles.push_back(data::Triangle{ negLoop[0], negLoop[1], negLoop[2] });
+			m_mesh->triangles.push_back(data::Triangle{ negLoop[2], negLoop[3], negLoop[0] });
+		}
+		else
+		{
+			Log().Warning("Triangle unexpectedly cut into %d pieces in neg halfspace", static_cast<int>(negLoop.size()));
+		}
+	}
+
+	// erase old, cut triangles
 	std::erase_if(m_mesh->triangles,
 		[&](const data::Triangle& t)
 		{
@@ -347,7 +431,10 @@ bool CutPlaneLoop::Invoke()
 			return false;
 		});
 
+
+	// cleanup
 	m_mesh->RemoveIsolatedVertices();
 
-	return false;
+	// done
+	return true;
 }
