@@ -42,6 +42,59 @@ namespace
 
 		return glm::distance(v0 + r * a, pt);
 	}
+
+	// Returns +1 if counter-clockwise, -1 if clockwise, 0 if colinear
+	int orientation(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r) {
+		double val = (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+		if (val > 0) return 1;     // left turn
+		if (val < 0) return -1;    // right turn
+		return 0;                  // colinear
+	}
+
+	// Checks if r lies on segment pq
+	bool on_segment(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r) {
+		return (std::min)(p.x, q.x) <= r.x && r.x <= (std::max)(p.x, q.x)
+			&& (std::min)(p.y, q.y) <= r.y && r.y <= (std::max)(p.y, q.y);
+	}
+
+	// Main intersection test
+	bool segments_intersect(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d) {
+		int o1 = orientation(a, b, c);
+		int o2 = orientation(a, b, d);
+		int o3 = orientation(c, d, a);
+		int o4 = orientation(c, d, b);
+
+		// General case
+		if (o1 != o2 && o3 != o4) return true;
+
+		// Colinear special cases
+		if (o1 == 0 && on_segment(a, b, c)) return true;
+		if (o2 == 0 && on_segment(a, b, d)) return true;
+		if (o3 == 0 && on_segment(c, d, a)) return true;
+		if (o4 == 0 && on_segment(c, d, b)) return true;
+
+		return false;
+	}
+
+	static float cross(const glm::vec2& u, const glm::vec2& v) {
+		return u.x * v.y - u.y * v.x;
+	}
+	glm::vec2 intersect(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d)
+	{
+		glm::vec2 r = b - a;
+		glm::vec2 s = d - c;
+		float denom = cross(r, s);
+		assert(denom != 0.0f); // nonzero because they intersect
+		float t = cross(c - a, s) / denom;
+		return a + t * r;
+	}
+	glm::vec2 prec(const glm::vec2& value, float scale = 0.0001f)
+	{
+		return {
+			std::round(value.x / scale) * scale,
+			std::round(value.y / scale) * scale
+		};
+	}
 }
 
 CutPlaneLoop::CutPlaneLoop(const sgrottel::ISimpleLog& log)
@@ -172,13 +225,13 @@ bool CutPlaneLoop::Invoke()
 	// The loop to cut!
 	std::vector<uint32_t> loop;
 	std::unordered_map<uint32_t, glm::vec2> pt2d;
+	float minX = 0.0f;
 	{
 		// collect all loops on the plane
 		std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> openLoops;
 		utilities::LoopsFromEdges(edges, openLoops, Log());
 
 		auto [projX, projY] = m_plane->Make2DCoordSys();
-		float minX = 0.0f;
 		for (auto loop : *openLoops)
 		{
 			for (uint32_t vi : *loop)
@@ -305,9 +358,36 @@ bool CutPlaneLoop::Invoke()
 			return false;
 		}
 
+		std::unordered_set<glm::vec2> intersections;
 		m_mesh->triangles.reserve(m_mesh->triangles.size() + capTris.size() * 2);
 		for (glm::uvec3 rt : capTris)
 		{
+			const uint32_t i0 = rt.x;
+			const uint32_t i1 = rt.y;
+			const uint32_t i2 = rt.z;
+
+			glm::vec2 c = (pt2d.at(i0) + pt2d.at(i1) + pt2d.at(i2));
+			c /= glm::vec2(3.0f);
+
+			glm::vec2 c2{ minX - 1.0f, c.y };
+
+			intersections.clear();
+			uint32_t pvidx = loop.back();
+			for (uint32_t vidx : loop)
+			{
+				const data::HashableEdge edge{ pvidx, vidx };
+				pvidx = vidx;
+				const auto& p1 = pt2d.at(edge.i0);
+				const auto& p2 = pt2d.at(edge.i1);
+				if (segments_intersect(c, c2, p1, p2))
+				{
+					intersections.insert(prec(intersect(c, c2, p1, p2)));
+				}
+			}
+			if (intersections.size() % 2 == 0) {
+				continue;
+			}
+
 			data::Triangle t{ rt.x, rt.y, rt.z };
 			const glm::vec3 tn = t.CalcNormal(m_mesh->vertices);
 			if (glm::dot(tn, m_plane->Normal()) > 0.0f)
@@ -430,7 +510,6 @@ bool CutPlaneLoop::Invoke()
 			}
 			return false;
 		});
-
 
 	// cleanup
 	m_mesh->RemoveIsolatedVertices();

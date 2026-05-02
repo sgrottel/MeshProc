@@ -46,8 +46,10 @@ std::vector<glm::uvec3> utilities::Constrained2DTriangulation::Compute() const
 		auto const& v0 = m_points.at(edge.i0);
 		auto const& v1 = m_points.at(edge.i1);
 
-		auto vh0 = cdt.insert(Point(v0.x, v0.y)); vh0->info() = edge.i0;
-		auto vh1 = cdt.insert(Point(v1.x, v1.y)); vh1->info() = edge.i1;
+		auto vh0 = cdt.insert(Point(v0.x, v0.y));
+		vh0->info() = edge.i0;
+		auto vh1 = cdt.insert(Point(v1.x, v1.y));
+		vh1->info() = edge.i1;
 
 		cdt.insert_constraint(vh0, vh1);
 	}
