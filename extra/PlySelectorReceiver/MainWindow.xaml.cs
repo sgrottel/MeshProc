@@ -17,11 +17,13 @@ namespace PlySelectorReceiver
 	public partial class MainWindow : Window
 	{
 		private ObservableCollection<SelectionData> selections = new();
+		private ObservableCollection<TextTemplate> templates = new();
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			ReceivedSelectionsList.ItemsSource = selections;
+			TemplateList.ItemsSource = templates;
 		}
 
 		#region Receiving SGR_PLYSELECTOR_EXPORT
@@ -145,6 +147,7 @@ namespace PlySelectorReceiver
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			LoadTemplatesButton_Click(sender, e);
 			ButtonReloadLastSelections_Click(sender, e);
 		}
 
@@ -228,5 +231,107 @@ namespace PlySelectorReceiver
 			}
 		}
 
+		private void AddTemplateButton_Click(object sender, RoutedEventArgs e)
+		{
+			TextTemplate tt = new() { Name = "New Template", SelectionType = "plane" };
+			if (templates.Count > 0)
+			{
+				tt.Name += $" {templates.Count + 1}";
+			}
+			templates.Add(tt);
+			TemplateList.SelectedItem = tt;
+		}
+
+		private void DeleteTemplatesButton_Click(object sender, RoutedEventArgs e)
+		{
+			var si = TemplateList.SelectedIndex;
+			foreach (var tt in TemplateList.SelectedItems.Cast<TextTemplate>().ToArray())
+			{
+				templates.Remove(tt);
+			}
+			si = Math.Min(si, templates.Count - 1);
+			if (si >= 0)
+			{
+				TemplateList.SelectedIndex = si;
+			}
+		}
+
+		private string templatesFile = Path.Combine(AppContext.BaseDirectory, "templates.json");
+
+		private void SaveTemplatesButton_Click(object sender, RoutedEventArgs e)
+		{
+			File.WriteAllText(
+				path: templatesFile,
+				contents: JsonSerializer.Serialize<TextTemplate[]>(templates.ToArray(), options: new JsonSerializerOptions() { WriteIndented = true }),
+				encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+		}
+
+		private void LoadTemplatesButton_Click(object sender, RoutedEventArgs e)
+		{
+			string? d = Path.GetDirectoryName(templatesFile) ?? AppContext.BaseDirectory;
+			string fn = Path.GetFileName(templatesFile);
+			while (d != null && !File.Exists(Path.Combine(d, fn)))
+			{
+				d = Path.GetDirectoryName(d);
+			}
+			if (d == null)
+			{
+				StatusText.Text = "Failed to find templates file";
+				return;
+			}
+
+			TextTemplate[]? tts = JsonSerializer.Deserialize<TextTemplate[]>(File.ReadAllText(Path.Combine(d, fn)));
+			if (tts == null)
+			{
+				StatusText.Text = "Failed to read templates file";
+				return;
+			}
+
+			templates.Clear();
+			foreach (var tt in tts)
+			{
+				templates.Add(tt);
+			}
+			templatesFile = Path.Combine(d, fn);
+		}
+
+		private TextTemplate? _previousSelectedTemplate;
+
+		private void TemplateList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		{
+			TextTemplate? sel = TemplateList.SelectedItem as TextTemplate;
+			if (sel == _previousSelectedTemplate)
+			{
+				return;
+			}
+			if (sel == null)
+			{
+				TemplatePreview.DataContext = new TextTemplate();
+				_previousSelectedTemplate = null;
+			}
+			else
+			{
+				TemplatePreview.DataContext = JsonSerializer.Deserialize<TextTemplate>(JsonSerializer.Serialize(sel)) ?? new TextTemplate();
+				_previousSelectedTemplate = sel;
+			}
+		}
+
+		private void StoreTemplateButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_previousSelectedTemplate == null)
+			{
+				StatusText.Text = "Cannot store template values, as the list entry is not found";
+				return;
+			}
+			TextTemplate? tt = TemplatePreview.DataContext as TextTemplate;
+			if (tt == null)
+			{
+				StatusText.Text = "Cannot store template values, as the working copy seems invalid";
+				return;
+			}
+			_previousSelectedTemplate.Name = tt.Name;
+			_previousSelectedTemplate.SelectionType = tt.SelectionType;
+			_previousSelectedTemplate.Text = tt.Text;
+		}
 	}
 }
