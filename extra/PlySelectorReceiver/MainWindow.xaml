@@ -41,7 +41,7 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<CheckBox IsChecked="{Binding Selected}" Margin="0,0,4,0" />
+							<CheckBox IsChecked="{Binding IsActive}" Margin="0,0,4,0" />
 							<TextBlock>
 								<Run Text="{Binding Name}" />
 								<Run Text="(" /><Run Text="{Binding SelectionType}" /><Run Text=")" />

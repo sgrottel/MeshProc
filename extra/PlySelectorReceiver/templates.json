@@ -1,12 +1,12 @@
 [
   {
-    "Selected": true,
+    "IsActive": true,
     "Name": "Default",
     "SelectionType": "ray",
     "Text": "-- TODO"
   },
   {
-    "Selected": true,
+    "IsActive": true,
     "Name": "Default Lua",
     "SelectionType": "plane",
     "Text": "cut.Point = XVec3(%point%)\r\ncut.Plane:set( XVec3(%normal%), cut.Point)\r\ncut:invoke()\r\n"

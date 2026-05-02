@@ -7,16 +7,16 @@ namespace PlySelectorReceiver
 {
 	internal class TextTemplate : INotifyPropertyChanged
 	{
-		private bool _selected = false;
-		public bool Selected
+		private bool _isActive = false;
+		public bool IsActive
 		{
-			get => _selected;
+			get => _isActive;
 			set
 			{
-				if (_selected != value)
+				if (_isActive != value)
 				{
-					_selected = value;
-					PropertyChanged?.Invoke(this, new(nameof(Selected)));
+					_isActive = value;
+					PropertyChanged?.Invoke(this, new(nameof(IsActive)));
 				}
 			}
 		}

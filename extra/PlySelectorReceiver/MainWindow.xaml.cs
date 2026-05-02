@@ -1,12 +1,17 @@
 ﻿using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Xps.Packaging;
 
 namespace PlySelectorReceiver
 {
@@ -116,7 +121,56 @@ namespace PlySelectorReceiver
 
 		private void Compile(SelectionData sel)
 		{
-			// throw new NotImplementedException();
+			foreach (TextTemplate tt in templates)
+			{
+				if (!tt.IsActive) continue;
+				if (!tt.SelectionType.Equals(sel.Selection, StringComparison.OrdinalIgnoreCase)) continue;
+
+				ResultsText.AppendText(Environment.NewLine + Compile(tt, sel));
+
+				break;
+			}
+		}
+
+		private string Compile(TextTemplate tt, SelectionData sel)
+		{
+#pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
+			return Regex.Replace(
+				input: tt.Text.Trim(),
+				pattern: "%([^%]+)%",
+				evaluator: (Match m) =>
+				{
+					MemberInfo[] members = sel.GetType().FindMembers(
+						memberType: MemberTypes.Property,
+						bindingAttr: BindingFlags.Instance | BindingFlags.Public,
+						filter: (MemberInfo mi, object? name) =>
+						{
+							return mi.Name.Equals(name as string, StringComparison.OrdinalIgnoreCase);
+						},
+						filterCriteria: m.Groups[1].Value
+						);
+					if (members.Length > 0)
+					{
+						PropertyInfo? pi = members[0] as PropertyInfo;
+						return CompileValueString(pi?.GetValue(sel)) ?? m.Value;
+					}
+					return m.Value;
+				}
+				);
+#pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
+		}
+
+		private string? CompileValueString(object? val)
+		{
+			if (val == null) return null;
+
+			if (val is float[])
+			{
+				float[] v = (float[])val;
+				return String.Join(", ", v.Select(x => x.ToString(CultureInfo.InvariantCulture)));
+			}
+
+			return null;
 		}
 
 		private void ButtonCopyResultsText_Click(object sender, RoutedEventArgs e)
@@ -224,7 +278,7 @@ namespace PlySelectorReceiver
 						encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
 					StatusText.Text = $"Saved data to: {saveFileDialog.FileName}";
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					StatusText.Text = $"Failed to save data to \"{saveFileDialog.FileName}\": {ex}";
 				}

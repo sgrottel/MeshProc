@@ -23,7 +23,6 @@ do -- cut
 
 	cut.Point = XVec3(-2.8, 2.8, 0) -- point
 	cut.Plane:set( XVec3(-1, -1, 0.01), cut.Point) -- normal
-
 	cut:invoke()
 
 	cut.Mesh = mesh2
