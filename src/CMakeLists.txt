@@ -33,6 +33,8 @@ add_executable(MeshProc
     utilities/LoopsFromEdges.h
     utilities/StringUtilities.cpp
     utilities/StringUtilities.h
+    utilities/Constrained2DTriangulation.cpp
+    utilities/Constrained2DTriangulation.h
     # lua
     lua/CommandCreator.cpp
     lua/CommandCreator.h

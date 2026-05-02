@@ -1,5 +1,6 @@
 #include "CutPlaneLoop.h"
 
+#include "utilities/Constrained2DTriangulation.h"
 #include "utilities/LoopsFromEdges.h"
 
 #include <SimpleLog/SimpleLog.hpp>
@@ -9,15 +10,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
-//#pragma warning(push)
-//#pragma warning(disable : 4702)
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-//#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-//#include <CGAL/Constrained_triangulation_face_base_2.h>
-//#include <CGAL/Triangulation_data_structure_2.h>
-//#pragma warning(pop)
-//
 //#include <algorithm>
 //#include <functional>
 #include <unordered_map>
@@ -181,6 +173,7 @@ bool CutPlaneLoop::Invoke()
 
 	// The loop to cut!
 	std::vector<uint32_t> loop;
+	std::unordered_map<uint32_t, glm::vec2> pt2d;
 	{
 		// collect all loops on the plane
 		std::shared_ptr<std::vector<std::shared_ptr<std::vector<uint32_t>>>> openLoops;
@@ -188,7 +181,6 @@ bool CutPlaneLoop::Invoke()
 
 		auto [projX, projY] = m_plane->Make2DCoordSys();
 		float minX = 0.0f;
-		std::unordered_map<uint32_t, glm::vec2> pt2d;
 		for (auto loop : *openLoops)
 		{
 			for (uint32_t vi : *loop)
@@ -287,15 +279,53 @@ bool CutPlaneLoop::Invoke()
 
 	// duplicate the loop for the neg size
 	std::vector<uint32_t> loopNeg;
+	std::unordered_map<uint32_t, uint32_t> toNegLoopVert;
 	loopNeg.reserve(loop.size());
+	toNegLoopVert.reserve(loop.size());
 	m_mesh->vertices.reserve(m_mesh->vertices.size() + loop.size());
 	for (uint32_t vi : loop)
 	{
-		loopNeg.push_back(static_cast<uint32_t>(m_mesh->vertices.size()));
+		const uint32_t nvi = static_cast<uint32_t>(m_mesh->vertices.size());
+		loopNeg.push_back(nvi);
+		toNegLoopVert.insert({ vi, nvi });
 		m_mesh->vertices.push_back(m_mesh->vertices.at(vi));
 	}
 
+	{
+		std::unordered_set<data::HashableEdge> loopEdges;
+		uint32_t pvi = loop.back();
+		for (uint32_t vi : loop)
+		{
+			loopEdges.insert({ pvi, vi });
+			pvi = vi;
+		}
 
+		utilities::Constrained2DTriangulation cap{ pt2d, loopEdges, Log() };
+		std::vector<glm::uvec3> capTris = cap.Compute();
+		if (cap.HasError())
+		{
+			return false;
+		}
+
+		m_mesh->triangles.reserve(m_mesh->triangles.size() + capTris.size() * 2);
+		for (glm::uvec3 rt : capTris)
+		{
+			data::Triangle t{ rt.x, rt.y, rt.z };
+			const glm::vec3 tn = t.CalcNormal(m_mesh->vertices);
+			if (glm::dot(tn, m_plane->Normal()) > 0.0f)
+			{
+				t.Flip();
+			}
+
+			m_mesh->triangles.push_back(t); // tri of pos-loop cap
+
+			t[0] = toNegLoopVert.at(t[0]);
+			t[1] = toNegLoopVert.at(t[1]);
+			t[2] = toNegLoopVert.at(t[2]);
+			t.Flip();
+			m_mesh->triangles.push_back(t); // tri of neg-loop cap
+		}
+	}
 
 	// TODO
 
