@@ -2,7 +2,8 @@
 
 #include <SimpleLog/SimpleLog.hpp>
 
-// #include <unordered_map>
+#include <unordered_map>
+#include <unordered_set>
 
 using namespace meshproc;
 using namespace meshproc::commands;
@@ -22,6 +23,31 @@ bool BlowupFill::Invoke()
 		Log().Error("Mesh is empty");
 		return false;
 	}
+
+	uint32_t startTI = std::numeric_limits<uint32_t>::max();
+	std::unordered_map<data::HashableEdge, std::unordered_set<uint32_t>> neighbors;
+	neighbors.reserve(m_mesh->triangles.size());
+	float minDistSq = std::numeric_limits<float>::max();
+	for (uint32_t ti = 0; ti < static_cast<uint32_t>(m_mesh->triangles.size()); ++ti)
+	{
+		const auto& t = m_mesh->triangles.at(ti);
+		for (uint32_t ei = 0; ei < 3; ++ei)
+		{
+			neighbors.insert( {t.HashableEdge(ei), {}} ).first->second.insert(ti);
+		}
+		const glm::vec3 tMid = (m_mesh->vertices.at(t[0]) + m_mesh->vertices.at(t[1]) + m_mesh->vertices.at(t[2])) / 3.0f;
+		const glm::vec3 distVec = tMid - m_point;
+		const float distSq = glm::dot(distVec, distVec);
+		if (minDistSq > distSq)
+		{
+			minDistSq = distSq;
+			startTI = ti;
+		}
+	}
+
+	data::Triangle t = m_mesh->triangles.at(startTI);
+	m_mesh->triangles.clear();
+	m_mesh->triangles.push_back(t);
 
 	return false;
 
