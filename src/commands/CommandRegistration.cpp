@@ -25,6 +25,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, VertexNormals
 #include "CommandRegistration.inc"
+#define COMMAND_PATH edit, BlowupFill
+#include "CommandRegistration.inc"
 #define COMMAND_PATH edit, CloseLoopWithPin
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, InvertVertexSelection

@@ -104,6 +104,8 @@ add_executable(MeshProc
     commands/compute/VertexEdgeDistanceToCut.h
     commands/compute/VertexNormals.cpp
     commands/compute/VertexNormals.h
+    commands/edit/BlowupFill.cpp
+    commands/edit/BlowupFill.h
     commands/edit/CloseLoopWithPin.cpp
     commands/edit/CloseLoopWithPin.h
     commands/edit/CutHalfSpace.cpp
