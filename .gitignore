@@ -22,3 +22,4 @@ out.obj
 vcpkg_installed
 extra/PlySelectorReceiver/obj
 test/test-cutplaneloop.obj
+extra/LinearPlotPreview/obj
