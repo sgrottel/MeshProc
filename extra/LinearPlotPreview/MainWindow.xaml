@@ -22,28 +22,57 @@
 				<RowDefinition Height="auto" />
 			</Grid.RowDefinitions>
 
-			<StackPanel Orientation="Horizontal" Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}">
-				<Button Margin="4,1,4,2" Padding="8,1" Click="ButtonPlot_Click">Plot</Button>
-			</StackPanel>
+			<Grid Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+				</Grid.RowDefinitions>
+
+				<StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+					<Button Margin="4,2" Padding="8,1" Click="ButtonPlot_Click">Plot</Button>
+				</StackPanel>
+
+				<TextBlock Grid.Row="1" Padding="4,1">Start Segments Count</TextBlock>
+				<TextBox Grid.Row="1" Grid.Column="1" x:Name="StartSegmentsCount">4</TextBox>
+
+				<TextBlock Grid.Row="2" Padding="4,1">Segment Subdiv Target Length</TextBlock>
+				<TextBox Grid.Row="2" Grid.Column="1" x:Name="SegmentSubdivTargetLength">0.1</TextBox>
+
+				<TextBlock Grid.Row="3" Grid.ColumnSpan="2" x:Name="ErrorText" Foreground="Red" Background="LightGray" FontWeight="Bold" />
+			</Grid>
 
 			<TextBlock Grid.Row="1"
 				Margin="4,0"
 				FontFamily="Consolas"
-				>function()<LineBreak />{</TextBlock>
+				>-- lua callback function<LineBreak/>
+				-- parameter `a` will be called with values [0 .. 1]<LineBreak/>
+				-- As return values, at least two float numbers are expected<LineBreak/>
+				function evalLinearPlot(a)
+			</TextBlock>
 
 			<TextBox Grid.Row="2"
 				x:Name="Code"
+				Padding="8,0,0,0"
 				VerticalScrollBarVisibility="Visible"
 				HorizontalScrollBarVisibility="Visible"
 				AcceptsReturn="True"
 				AcceptsTab="True"
 				FontFamily="Consolas"
-				></TextBox>
+				xml:space="preserve" PreviewKeyDown="Code_PreviewKeyDown"
+>local angle = a * 2 * math.pi
+return math.sin(angle), math.cos(angle)
+</TextBox>
 
 			<TextBlock Grid.Row="3"
 				Margin="4,0"
 				FontFamily="Consolas"
-				>}</TextBlock>
+				>end</TextBlock>
 		</Grid>
 
 		<GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
