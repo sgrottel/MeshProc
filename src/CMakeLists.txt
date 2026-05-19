@@ -96,8 +96,12 @@ add_executable(MeshProc
     commands/compute/LinearColorMap.h
     commands/compute/OpenBorder.cpp
     commands/compute/OpenBorder.h
+    commands/compute/OutsideSurfaceClassification.cpp
+    commands/compute/OutsideSurfaceClassification.h
     commands/compute/SplitByEdges.cpp
     commands/compute/SplitByEdges.h
+    commands/compute/VertexColorFromTriangleColor.cpp
+    commands/compute/VertexColorFromTriangleColor.h
     commands/compute/VertexEdgeDistance.cpp
     commands/compute/VertexEdgeDistance.h
     commands/compute/VertexEdgeDistanceToCut.cpp

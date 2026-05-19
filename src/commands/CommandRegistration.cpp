@@ -17,7 +17,11 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, OpenBorder
 #include "CommandRegistration.inc"
+#define COMMAND_PATH compute, OutsideSurfaceClassification
+#include "CommandRegistration.inc"
 #define COMMAND_PATH compute, SplitByEdges
+#include "CommandRegistration.inc"
+#define COMMAND_PATH compute, VertexColorFromTriangleColor
 #include "CommandRegistration.inc"
 #define COMMAND_PATH compute, VertexEdgeDistance
 #include "CommandRegistration.inc"
