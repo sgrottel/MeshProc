@@ -37,6 +37,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH edit, DisplacementNoise
 #include "CommandRegistration.inc"
+#define COMMAND_PATH edit, SimpleSmooth
+#include "CommandRegistration.inc"
 #define COMMAND_PATH edit, Subdivision
 #include "CommandRegistration.inc"
 #define COMMAND_PATH generator, Cuboid
