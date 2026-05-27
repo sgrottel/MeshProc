@@ -116,6 +116,8 @@ add_executable(MeshProc
     commands/edit/InvertVertexSelection.h
     commands/edit/SelectConnectedComponentVertices.cpp
     commands/edit/SelectConnectedComponentVertices.h
+    commands/edit/SimpleSmooth.cpp
+    commands/edit/SimpleSmooth.h
     commands/edit/Subdivision.cpp
     commands/edit/Subdivision.h
     commands/generator/Cuboid.cpp
