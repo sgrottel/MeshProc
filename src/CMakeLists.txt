@@ -30,6 +30,8 @@ add_executable(MeshProc
     data/Triangle.cpp
     data/Triangle.h
     # utilities
+    utilities/CoInitializeScope.h
+    utilities/CoInitializeScope.cpp
     utilities/LoopsFromEdges.h
     utilities/StringUtilities.cpp
     utilities/StringUtilities.h
