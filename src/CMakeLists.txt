@@ -30,6 +30,8 @@ add_executable(MeshProc
     data/Triangle.cpp
     data/Triangle.h
     # utilities
+    utilities/CoInitializeScope.h
+    utilities/CoInitializeScope.cpp
     utilities/LoopsFromEdges.h
     utilities/StringUtilities.cpp
     utilities/StringUtilities.h
@@ -142,6 +144,8 @@ add_executable(MeshProc
     commands/io/StlReader.h
     commands/io/StlWriter.cpp
     commands/io/StlWriter.h
+    commands/util/TriggerMeshLabRefresh.cpp
+    commands/util/TriggerMeshLabRefresh.h
     # 3rd Party
     3rd-party/xyz_math/xyz_math.lua
     3rd-party/xyz_math/README.md

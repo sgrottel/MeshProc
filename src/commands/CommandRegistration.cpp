@@ -63,6 +63,8 @@ namespace
 #include "CommandRegistration.inc"
 #define COMMAND_PATH io, StlWriter
 #include "CommandRegistration.inc"
+#define COMMAND_PATH util, TriggerMeshLabRefresh
+#include "CommandRegistration.inc"
 
 // add more commands here
 
