@@ -328,6 +328,7 @@ bool TriggerMeshLabRefresh::Invoke()
 		{
 			if (InvokeElement(reloadAll))
 			{
+				Log().Detail("MeshLab [0x%.08x] \"Reload All\" toolbar button triggered", reinterpret_cast<uintptr_t>(hwnd));
 				continue;
 			}
 		}
@@ -350,6 +351,7 @@ bool TriggerMeshLabRefresh::Invoke()
 			{
 				if (InvokeElement(reloadAll))
 				{
+					Log().Detail("MeshLab [0x%.08x] \"Reload All\" menu item triggered", reinterpret_cast<uintptr_t>(hwnd));
 					continue;
 				}
 			}
