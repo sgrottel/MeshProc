@@ -125,14 +125,14 @@ namespace meshproc
 			template<>
 			struct Guard<0> {
 				constexpr static int val = 0;
-				void CollectNames([[maybe_unused]] std::string& str) { }
+				constexpr static void CollectNames([[maybe_unused]] std::string& str) { }
 			};
 #endif
 
 			template<int i>
 			struct Guard {
 				constexpr static int val = Guard<i - 1>::val;
-				void CollectNames(std::string& str)
+				constexpr static void CollectNames(std::string& str)
 				{
 					Guard<i - 1>::CollectNames(str);
 				}
@@ -141,7 +141,7 @@ namespace meshproc
 			template<int i, typename CmdT>
 			struct GuardCounted {
 				constexpr static int val = Guard<i - 1>::val + 1;
-				void CollectNames(std::string& str)
+				constexpr static void CollectNames(std::string& str)
 				{
 					Guard<i - 1>::CollectNames(str);
 					str += typeid(CmdT).name();
