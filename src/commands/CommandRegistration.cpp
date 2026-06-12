@@ -1,110 +1,121 @@
 #include "CommandRegistration.h"
 
-namespace
-{
-	template<int N>
-	struct RegisterCommandHelper {};
-}
+#ifdef REGISTER_COMMAND
+#error REGISTER_COMMAND must not be registed yet!
+#endif
 
-// define the COMMAND_PATH (namespace, class_name)
-// then include "CommandRegistration.inc"
-//
-// this will generate: 
-//   #include "namespace/class_name.h"
-//   And the template specialization of `RegisterCommandHelper` for class runtime registration logic
-
-#define COMMAND_PATH compute, LinearColorMap
-#include "CommandRegistration.inc"
-#define COMMAND_PATH compute, OpenBorder
-#include "CommandRegistration.inc"
-#define COMMAND_PATH compute, SplitByEdges
-#include "CommandRegistration.inc"
-#define COMMAND_PATH compute, VertexEdgeDistance
-#include "CommandRegistration.inc"
-#define COMMAND_PATH compute, VertexEdgeDistanceToCut
-#include "CommandRegistration.inc"
-#define COMMAND_PATH compute, VertexNormals
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, CloseLoopWithPin
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, InvertVertexSelection
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, SelectConnectedComponentVertices
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, CutHalfSpace
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, CutPlaneLoop
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, DisplacementNoise
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, SimpleSmooth
-#include "CommandRegistration.inc"
-#define COMMAND_PATH edit, Subdivision
-#include "CommandRegistration.inc"
-#define COMMAND_PATH generator, Cuboid
-#include "CommandRegistration.inc"
-#define COMMAND_PATH generator, Icosahedron
-#include "CommandRegistration.inc"
-#define COMMAND_PATH generator, Octahedron
-#include "CommandRegistration.inc"
-#define COMMAND_PATH generator, SphereIco
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, Model3mfReader
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, ObjReader
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, ObjWriter
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, PlyReader
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, PlyWriter
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, StlReader
-#include "CommandRegistration.inc"
-#define COMMAND_PATH io, StlWriter
-#include "CommandRegistration.inc"
-#define COMMAND_PATH util, TriggerMeshLabRefresh
+#include "AbstractCommand.h"
 #include "CommandRegistration.inc"
 
-// add more commands here
+#ifndef REGISTER_COMMAND
+#error REGISTER_COMMAND failed to register
+#endif
+
+// Include all commands here:
+
+#include "compute/LinearColorMap.h"
+#include "compute/OpenBorder.h"
+#include "compute/SplitByEdges.h"
+#include "compute/VertexEdgeDistance.h"
+#include "compute/VertexEdgeDistanceToCut.h"
+#include "compute/VertexNormals.h"
+#include "edit/CloseLoopWithPin.h"
+#include "edit/CutHalfSpace.h"
+#include "edit/CutPlaneLoop.h"
+#include "edit/DisplacementNoise.h"
+#include "edit/InvertVertexSelection.h"
+#include "edit/SelectConnectedComponentVertices.h"
+#include "edit/SimpleSmooth.h"
+#include "edit/Subdivision.h"
+#include "generator/Cuboid.h"
+#include "generator/Icosahedron.h"
+#include "generator/Octahedron.h"
+#include "generator/SphereIco.h"
+#include "io/Model3mfReader.h"
+#include "io/ObjReader.h"
+#include "io/ObjWriter.h"
+#include "io/PlyReader.h"
+#include "io/PlyWriter.h"
+#include "io/StlReader.h"
+#include "io/StlWriter.h"
+#include "util/TriggerMeshLabRefresh.h"
+
+// Now, included commands will be wrapped in the factory
 
 #include "CommandFactory.h"
 
 #include <SimpleLog/SimpleLog.hpp>
 
+static_assert(::meshproc::commands::_utils::Guard<__COUNTER__>::val == 0);
+
 namespace
 {
 
-	template<int N>
-	bool CallRegisterCommandHelper(meshproc::commands::CommandFactory& factory);
-	
-	template<>
-	bool CallRegisterCommandHelper<-1>([[maybe_unused]] meshproc::commands::CommandFactory& factory)
-	{
-		return true;
-	}
+	using FinalRegistrationHelper = CommandRegistrationHelper<__COUNTER__>;
 
-	template<int N>
-	bool CallRegisterCommandHelper(meshproc::commands::CommandFactory& factory)
+	template<typename TCMD>
+	struct RegisterAction
 	{
-		if (!CallRegisterCommandHelper<N - 1>(factory))
+		static bool RegisterCommandType(meshproc::commands::CommandFactory& factory, const char* name)
 		{
-			return false;
+			return factory.Register<TCMD>(name);
 		}
-		return factory.Register<typename RegisterCommandHelper<N>::T>(RegisterCommandHelper<N>::NAME);
-	}
+	};
+
+	template<>
+	struct RegisterAction<void>
+	{
+		static bool RegisterCommandType([[maybe_unused]] meshproc::commands::CommandFactory& factory, [[maybe_unused]] const char* name)
+		{
+			return true;
+		}
+	};
+
+	template<int I>
+	struct RegisterCountedCommand
+	{
+		static bool RegisterCommandType(meshproc::commands::CommandFactory& factory, const sgrottel::ISimpleLog& log)
+		{
+			const bool preSucc = RegisterCountedCommand<I - 1>::RegisterCommandType(factory, log);
+			if (!preSucc)
+			{
+				return false;
+			}
+
+			const bool succ = RegisterAction<CommandRegistrationHelper<I>::TYPE>::RegisterCommandType(factory, CommandRegistrationHelper<I>::NAME);
+			if (!succ)
+			{
+				log.Error("Failed to register command (%d) \"%s\"", CommandRegistrationHelper<I>::VAL, CommandRegistrationHelper<I>::NAME);
+				return false;
+			}
+
+			return true;
+		}
+	};
+
+	template<>
+	struct RegisterCountedCommand<-1>
+	{
+		static bool RegisterCommandType(
+			[[maybe_unused]] meshproc::commands::CommandFactory& factory,
+			[[maybe_unused]] const sgrottel::ISimpleLog& log)
+		{
+			return true;
+		}
+	};
+
 }
 
 bool meshproc::commands::CommandRegistration(CommandFactory& factory, const sgrottel::ISimpleLog& log)
 {
-	bool succ = true;
 	log.Detail("Populating CommandFactory");
 
-	CallRegisterCommandHelper<__COUNTER__ - 1>(factory);
+	const bool succ = RegisterCountedCommand<FinalRegistrationHelper::VAL>::RegisterCommandType(factory, log);
 
-	// Here you can add code, which cannot be handled by the `RegisterCommandHelper` construct
+	// add code here, which cannot be handled by the `RegisterCommandHelper` construct:
 	//factory.HideCommand("DevPlayground");
 
 	log.Detail("Populated CommandFactory: %s", succ ? "success" : "failed");
+
 	return succ;
 }

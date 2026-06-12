@@ -29,3 +29,4 @@ namespace meshproc
 		}
 	}
 }
+REGISTER_COMMAND(meshproc, commands, compute, VertexNormals)

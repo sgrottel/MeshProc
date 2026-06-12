@@ -32,3 +32,4 @@ namespace meshproc
 		}
 	}
 }
+REGISTER_COMMAND(meshproc, commands, generator, Cuboid)
