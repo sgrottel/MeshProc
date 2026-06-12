@@ -14,6 +14,23 @@ namespace sgrottel
 	class ISimpleLog;
 }
 
+#ifndef REGISTER_COMMAND
+
+#define REGISTER_COMMAND_ARG_AS_TYPE1(a) ::##a
+#define REGISTER_COMMAND_ARG_AS_TYPE2(a,b) ::##a##::##b
+#define REGISTER_COMMAND_ARG_AS_TYPE3(a,b,c) ::##a##::##b##::##c
+#define REGISTER_COMMAND_ARG_AS_TYPE4(a,b,c,d) ::##a##::##b##::##c##::##d
+#define REGISTER_COMMAND_ARG_AS_TYPE5(a,b,c,d,e) ::##a##::##b##::##c##::##d##::##e
+
+#define REGISTER_COMMAND_SELECT(_1,_2,_3,_4,_5,NAME,...) NAME
+#define REGISTER_COMMAND_EVALNAME(a) a
+
+#define REGISTER_COMMAND_ARG_AS_TYPE(...) REGISTER_COMMAND_EVALNAME(REGISTER_COMMAND_SELECT(__VA_ARGS__, REGISTER_COMMAND_ARG_AS_TYPE5, REGISTER_COMMAND_ARG_AS_TYPE4, REGISTER_COMMAND_ARG_AS_TYPE3, REGISTER_COMMAND_ARG_AS_TYPE2, REGISTER_COMMAND_ARG_AS_TYPE1)(__VA_ARGS__))
+
+#define REGISTER_COMMAND(...) template<> struct ::meshproc::commands::_utils::Guard<__COUNTER__ + 1> : public ::meshproc::commands::_utils::GuardCounted<__COUNTER__, REGISTER_COMMAND_ARG_AS_TYPE(__VA_ARGS__)> { };
+
+#endif
+
 namespace meshproc
 {
 	namespace commands
@@ -96,6 +113,41 @@ namespace meshproc
 			auto newParamBinding = std::make_shared<struct ParamBinding<PM, PT>>(var);
 			newParamBinding->m_idx = m_params.size();
 			m_params[name] = newParamBinding;
+		}
+
+		namespace _utils
+		{
+			template<int i>
+			struct Guard;
+
+#ifndef REGISTER_COMMAND_GUARD_0
+#define REGISTER_COMMAND_GUARD_0
+			template<>
+			struct Guard<0> {
+				constexpr static int val = 0;
+				void CollectNames([[maybe_unused]] std::string& str) { }
+			};
+#endif
+
+			template<int i>
+			struct Guard {
+				constexpr static int val = Guard<i - 1>::val;
+				void CollectNames(std::string& str)
+				{
+					Guard<i - 1>::CollectNames(str);
+				}
+			};
+
+			template<int i, typename CmdT>
+			struct GuardCounted {
+				constexpr static int val = Guard<i - 1>::val + 1;
+				void CollectNames(std::string& str)
+				{
+					Guard<i - 1>::CollectNames(str);
+					str += typeid(CmdT).name();
+					str += '\n';
+				}
+			};
 		}
 
 	}

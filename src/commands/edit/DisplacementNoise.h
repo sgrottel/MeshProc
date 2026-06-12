@@ -35,3 +35,4 @@ namespace meshproc
 		}
 	}
 }
+REGISTER_COMMAND(meshproc, commands, edit, DisplacementNoise)

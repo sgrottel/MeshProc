@@ -20,3 +20,4 @@ namespace meshproc
 		}
 	}
 }
+REGISTER_COMMAND(meshproc, commands, util, TriggerMeshLabRefresh)

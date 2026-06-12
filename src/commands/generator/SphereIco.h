@@ -23,3 +23,4 @@ namespace meshproc
 		}
 	}
 }
+REGISTER_COMMAND(meshproc, commands, generator, SphereIco)

@@ -1,9 +1,24 @@
 #include "CommandRegistration.h"
 
+namespace meshproc
+{
+	namespace commands
+	{
+		namespace compute
+		{
+			class LinearColorMap;
+		}
+	}
+}
+
 namespace
 {
 	template<int N>
-	struct RegisterCommandHelper {};
+	struct RegisterCommandHelper
+	{
+		using T = ::meshproc::commands::compute::LinearColorMap;
+		static constexpr const char* NAME = nullptr;
+	};
 }
 
 // define the COMMAND_PATH (namespace, class_name)
@@ -91,7 +106,11 @@ namespace
 		{
 			return false;
 		}
-		return factory.Register<typename RegisterCommandHelper<N>::T>(RegisterCommandHelper<N>::NAME);
+		if (RegisterCommandHelper<N>::NAME != nullptr)
+		{
+			return factory.Register<typename RegisterCommandHelper<N>::T>(RegisterCommandHelper<N>::NAME);
+		}
+		return true;
 	}
 }
 
