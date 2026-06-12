@@ -38,6 +38,7 @@
 #include "io/PlyWriter.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
+#include "io/VertexColorReader.h"
 #include "util/TriggerMeshLabRefresh.h"
 
 // Now, included commands will be wrapped in the factory

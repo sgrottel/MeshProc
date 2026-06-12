@@ -144,6 +144,8 @@ add_executable(MeshProc
     commands/io/StlReader.h
     commands/io/StlWriter.cpp
     commands/io/StlWriter.h
+    commands/io/VertexColorReader.cpp
+    commands/io/VertexColorReader.h
     commands/util/TriggerMeshLabRefresh.cpp
     commands/util/TriggerMeshLabRefresh.h
     # 3rd Party
