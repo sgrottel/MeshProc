@@ -1,21 +1,12 @@
 #include "VertexColorGrowth.h"
 
+#include "utilities/ColorCompare.h"
+
 #include <SimpleLog/SimpleLog.hpp>
 
 using namespace meshproc;
 using namespace meshproc::commands;
 using namespace meshproc::commands::edit;
-
-namespace
-{
-	inline const float MHD(const glm::vec3& a, const glm::vec3& b) noexcept
-	{
-		return std::max(std::max(
-			std::abs(a.x - b.x),
-			std::abs(a.y - b.y)),
-			std::abs(a.z - b.z));
-	}
-}
 
 VertexColorGrowth::VertexColorGrowth(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
@@ -50,11 +41,11 @@ bool VertexColorGrowth::Invoke()
 	std::transform(m_colors->begin(), m_colors->end(), marker.begin(),
 		[&](glm::vec3 const& c)
 		{
-			if (MHD(c, m_color) < 0.005f)
+			if (ColorCompare::IsNearlyEqual(c, m_color))
 			{
 				return 2;	// already set
 			}
-			if (MHD(c, m_blankColor) < 0.005f)
+			if (ColorCompare::IsNearlyEqual(c, m_blankColor))
 			{
 				return 0;	// growth potential
 			}

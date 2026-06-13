@@ -32,6 +32,8 @@ add_executable(MeshProc
     # utilities
     utilities/CoInitializeScope.h
     utilities/CoInitializeScope.cpp
+    utilities/ColorCompare.cpp
+    utilities/ColorCompare.h
     utilities/LoopsFromEdges.h
     utilities/StringUtilities.cpp
     utilities/StringUtilities.h

@@ -1,5 +1,7 @@
 #include "VertexColorDyeThrough.h"
 
+#include "utilities/ColorCompare.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
@@ -22,17 +24,6 @@
 using namespace meshproc;
 using namespace meshproc::commands;
 using namespace meshproc::commands::edit;
-
-namespace
-{
-	inline const float MHD(const glm::vec3& a, const glm::vec3& b) noexcept
-	{
-		return std::max(std::max(
-				std::abs(a.x - b.x),
-				std::abs(a.y - b.y)),
-				std::abs(a.z - b.z));
-	}
-}
 
 VertexColorDyeThrough::VertexColorDyeThrough(const sgrottel::ISimpleLog& log)
 	: AbstractCommand{ log }
@@ -82,7 +73,7 @@ bool VertexColorDyeThrough::Invoke()
 	const size_t len = m_colors->size();
 
 	std::vector<bool> isBlank(len, false);
-	std::transform(m_colors->begin(), m_colors->end(), isBlank.begin(), [&](glm::vec3 const& c) { return MHD(c, m_blankColor) < 0.005f; });
+	std::transform(m_colors->begin(), m_colors->end(), isBlank.begin(), [&](glm::vec3 const& c) { return ColorCompare::IsNearlyEqual(c, m_blankColor); });
 	const uint32_t blanks = static_cast<uint32_t>(std::count_if(isBlank.begin(), isBlank.end(), [](auto b) { return b; }));
 
 	std::vector<uint32_t> origIdx;
