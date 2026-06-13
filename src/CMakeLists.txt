@@ -122,6 +122,8 @@ add_executable(MeshProc
     commands/edit/SimpleSmooth.h
     commands/edit/Subdivision.cpp
     commands/edit/Subdivision.h
+    commands/edit/VertexColorCleanup.cpp
+    commands/edit/VertexColorCleanup.h
     commands/edit/VertexColorDyeThrough.cpp
     commands/edit/VertexColorDyeThrough.h
     commands/edit/VertexColorGrowth.cpp

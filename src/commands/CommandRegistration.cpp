@@ -27,6 +27,7 @@
 #include "edit/SelectConnectedComponentVertices.h"
 #include "edit/SimpleSmooth.h"
 #include "edit/Subdivision.h"
+#include "edit/VertexColorCleanup.h"
 #include "edit/VertexColorDyeThrough.h"
 #include "edit/VertexColorGrowth.h"
 #include "generator/Cuboid.h"
