@@ -122,6 +122,8 @@ add_executable(MeshProc
     commands/edit/SimpleSmooth.h
     commands/edit/Subdivision.cpp
     commands/edit/Subdivision.h
+    commands/edit/VertexColorDyeThrough.cpp
+    commands/edit/VertexColorDyeThrough.h
     commands/generator/Cuboid.cpp
     commands/generator/Cuboid.h
     commands/generator/Icosahedron.cpp
@@ -195,6 +197,8 @@ endif()
 # get_target_property(L3MF_OPTS_AFTER lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
 # message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (after) = '${L3MF_OPTS_AFTER}'")
 
+find_package(FLANN CONFIG REQUIRED)
+
 # Modern compile features
 target_compile_features(MeshProc PRIVATE cxx_std_20)
 target_compile_options(MeshProc PRIVATE /std:c++20 /Zc:__cplusplus)
@@ -221,12 +225,19 @@ target_link_libraries(MeshProc
         Lua::Lua
         CGAL::CGAL
         lib3mf::lib3mf
+        flann::flann
+        flann::flann_cpp
 )
 
 # Required for TARGET_RUNTIME_DLLS on MSVC
 set_property(TARGET MeshProc PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:MeshProc>)
 
-set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/debug/bin")
+else()
+    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+endif()
+
 file(GLOB VCPKG_DLLS "${VCPKG_BIN_DIR}/*.dll")
 if (VCPKG_DLLS)
     add_custom_command(TARGET MeshProc POST_BUILD

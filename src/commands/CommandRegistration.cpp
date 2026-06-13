@@ -27,6 +27,7 @@
 #include "edit/SelectConnectedComponentVertices.h"
 #include "edit/SimpleSmooth.h"
 #include "edit/Subdivision.h"
+#include "edit/VertexColorDyeThrough.h"
 #include "generator/Cuboid.h"
 #include "generator/Icosahedron.h"
 #include "generator/Octahedron.h"
