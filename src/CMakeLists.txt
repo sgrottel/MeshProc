@@ -124,6 +124,8 @@ add_executable(MeshProc
     commands/edit/Subdivision.h
     commands/edit/VertexColorDyeThrough.cpp
     commands/edit/VertexColorDyeThrough.h
+    commands/edit/VertexColorGrowth.cpp
+    commands/edit/VertexColorGrowth.h
     commands/generator/Cuboid.cpp
     commands/generator/Cuboid.h
     commands/generator/Icosahedron.cpp

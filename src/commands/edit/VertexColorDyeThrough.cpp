@@ -82,7 +82,7 @@ bool VertexColorDyeThrough::Invoke()
 	const size_t len = m_colors->size();
 
 	std::vector<bool> isBlank(len, false);
-	std::transform(m_colors->begin(), m_colors->end(), isBlank.begin(), [&](glm::vec3 const& c) { return MHD(c, m_blankColor) < 0.0001f; });
+	std::transform(m_colors->begin(), m_colors->end(), isBlank.begin(), [&](glm::vec3 const& c) { return MHD(c, m_blankColor) < 0.005f; });
 	const uint32_t blanks = static_cast<uint32_t>(std::count_if(isBlank.begin(), isBlank.end(), [](auto b) { return b; }));
 
 	std::vector<uint32_t> origIdx;

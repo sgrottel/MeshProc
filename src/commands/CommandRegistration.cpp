@@ -28,6 +28,7 @@
 #include "edit/SimpleSmooth.h"
 #include "edit/Subdivision.h"
 #include "edit/VertexColorDyeThrough.h"
+#include "edit/VertexColorGrowth.h"
 #include "generator/Cuboid.h"
 #include "generator/Icosahedron.h"
 #include "generator/Octahedron.h"
