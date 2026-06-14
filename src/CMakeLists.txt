@@ -32,6 +32,8 @@ add_executable(MeshProc
     # utilities
     utilities/CoInitializeScope.h
     utilities/CoInitializeScope.cpp
+    utilities/ColorCompare.cpp
+    utilities/ColorCompare.h
     utilities/LoopsFromEdges.h
     utilities/StringUtilities.cpp
     utilities/StringUtilities.h
@@ -122,6 +124,12 @@ add_executable(MeshProc
     commands/edit/SimpleSmooth.h
     commands/edit/Subdivision.cpp
     commands/edit/Subdivision.h
+    commands/edit/VertexColorCleanup.cpp
+    commands/edit/VertexColorCleanup.h
+    commands/edit/VertexColorDyeThrough.cpp
+    commands/edit/VertexColorDyeThrough.h
+    commands/edit/VertexColorGrowth.cpp
+    commands/edit/VertexColorGrowth.h
     commands/generator/Cuboid.cpp
     commands/generator/Cuboid.h
     commands/generator/Icosahedron.cpp
@@ -144,6 +152,10 @@ add_executable(MeshProc
     commands/io/StlReader.h
     commands/io/StlWriter.cpp
     commands/io/StlWriter.h
+    commands/io/VertexColorReader.cpp
+    commands/io/VertexColorReader.h
+    commands/io/VertexColorWriter.cpp
+    commands/io/VertexColorWriter.h
     commands/util/TriggerMeshLabRefresh.cpp
     commands/util/TriggerMeshLabRefresh.h
     # 3rd Party
@@ -185,11 +197,19 @@ get_target_property(L3MF_OPTS_BEFORE lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
 # message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (before) = '${L3MF_OPTS_BEFORE}'")
 if (L3MF_OPTS_BEFORE)
     set(L3MF_OPTS_CLEAN "${L3MF_OPTS_BEFORE}")
-    list(FILTER L3MF_OPTS_CLEAN EXCLUDE REGEX "/W[0-4]") # Removes all /W[0-4] flags (including /W3)
+
+    string(REGEX REPLACE "(^|[;:])/W[0-4]([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE "(^|[;:])/Od([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE "(^|[;:])/Ob0([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE ":;+" ":" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE ";;+" ";" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+
     set_target_properties(lib3mf::lib3mf PROPERTIES INTERFACE_COMPILE_OPTIONS "${L3MF_OPTS_CLEAN}")
 endif()
 # get_target_property(L3MF_OPTS_AFTER lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
 # message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (after) = '${L3MF_OPTS_AFTER}'")
+
+find_package(FLANN CONFIG REQUIRED)
 
 # Modern compile features
 target_compile_features(MeshProc PRIVATE cxx_std_20)
@@ -217,12 +237,19 @@ target_link_libraries(MeshProc
         Lua::Lua
         CGAL::CGAL
         lib3mf::lib3mf
+        flann::flann
+        flann::flann_cpp
 )
 
 # Required for TARGET_RUNTIME_DLLS on MSVC
 set_property(TARGET MeshProc PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:MeshProc>)
 
-set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+else()
+    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/debug/bin")
+endif()
+
 file(GLOB VCPKG_DLLS "${VCPKG_BIN_DIR}/*.dll")
 if (VCPKG_DLLS)
     add_custom_command(TARGET MeshProc POST_BUILD

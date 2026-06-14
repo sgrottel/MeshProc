@@ -27,6 +27,9 @@
 #include "edit/SelectConnectedComponentVertices.h"
 #include "edit/SimpleSmooth.h"
 #include "edit/Subdivision.h"
+#include "edit/VertexColorCleanup.h"
+#include "edit/VertexColorDyeThrough.h"
+#include "edit/VertexColorGrowth.h"
 #include "generator/Cuboid.h"
 #include "generator/Icosahedron.h"
 #include "generator/Octahedron.h"
@@ -38,6 +41,8 @@
 #include "io/PlyWriter.h"
 #include "io/StlReader.h"
 #include "io/StlWriter.h"
+#include "io/VertexColorReader.h"
+#include "io/VertexColorWriter.h"
 #include "util/TriggerMeshLabRefresh.h"
 
 // Now, included commands will be wrapped in the factory
