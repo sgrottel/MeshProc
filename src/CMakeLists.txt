@@ -197,7 +197,13 @@ get_target_property(L3MF_OPTS_BEFORE lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
 # message(STATUS "lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS (before) = '${L3MF_OPTS_BEFORE}'")
 if (L3MF_OPTS_BEFORE)
     set(L3MF_OPTS_CLEAN "${L3MF_OPTS_BEFORE}")
-    list(FILTER L3MF_OPTS_CLEAN EXCLUDE REGEX "/W[0-4]") # Removes all /W[0-4] flags (including /W3)
+
+    string(REGEX REPLACE "(^|[;:])/W[0-4]([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE "(^|[;:])/Od([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE "(^|[;:])/Ob0([;>]|$)" "\\1\\2" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE ":;+" ":" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+    string(REGEX REPLACE ";;+" ";" L3MF_OPTS_CLEAN "${L3MF_OPTS_CLEAN}")
+
     set_target_properties(lib3mf::lib3mf PROPERTIES INTERFACE_COMPILE_OPTIONS "${L3MF_OPTS_CLEAN}")
 endif()
 # get_target_property(L3MF_OPTS_AFTER lib3mf::lib3mf INTERFACE_COMPILE_OPTIONS)
@@ -238,10 +244,10 @@ target_link_libraries(MeshProc
 # Required for TARGET_RUNTIME_DLLS on MSVC
 set_property(TARGET MeshProc PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:MeshProc>)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/debug/bin")
-else()
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/bin")
+else()
+    set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/debug/bin")
 endif()
 
 file(GLOB VCPKG_DLLS "${VCPKG_BIN_DIR}/*.dll")
