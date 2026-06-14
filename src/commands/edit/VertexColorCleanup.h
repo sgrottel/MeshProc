@@ -21,6 +21,7 @@ namespace meshproc
 			private:
 				const std::shared_ptr<data::Mesh> m_mesh;
 				std::shared_ptr<std::vector<glm::vec3>> m_colors;
+				const float m_smallThreshold{ 0.025f };
 			};
 
 		}
