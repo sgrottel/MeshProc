@@ -71,7 +71,7 @@ jobs:
         "vcpkg_cache_key=$vcpkg_cache_key" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Cache vcpkg packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: vcpkg_installed
         key: meshproc_vcpkg_installed_${{ steps.build-vcpkg_cache_key.outputs.vcpkg_cache_key }}
